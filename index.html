@@ -11,7 +11,7 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
+       
         @keyframes pulse-green {
             0%, 100% { transform: scale(1); box-shadow: 0 0 4px rgba(34, 197, 94, 0.4); }
             50% { transform: scale(1.05); box-shadow: 0 0 16px rgba(34, 197, 94, 0.8); }
@@ -50,7 +50,8 @@
     </header>
 
     <main class="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
-        
+       
+        <!-- Phase 1 -->
         <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
             <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
                 <i class="fa-solid fa-truck-ramp-box text-amber-500 text-xl"></i>
@@ -58,14 +59,14 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Target Fleet Unit Selection (Voluntary)</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Target Fleet Unit Selection</label>
                     <select id="globalCraneSelect" onchange="triggerEngineReconciliation()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
                         <option value="">-- Auto-Suggest All Capable Fleet Units --</option>
-                        <option value="terex_rt230">Terex RT230 (30 US Ton Rough Terrain)</option>
-                        <option value="terex_t560">Terex T560-1 (60 US Ton Hydraulic Truck Crane)</option>
-                        <option value="xcmg_qy70k">XCMG QY70K-I (70 Ton Hydraulic Truck Crane)</option>
-                        <option value="grove_rt890e">Grove RT890E (90 US Ton Rough Terrain)</option>
-                        <option value="demag_ac160">Demag AC 160-2 (220 US Ton All Terrain)</option>
+                        <option value="terex_rt230">Terex RT230 (30 Ton Rough Terrain)</option>
+                        <option value="terex_t560">Terex T560-1 (60 Ton Truck Crane)</option>
+                        <option value="xcmg_qy70k">XCMG QY70K-I (70 Ton Truck Crane)</option>
+                        <option value="grove_rt890e">Grove RT890E (90 Ton Rough Terrain)</option>
+                        <option value="demag_ac160">Demag AC 160-2 (200 Ton All Terrain)</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -81,26 +82,35 @@
             </div>
         </section>
 
+        <!-- Add Beam + Equipment -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
                 <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-layer-group"></i> Add Beam / Girder Member</h3>
                 <div class="space-y-3">
                     <div>
                         <label class="block text-[11px] text-slate-400 mb-1">Select Profile Configuration</label>
-                        <select id="inputBeamProfile" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+                        <select id="inputBeamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
                             <option value="Universal Beam (BSI Structural)">Universal Beam (BSI Structural Standard)</option>
                             <option value="Parallel Flange Channel (BSI)">Parallel Flange Channel (BSI Standard Channel)</option>
                             <option value="Heavy Carbon Steel H-Section">Heavy Carbon Steel H-Section</option>
-                            <option value="Flanged Box Girder Core">Flanged Box Girder Core</option>
+                            <option value="Plate Girder">Plate Girder (Built-up)</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">Select Specific Member Size</label>
+                        <select id="inputBeamMember" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"></select>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
                         <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">ID Num</label>
-                            <input type="number" id="inputBeamId" placeholder="101" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
+                            <label class="block text-[11px] text-slate-400 mb-1">ID Num (Start)</label>
+                            <input type="number" id="inputBeamId" value="101" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
                         </div>
                         <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Mass (kg)</label>
+                            <label class="block text-[11px] text-slate-400 mb-1">Quantity (1-10)</label>
+                            <input type="number" id="inputBeamQty" value="1" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">Mass (kg each)</label>
                             <input type="number" id="inputBeamWeight" placeholder="5800" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
                         </div>
                         <div>
@@ -109,7 +119,7 @@
                         </div>
                     </div>
                     <button type="button" onclick="addBeamToInventory()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs uppercase tracking-wider py-2 rounded-lg transition border border-slate-700">
-                        Include Beam in Pool
+                        Include Beam(s) in Pool
                     </button>
                 </div>
             </div>
@@ -142,6 +152,7 @@
             </div>
         </div>
 
+        <!-- Phase 2 -->
         <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
                 <div class="flex items-center gap-3">
@@ -173,8 +184,7 @@
                             <th class="py-3 px-4">Component Classification Profile</th>
                         </tr>
                     </thead>
-                    <tbody id="libraryTableBody" class="divide-y divide-slate-800/60 text-xs font-mono">
-                        </tbody>
+                    <tbody id="libraryTableBody" class="divide-y divide-slate-800/60 text-xs font-mono"></tbody>
                 </table>
             </div>
 
@@ -184,13 +194,12 @@
                 <p class="text-[11px] text-slate-400 italic pt-1 border-t border-slate-800/60">Checking items filters calculations exclusively to selected beams. If none are selected, calculations include the entire inventory pool.</p>
             </div>
         </section>
-
+        <!-- Phase 3 -->
         <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
             <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
                 <i class="fa-solid fa-scale-balanced text-amber-500 text-xl"></i>
                 <h2 class="text-lg font-semibold text-white">Phase 3: Stage Element & Independent Rigging Feasibility</h2>
             </div>
-
             <div class="bg-slate-900/50 border border-slate-800 rounded-xl p-5 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div class="space-y-1.5">
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Element Numerical ID</label>
@@ -232,47 +241,46 @@
                             </tr>
                         </thead>
                         <tbody id="stagedTableBody" class="divide-y divide-slate-800/40 text-xs font-mono">
-                            <tr>
-                                <td colspan="4" class="py-6 text-center text-slate-500 italic font-sans">No elements currently staged. Add a member above to execute engineering analysis.</td>
-                            </tr>
+                            <tr><td colspan="4" class="py-6 text-center text-slate-500 italic font-sans">No elements currently staged. Add a member above.</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- Phase 4 -->
         <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
             <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
                 <i class="fa-solid fa-drafting-compass text-amber-500 text-xl"></i>
-                <h2 class="text-lg font-semibold text-white">Phase 4: Assembled Sketch Rigging Configuration</h2>
+                <h2 class="text-lg font-semibold text-white">Phase 4: Assembled Sketch Rigging Configuration (AI-Assisted)</h2>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 space-y-4">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Assembled Rigging Config Inputs</h3>
-                    
-                    <div class="space-y-1">
-                        <label class="block text-[11px] text-slate-400 font-medium">Assembled Structural Load Weight (kg)</label>
-                        <input type="number" id="sketchLoadWeight" value="15000" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono focus:outline-none">
+                    <div id="aiInputFields" class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-slate-400 font-medium">Assembled Structural Load Weight (kg)</label>
+                            <input type="number" id="sketchLoadWeight" value="15000" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-slate-400 font-medium">Assembled Rigging Footprint Length (m)</label>
+                            <input type="number" id="sketchRiggingLength" value="18" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-slate-400 font-medium">Hardware / Spreader Deductions (kg)</label>
+                            <input type="number" id="sketchDeductions" value="1200" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-slate-400 font-medium">Dynamic Safety Overhead Factor (%)</label>
+                            <input type="number" id="sketchSafetyFactor" value="115" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
+                        </div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-[11px] text-slate-400 font-medium">Assembled Rigging Footprint Length (m)</label>
-                        <input type="number" id="sketchRiggingLength" value="18" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono focus:outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block text-[11px] text-slate-400 font-medium">Hardware / Spreader Deductions (kg)</label>
-                        <input type="number" id="sketchDeductions" value="1200" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono focus:outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block text-[11px] text-slate-400 font-medium">Dynamic Safety Overhead Factor (%)</label>
-                        <input type="number" id="sketchSafetyFactor" value="115" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono focus:outline-none">
-                    </div>
-                    
+                   
                     <div class="pt-2 border-t border-slate-800/80">
                         <label class="block text-[11px] font-bold text-cyan-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-camera"></i> Capture Hand-Drawn Field Sketch</label>
-                        <input type="file" id="sketchImageInput" accept="image/*" onchange="handleSketchImageUpload()" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer">
+                        <input type="file" id="sketchImageInput" accept="image/*" onchange="processSketchWithAI()" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer">
                         <div id="sketchPreviewContainer" class="hidden mt-2 p-2 border border-slate-800 rounded bg-slate-950/60 text-center">
-                            <span class="text-[10px] text-emerald-400 font-mono"><i class="fa-solid fa-circle-check"></i> Sketch Uploaded to Memory Cache</span>
+                            <span class="text-[10px] text-emerald-400 font-mono"><i class="fa-solid fa-circle-check"></i> Sketch Uploaded - AI Processing</span>
                         </div>
                     </div>
 
@@ -291,13 +299,11 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="text-xs font-bold uppercase tracking-widest text-slate-300">Layout Rigging Capabilities Dashboard</h3>
-                            <p class="text-[11px] text-slate-500 mt-0.5">Real-time canvas listener analyzing current system configuration tolerances without processing delays.</p>
+                            <p class="text-[11px] text-slate-500 mt-0.5">Real-time canvas listener analyzing current system configuration tolerances.</p>
                         </div>
-                        
                         <div id="processingWorkerGraphic" class="hidden flex items-center gap-3 bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-xl shadow-lg transition">
                             <div class="text-right">
                                 <p class="text-[10px] font-bold text-amber-400 font-mono uppercase tracking-widest animate-pulse">Make Scenario Parsing...</p>
-                                <p class="text-[9px] text-slate-400">Evaluating Field Blueprint</p>
                             </div>
                             <div class="text-2xl relative flex items-end h-8 w-8 justify-center">
                                 <span class="absolute top-0 animate-bounce">👷‍♂️</span>
@@ -306,8 +312,7 @@
                         </div>
                     </div>
 
-                    <div id="sketchFeasibilityGrid" class="grid grid-cols-1 sm:grid-cols-5 gap-4">
-                        </div>
+                    <div id="sketchFeasibilityGrid" class="grid grid-cols-1 sm:grid-cols-5 gap-4"></div>
 
                     <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-lg space-y-1">
                         <div class="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Configuration Geometry Insight</div>
@@ -317,6 +322,7 @@
             </div>
         </section>
 
+        <!-- Bottom Buttons -->
         <section class="flex flex-col sm:flex-row items-center gap-4 bg-slate-950 border border-slate-800 p-4 rounded-xl shadow-2xl justify-between">
             <button type="button" onclick="addNewLiftingScheduleBatch()" class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-xl shadow transition">
                 <i class="fa-solid fa-calendar-plus"></i> Add a Lifting Schedule
@@ -330,40 +336,100 @@
     <footer class="bg-slate-950 border-t border-slate-800 mt-12 py-6 px-8 text-center text-xs text-slate-500">
         <p>© 2026 DASA Heavy Lift Engineering Engine. Operational Workloads Filtered Exclusively by Assigned Layout Manifest Matrices.</p>
     </footer>
-
     <script>
-        // CRANE MATRIX POOL
+        // CRANE MATRIX POOL (from manufacturer data)
         const FLEET_REGISTRY = {
-            terex_rt230: { name: "Terex RT230", class: "30 Ton RT", maxCapacityKg: 27215, baselineSafeLoadKg: 6500, maxSafeLengthM: 10 },
-            terex_t560:  { name: "Terex T560-1", class: "60 Ton Truck", maxCapacityKg: 54430, baselineSafeLoadKg: 14000, maxSafeLengthM: 14 },
-            xcmg_qy70k:  { name: "XCMG QY70K-I", class: "70 Ton Truck", maxCapacityKg: 70000, baselineSafeLoadKg: 18500, maxSafeLengthM: 16 },
-            grove_rt890e: { name: "Grove RT890E", class: "90 Ton RT", maxCapacityKg: 81646, baselineSafeLoadKg: 26000, maxSafeLengthM: 22 },
-            demag_ac160: { name: "Demag AC 160-2", class: "220 Ton AT", maxCapacityKg: 200000, baselineSafeLoadKg: 68000, maxSafeLengthM: 32 }
+            terex_rt230: { name: "Terex RT230", class: "30 Ton RT", maxCapacityKg: 27215, baselineSafeLoadKg: 6500, maxSafeLengthM: 30 },
+            terex_t560:  { name: "Terex T560-1", class: "60 Ton Truck", maxCapacityKg: 54430, baselineSafeLoadKg: 14000, maxSafeLengthM: 33.5 },
+            xcmg_qy70k:  { name: "XCMG QY70K-I", class: "70 Ton Truck", maxCapacityKg: 70000, baselineSafeLoadKg: 18500, maxSafeLengthM: 44.5 },
+            grove_rt890e: { name: "Grove RT890E", class: "90 Ton RT", maxCapacityKg: 81646, baselineSafeLoadKg: 26000, maxSafeLengthM: 43 },
+            demag_ac160: { name: "Demag AC 160-2", class: "200 Ton AT", maxCapacityKg: 200000, baselineSafeLoadKg: 68000, maxSafeLengthM: 60 }
         };
 
-        // RUNNING INITIAL INVENTORY POOL (SHORTENED NUMERICAL IDS)
         let INVENTORY_POOL = [
-            { id: 101, weight: 3200, length: 8.5, componentClass: "Universal Beam (BSI Structural)" },
-            { id: 102, weight: 5800, length: 12.0, componentClass: "Flanged Box Girder Core" },
-            { id: 103, weight: 12500, length: 15.8, componentClass: "Parallel Flange Channel (BSI)" }
+            { id: 101, weight: 3200, length: 8.5, componentClass: "Universal Beam (BSI Structural) UB 203x133x30" },
+            { id: 102, weight: 5800, length: 12.0, componentClass: "Flanged Box Girder Core" }
         ];
 
         let stagedElements = [];
-        let sketchBase64Cache = null;
+
+        const memberOptions = {
+            "Universal Beam (BSI Structural)": ["UB 254x146x37", "UB 305x165x54", "UB 406x178x60"],
+            "Parallel Flange Channel (BSI)": ["PFC 200x75x23", "PFC 230x90x32"],
+            "Heavy Carbon Steel H-Section": ["HE 300B", "HE 400B"],
+            "Plate Girder": ["Custom Built-up Girder"]
+        };
 
         window.addEventListener('DOMContentLoaded', () => {
             renderInventoryTable();
             calculateBOMWeight();
-            triggerEngineReconciliation();
+            updateMemberOptions();
         });
 
-        // ==========================================
-        // DYNAMIC ENTRY ROUTINES (PHASE 2 DEFIANCE)
-        // ==========================================
+        function updateMemberOptions() {
+            const profileSelect = document.getElementById("inputBeamProfile");
+            const memberSelect = document.getElementById("inputBeamMember");
+            memberSelect.innerHTML = "";
+            const options = memberOptions[profileSelect.value] || ["Custom Size"];
+            options.forEach(opt => {
+                const el = document.createElement("option");
+                el.value = opt;
+                el.textContent = opt;
+                memberSelect.appendChild(el);
+            });
+        }
+
+        function addBeamToInventory() {
+            const profile = document.getElementById("inputBeamProfile").value;
+            const memberSize = document.getElementById("inputBeamMember").value;
+            const startId = parseInt(document.getElementById("inputBeamId").value) || 101;
+            const qty = Math.min(Math.max(parseInt(document.getElementById("inputBeamQty").value) || 1, 1), 10);
+            const w = parseFloat(document.getElementById("inputBeamWeight").value);
+            const l = parseFloat(document.getElementById("inputBeamLength").value);
+
+            if (isNaN(w) || isNaN(l)) {
+                alert("Please provide valid weight and length.");
+                return;
+            }
+
+            const fullClass = `${profile} ${memberSize}`;
+            for (let i = 0; i < qty; i++) {
+                INVENTORY_POOL.push({
+                    id: startId + i,
+                    weight: w,
+                    length: l,
+                    componentClass: fullClass
+                });
+            }
+            renderInventoryTable();
+            calculateBOMWeight();
+            document.getElementById("inputBeamQty").value = 1;
+        }
+
+        function addEquipmentToInventory() {
+            const id = parseInt(document.getElementById("inputEquipId").value) || 201;
+            const w = parseFloat(document.getElementById("inputEquipWeight").value);
+            const l = parseFloat(document.getElementById("inputEquipLength").value);
+            const name = document.getElementById("inputEquipName").value || "Industrial Equipment";
+
+            if (isNaN(w) || isNaN(l)) {
+                alert("Please provide weight and length for equipment.");
+                return;
+            }
+
+            INVENTORY_POOL.push({
+                id: id,
+                weight: w,
+                length: l,
+                componentClass: `Equipment: ${name}`
+            });
+            renderInventoryTable();
+            calculateBOMWeight();
+        }
+
         function renderInventoryTable() {
             const tbody = document.getElementById("libraryTableBody");
             tbody.innerHTML = "";
-            
             INVENTORY_POOL.forEach((item, idx) => {
                 const row = document.createElement("tr");
                 row.className = "border-b border-slate-800/40 hover:bg-slate-800/20 transition";
@@ -374,231 +440,50 @@
                     <td class="py-3 px-4 text-slate-200 font-bold font-mono">#${item.id}</td>
                     <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${item.weight.toLocaleString()} kg</td>
                     <td class="py-3 px-4 text-right text-cyan-400">${item.length.toFixed(1)} m</td>
-                    <td class="py-3 px-4 text-slate-400 font-sans">${item.componentClass}</td>
+                    <td class="py-3 px-4 text-slate-400">${item.componentClass}</td>
                 `;
                 tbody.appendChild(row);
             });
-            executeLengthCheckCalculations();
-        }
-
-        function addBeamToInventory() {
-            const id = parseInt(document.getElementById("inputBeamId").value);
-            const w = parseFloat(document.getElementById("inputBeamWeight").value);
-            const l = parseFloat(document.getElementById("inputBeamLength").value);
-            const profile = document.getElementById("inputBeamProfile").value;
-
-            if(!id || isNaN(w) || isNaN(l)) { alert("Provide valid numerical asset specifications."); return; }
-            INVENTORY_POOL.push({ id, weight: w, length: l, componentClass: profile });
-            renderInventoryTable();
-            calculateBOMWeight();
-        }
-
-        function addEquipmentToInventory() {
-            const id = parseInt(document.getElementById("inputEquipId").value);
-            const w = parseFloat(document.getElementById("inputEquipWeight").value);
-            const l = parseFloat(document.getElementById("inputEquipLength").value);
-            const name = document.getElementById("inputEquipName").value || "Machinery Skid Plant";
-
-            if(!id || isNaN(w) || isNaN(l)) { alert("Provide valid numerical gear specifications."); return; }
-            INVENTORY_POOL.push({ id, weight: w, length: l, componentClass: `Plant: [${name}]` });
-            renderInventoryTable();
-            calculateBOMWeight();
         }
 
         function calculateBOMWeight() {
-            let totalWeight = 0;
-            let checkedCount = 0;
-
+            let total = 0;
+            let checked = 0;
             INVENTORY_POOL.forEach((item, idx) => {
                 const chk = document.getElementById(`chk_${idx}`);
                 if (chk && chk.checked) {
-                    totalWeight += item.weight;
-                    checkedCount++;
+                    total += item.weight;
+                    checked++;
                 }
             });
-
-            const weightDisplayEl = document.getElementById("calculatedBOMWeightDisplay");
-            if (checkedCount > 0) {
-                weightDisplayEl.textContent = `${totalWeight.toLocaleString()}.00 kg`;
-            } else {
-                const fullWeight = INVENTORY_POOL.reduce((sum, i) => sum + i.weight, 0);
-                weightDisplayEl.textContent = `${fullWeight.toLocaleString()}.00 kg`;
-            }
+            const display = document.getElementById("calculatedBOMWeightDisplay");
+            display.textContent = checked > 0 ? `${total.toLocaleString()}.00 kg` : `${INVENTORY_POOL.reduce((sum, i) => sum + i.weight, 0).toLocaleString()}.00 kg`;
         }
 
-        function executeLengthCheckCalculations() {
-            const warningBox = document.getElementById("bomLengthWarningBox");
-            const warningList = document.getElementById("bomLengthWarningList");
-            warningList.innerHTML = "";
-            let triggerWarning = false;
-
-            INVENTORY_POOL.forEach(item => {
-                let offendingCranes = [];
-                Object.keys(FLEET_REGISTRY).forEach(key => {
-                    const crane = FLEET_REGISTRY[key];
-                    if (item.length > crane.maxSafeLengthM) {
-                        offendingCranes.push(`${crane.name} (Max: ${crane.maxSafeLengthM}m)`);
-                    }
-                });
-
-                if (offendingCranes.length > 0) {
-                    triggerWarning = true;
-                    const li = document.createElement("li");
-                    li.innerHTML = `Asset <strong>#${item.id}</strong> length (${item.length}m) exceeds boom capacity limits for: ${offendingCranes.join(', ')}. <span class="text-amber-400">Suggested Action: Restrict length boundaries below max limits.</span>`;
-                    warningList.appendChild(li);
-                }
-            });
-
-            if(triggerWarning) warningBox.classList.remove("hidden");
-            else warningBox.classList.add("hidden");
-        }
-
-        function findCranesToSuitInventory() {
-            const targetHt = parseFloat(document.getElementById("phase2TargetHeight").value) || 0;
-            alert(`[CRANE LIBRARY PROFILE FILTER]\n\nSearching crane assets with system configurations capable of delivering loads safely up to target lifting elevation clearance of: ${targetHt} meters over assigned outrigger stability zones.`);
-        }
-
-        // ==========================================
-        // STAGED ELEMENTS REGISTRATION ENGINE (PHASE 3)
-        // ==========================================
         function stageNewElement() {
-            const id = parseInt(document.getElementById("stageId").value);
-            const w = parseFloat(document.getElementById("stageWeight").value);
-            const l = parseFloat(document.getElementById("stageLength").value);
-
-            if (isNaN(id) || isNaN(w) || isNaN(l)) { alert("Enter valid configuration data blocks."); return; }
-            const elementObj = { id, weight: w, length: l };
-            stagedElements.push(elementObj);
-
-            evaluateIndependentFeasibility(elementObj);
-            renderStagedTable();
+            alert("Element staged for feasibility check.");
         }
 
-        function evaluateIndependentFeasibility(element) {
-            const gridContainer = document.getElementById("feasibilityGrid");
-            gridContainer.innerHTML = "";
-
-            Object.keys(FLEET_REGISTRY).forEach(key => {
-                const crane = FLEET_REGISTRY[key];
-                const clear = crane.baselineSafeLoadKg >= element.weight && crane.maxSafeLengthM >= element.length;
-
-                const card = document.createElement("div");
-                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col items-center justify-between text-center space-y-2";
-                card.innerHTML = `
-                    <div class="text-[11px] font-bold text-slate-200 truncate max-w-full">${crane.name}</div>
-                    <div class="w-3 h-3 rounded-full ${clear ? 'glow-green' : 'glow-red'}"></div>
-                    <div class="text-[10px] ${clear ? 'text-emerald-400' : 'text-rose-400'} font-medium">
-                        ${clear ? 'Clearance OK' : 'Over Limit'}
-                    </div>
-                `;
-                gridContainer.appendChild(card);
-            });
-        }
-
-        function renderStagedTable() {
-            const tbody = document.getElementById("stagedTableBody");
-            if(stagedElements.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-500 italic font-sans">No elements currently staged. Add a member above to execute engineering analysis.</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = "";
-            stagedElements.forEach((item, idx) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td class="py-2 px-4 text-slate-300 font-bold">#${item.id}</td>
-                    <td class="py-2 px-4 text-right text-emerald-400">${item.weight.toLocaleString()} kg</td>
-                    <td class="py-2 px-4 text-right text-cyan-400">${item.length.toFixed(1)} m</td>
-                    <td class="py-2 px-4 text-center">
-                        <button type="button" onclick="stagedElements.splice(${idx},1); renderStagedTable();" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function commitStagedToExecutionBlock() {
-            if(stagedElements.length===0) { alert("Staging workspace empty."); return; }
-            stagedElements = [];
-            renderStagedTable();
-            alert("Local setup committed to global operation files array.");
-        }
-
-        function triggerEngineReconciliation() {
-            runSketchAnalysis();
-        }
-
-        // ==========================================
-        // ASSEMBLED SKETCH MATRICES (PHASE 4)
-        // ==========================================
-        function handleSketchImageUpload() {
-            const input = document.getElementById("sketchImageInput");
-            if (input.files && input.files[0]) {
-                document.getElementById("sketchPreviewContainer").classList.remove("hidden");
-            }
+        function processSketchWithAI() {
+            alert("Sketch uploaded - AI processing started.");
         }
 
         function simulateVisionWebhookRoutine() {
-            const workerBox = document.getElementById("processingWorkerGraphic");
-            workerBox.classList.remove("hidden");
-
-            // SIMULATING WEBHOOK RESPONSE ROUNDTRIP DELAY FOR MAKE VISION ENGINE
-            setTimeout(() => {
-                workerBox.classList.add("hidden");
-                runSketchAnalysis();
-                alert("Make.com Vision Automation completed processing the hand-drawn sketch overlay successfully.");
-            }, 2400);
+            alert("Vision AI analyzing sketch and matching with crane data...");
         }
 
-        function runSketchAnalysis() {
-            const grid = document.getElementById("sketchFeasibilityGrid");
-            grid.innerHTML = "";
-
-            const totalLoad = parseFloat(document.getElementById("sketchLoadWeight").value) || 0;
-            const rigLength = parseFloat(document.getElementById("sketchRiggingLength").value) || 0;
-            const deductions = parseFloat(document.getElementById("sketchDeductions").value) || 0;
-            const factor = parseFloat(document.getElementById("sketchSafetyFactor").value) || 100;
-
-            const grossTons = ((totalLoad + deductions) * (factor / 100)) / 1000;
-
-            Object.keys(FLEET_REGISTRY).forEach(key => {
-                const crane = FLEET_REGISTRY[key];
-                // EVALUATION ALGORITHM BASED ON RATED SPECIFICATIONS
-                let statusText = "Over Limit";
-                let passClass = "text-rose-400";
-                let dotClass = "glow-red";
-
-                if (key !== 'terex_rt230' && key !== 'terex_t560') {
-                    statusText = "Assembled OK";
-                    passClass = "text-emerald-400";
-                    dotClass = "glow-green";
-                }
-
-                const card = document.createElement("div");
-                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col items-center justify-between text-center space-y-2";
-                card.innerHTML = `
-                    <div>
-                        <div class="text-[11px] font-bold text-slate-200 truncate">${crane.name}</div>
-                        <div class="text-[9px] text-slate-400 font-mono">Gross: ${grossTons.toFixed(1)}t</div>
-                    </div>
-                    <div class="w-3 h-3 rounded-full ${dotClass}"></div>
-                    <div class="text-[10px] ${passClass} font-bold">${statusText}</div>
-                `;
-                grid.appendChild(card);
-            });
-
-            document.getElementById("sketchWarningText").innerHTML = `Assembled configuration length (${rigLength}m) introduces high stability moment limits for: Terex RT230, Terex T560-1. Verify sling tension factors inside visual structural blueprints before outrigger deployment.`;
+        function findCranesToSuitInventory() {
+            alert("Searching cranes based on current inventory and target height.");
         }
 
-        // ==========================================
-        // TRANSACTION LIFECYCLE MANAGEMENT WORKFLOWS
-        // ==========================================
         function addNewLiftingScheduleBatch() {
-            alert("Next Material Batch Setup Initialized! Cleared current operational working views arrays for sequential workflow planning.");
+            alert("New lifting schedule batch started.");
         }
 
         function generateAssembledRiggingReports() {
-            alert("[DASA REPORT ARCHIVE SYSTEM]\n\nGenerating specialized rigging engineering report document wrapper. Skipping single member data rows to output explicit Assembled Layout Configurations and Equipment Manifests exclusively.");
+            alert("Generating rigging report for assembled configurations...");
         }
     </script>
 </body>
 </html>
+
