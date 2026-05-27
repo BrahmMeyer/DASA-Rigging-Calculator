@@ -206,26 +206,45 @@
                 <span class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Location Scope</span>
             </div>
 
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Site Operating Area (DASA Battery Limits)</label>
-                    <select id="siteOperatingArea" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-                        <option value="Sulphur Storage & Handling">Sulphur Storage & Handling (Pits, Filters, Storage)</option>
-                        <option value="Acid Plant & Reagents">Acid Plant & Reagents (Regeneration Terrace, Absorber, Tanks)</option>
-                        <option value="Crusher & ROM Tip Area">Crusher & ROM Tip Area (ROM Tip, Crusher Building, Reclaimer)</option>
-                        <option value="Milling & Processing">Milling & Processing (SAG/Pug Mills, Leaching, Tank Structures)</option>
-                        <option value="Liquid Separation & Filtration">Liquid Separation & Filtration (Belt Filters, LLS Clarification)</option>
-                        <option value="Chemical House">Chemical House</option>
-                        <option value="Main Run of Mine Substation (MRSS)">Main Run of Mine Substation (MRSS Building)</option>
-                        <option value="Plant Power Plant & Utilities">Plant Power Plant & Utilities (DG House, Transformers, Boiler)</option>
-                        <option value="Plant Buildings Substations">Plant Buildings Substations (Substations 1-4)</option>
-                        <option value="Mine Infrastructure">Mine Infrastructure (Workshops, Offices, Change Houses)</option>
-                    </select>
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Site Operating Area (DASA Battery Limits)</label>
+                        <select id="siteOperatingArea" onchange="adjustSafetyFactorPreset()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                            <option value="Sulphur Storage & Handling">Sulphur Storage & Handling (Pits, Filters, Storage)</option>
+                            <option value="Acid Plant & Reagents">Acid Plant & Reagents (Regeneration Terrace, Absorber, Tanks)</option>
+                            <option value="Crusher & ROM Tip Area">Crusher & ROM Tip Area (ROM Tip, Crusher Building, Reclaimer)</option>
+                            <option value="Milling & Processing">Milling & Processing (SAG/Pug Mills, Leaching, Tank Structures)</option>
+                            <option value="Liquid Separation & Filtration">Liquid Separation & Filtration (Belt Filters, LLS Clarification)</option>
+                            <option value="Chemical House">Chemical House</option>
+                            <option value="Main Run of Mine Substation (MRSS)">Main Run of Mine Substation (MRSS Building)</option>
+                            <option value="Plant Power Plant & Utilities">Plant Power Plant & Utilities (DG House, Transformers, Boiler)</option>
+                            <option value="Plant Buildings Substations">Plant Buildings Substations (Substations 1-4)</option>
+                            <option value="Mine Infrastructure">Mine Infrastructure (Workshops, Offices, Change Houses)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Required Operating Radius (m)</label>
+                        <input type="number" id="operatingRadius" step="0.1" min="1" placeholder="e.g. 24.5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Required Operating Radius (m)</label>
-                    <input type="number" id="operatingRadius" step="0.1" min="1" placeholder="e.g. 24.5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-800/80 pt-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Safety Factor (%)</label>
+                        <div class="relative">
+                            <input type="number" id="safetyFactor" step="1" min="100" value="120" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-10 py-2.5 text-sm font-bold text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-500 text-xs font-bold">%</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Date of Installation (Activates Live Weather Parameters)</label>
+                        <div class="relative">
+                            <input type="date" id="installationDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -311,7 +330,7 @@
                 "Indian Medium Channel (ISMC)": [
                     { designation: "ISMC 150", weight: 16.8 },
                     { designation: "ISMC 200", weight: 22.3 },
-                    { designation: "ISMC 250", text: "30.4", weight: 30.4 }
+                    { designation: "ISMC 250", weight: 30.4 }
                 ],
                 "Indian Standard Angle (ISA)": [
                     { designation: "ISA 90x90x6", weight: 8.2 },
@@ -341,13 +360,29 @@
             { id: "crane_sany_scc1500", name: "Sany SCC1500A Crawler (150t)" }
         ];
 
+        // Dynamic presets mapping specific battery limits to critical safety factor margins
+        const safetyFactorPresets = {
+            "Sulphur Storage & Handling": 120,
+            "Acid Plant & Reagents": 125,
+            "Crusher & ROM Tip Area": 115,
+            "Milling & Processing": 120,
+            "Liquid Separation & Filtration": 120,
+            "Chemical House": 115,
+            "Main Run of Mine Substation (MRSS)": 110,
+            "Plant Power Plant & Utilities": 130,
+            "Plant Buildings Substations": 110,
+            "Mine Infrastructure": 115
+        };
+
         let stagedBOMMembers = [];
         let archivedLiftSchedules = [];
-        let pieceCounter = 0; // Global sequential count for custom structural pieces tracking
 
         window.addEventListener('DOMContentLoaded', () => {
             initCraneFleetGrid();
             updateProfileTypes();
+            adjustSafetyFactorPreset();
+            // Default setup date picker to today's date context
+            document.getElementById('installationDate').value = new Date().toISOString().split('T')[0];
         });
 
         function initCraneFleetGrid() {
@@ -358,6 +393,13 @@
                     <span class="text-xs font-semibold text-slate-300">${crane.name}</span>
                 </label>
             `).join('');
+        }
+
+        function adjustSafetyFactorPreset() {
+            const currentArea = document.getElementById('siteOperatingArea').value;
+            if (safetyFactorPresets[currentArea]) {
+                document.getElementById('safetyFactor').value = safetyFactorPresets[currentArea];
+            }
         }
 
         function updateProfileTypes() {
@@ -438,7 +480,6 @@
 
             let addedSomething = false;
 
-            // Check if user is adding Equipment parameters
             if (equipName && !isNaN(equipWeight) && equipWeight >= 0) {
                 stagedBOMMembers.push({
                     isEquipment: true,
@@ -446,18 +487,16 @@
                     id: 'EQ-' + Date.now() + Math.random().toString(36).substr(2, 4),
                     codeFamily: '-',
                     profileType: 'HEAVY EQUIPMENT',
-                    designation: equipName,
+                    designation: '-', // Kept blank/placeholder for size designation column as per spec
                     length: null,
                     unitWeight: null,
                     calculatedMass: equipWeight
                 });
                 addedSomething = true;
-                // Clear equipment inputs after successful insertion
                 document.getElementById('equipmentName').value = '';
                 document.getElementById('equipmentWeight').value = '';
             }
 
-            // Check if user is adding structural profiles parameters
             if (!isNaN(length) && length > 0) {
                 const family = document.getElementById('codeFamily').value;
                 const type = document.getElementById('profileType').value;
@@ -480,7 +519,7 @@
 
                 stagedBOMMembers.push({
                     isEquipment: false,
-                    labelKey: null, // assigned dynamically on sequence updates
+                    labelKey: null,
                     id: 'ST-' + Date.now() + Math.random().toString(36).substr(2, 4),
                     codeFamily: family,
                     profileType: type,
@@ -537,16 +576,19 @@
                 let displayLength = '-';
                 let displayUnitWeight = '-';
                 let rowHighlightStyle = '';
+                let sizeDesignatorText = '';
 
                 if (member.isEquipment) {
-                    pieceLabel = member.designation; // Unique manual text name used as the layout Piece # anchor
+                    pieceLabel = member.id.split('-')[0] === 'EQ' ? member.labelKey : 'Equipment';
                     rowHighlightStyle = 'bg-amber-500/5 hover:bg-amber-500/10';
+                    sizeDesignatorText = '-'; // Keeps completely blank when adding only an equipment piece
                 } else {
                     member.labelKey = `Piece #${structuralIndex}`;
                     pieceLabel = member.labelKey;
                     structuralIndex++;
                     displayLength = `${member.length.toFixed(2)} m`;
                     displayUnitWeight = `${member.unitWeight.toFixed(2)} kg/m`;
+                    sizeDesignatorText = member.designation;
                 }
 
                 tbody.innerHTML += `
@@ -554,7 +596,7 @@
                         <td class="py-3 px-4 text-left font-black text-amber-400 font-mono text-xs bg-slate-900/30 max-w-[200px] truncate" title="${pieceLabel}">${pieceLabel}</td>
                         <td class="py-3 px-4 font-semibold text-slate-400 text-xs">${member.codeFamily}</td>
                         <td class="py-3 px-4 text-slate-200 text-xs font-medium">${member.profileType}</td>
-                        <td class="py-3 px-4 text-white font-mono text-xs truncate max-w-[180px]">${member.designation}</td>
+                        <td class="py-3 px-4 text-white font-mono text-xs truncate max-w-[180px]">${sizeDesignatorText}</td>
                         <td class="py-3 px-4 text-right font-mono text-slate-300 text-xs">${displayLength}</td>
                         <td class="py-3 px-4 text-right font-mono text-slate-400 text-xs">${displayUnitWeight}</td>
                         <td class="py-3 px-4 text-right font-mono text-amber-400 font-bold text-xs">${member.calculatedMass.toFixed(2)} kg</td>
@@ -578,9 +620,15 @@
 
             const area = document.getElementById('siteOperatingArea').value;
             const radius = parseFloat(document.getElementById('operatingRadius').value);
+            const factor = parseFloat(document.getElementById('safetyFactor').value) || 100;
+            const targetDate = document.getElementById('installationDate').value;
 
             if (!radius || radius <= 0) {
                 alert("Please declare a valid operational radius in Phase 4 before creating execution lines.");
+                return;
+            }
+            if (!targetDate) {
+                alert("Please select an Installation Date context to map active weather telemetry.");
                 return;
             }
 
@@ -595,14 +643,16 @@
                 liftSequenceId: `LIFT-${Date.now()}`,
                 siteOperatingArea: area,
                 requiredOperatingRadiusMeters: radius,
+                safetyFactorPercentage: factor,
+                plannedInstallationDate: targetDate,
                 selectedFleetCranesAllowed: targetCranes,
                 bomComponentsList: [...stagedBOMMembers],
-                combinedGrossPayloadMassKg: massSum
+                combinedGrossPayloadMassKg: massSum,
+                factoredDesignLoadKg: massSum * (factor / 100)
             });
 
-            alert(`Lift execution row committed! Combined gross payload weight: ${massSum.toFixed(2)} kg across ${stagedBOMMembers.length} components.`);
+            alert(`Execution row committed! Factored payload weight: ${(massSum * (factor / 100)).toFixed(2)} kg across ${stagedBOMMembers.length} elements.`);
             
-            // Wipe matrix to receive clean data sets for next lift configurations
             stagedBOMMembers = [];
             renderBOMTable();
         }
