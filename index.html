@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,69 +40,31 @@
             <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/20">1</span>
-                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 1: Structural Profile Entry & Local Staging</h2>
+                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 1: Equipment & Crane Parameter Matrix</h2>
                 </div>
-                <span class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Input Layer</span>
-            </div>
-            
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 items-end">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Structural Code Family</label>
-                    <select id="codeFamily" onchange="updateProfileTypes()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-                        <option value="BSI">BSI / British Standards</option>
-                        <option value="SANS">SANS / South African Family</option>
-                        <option value="BIS">IS / Indian National Family</option>
-                        <option value="CUSTOM">Custom Welded Plate Girder</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Profile Class Type</label>
-                    <select id="profileType" onchange="updateProfileSizes()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"></select>
-                </div>
-
-                <div class="lg:col-span-1">
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Designation / Size / Weight Class</label>
-                    <select id="profileSize" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"></select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Total Length (m)</label>
-                    <input type="number" id="memberLength" step="0.01" min="0.1" placeholder="e.g. 6.50" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-                </div>
-
-                <div>
-                    <button onclick="addMemberToBOM()" class="w-full bg-amber-500 hover:bg-amber-600 active:transform active:scale-[0.98] text-slate-950 font-bold text-sm py-2 px-4 rounded-lg shadow-lg shadow-amber-500/10 flex items-center justify-center gap-2 transition-all">
-                        <i class="fa-solid fa-plus text-xs"></i> Add Staged Member
-                    </button>
-                </div>
+                <span class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Fleet Matcher</span>
             </div>
 
-            <div id="customPlateForm" class="hidden border-t border-slate-800 bg-slate-950/60 p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="col-span-full mb-1"><h4 class="text-xs font-bold uppercase text-amber-400 tracking-wider">Welded Plate Built-Up Matrix Specs (Manual Overrides)</h4></div>
-                <div>
-                    <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Web Height (mm)</label>
-                    <input type="number" id="customWebH" value="500" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <div class="p-6 space-y-6">
+                <div class="border border-slate-800 rounded-xl bg-slate-900/20 p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-truck-monster text-amber-400 text-sm"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-white">Select Fleet Cranes Available for Verification First</h3>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="craneFleetCheckboxGrid">
+                        </div>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Web Thick (mm)</label>
-                    <input type="number" id="customWebT" value="12" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Top Flange W (mm)</label>
-                    <input type="number" id="customTopW" value="300" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Top Flange T (mm)</label>
-                    <input type="number" id="customTopT" value="20" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Bot Flange W (mm)</label>
-                    <input type="number" id="customBotW" value="300" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Bot Flange T (mm)</label>
-                    <input type="number" id="customBotT" value="20" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Equipment Name (Typed by hand)</label>
+                        <input type="text" id="equipmentName" placeholder="e.g. Sulphur Transfer Pump P-102A, Valve Cluster V-12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Equipment Weight (kg)</label>
+                        <input type="number" id="equipmentWeight" step="1" min="0" placeholder="e.g. 12500" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                    </div>
                 </div>
             </div>
         </section>
@@ -110,7 +73,83 @@
             <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/20">2</span>
-                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 2: Structural BOM Matrix View</h2>
+                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 2: Structural Profile Entry & Local Staging</h2>
+                </div>
+                <span class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Input Layer</span>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-end">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Structural Code Family</label>
+                        <select id="codeFamily" onchange="updateProfileTypes()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                            <option value="BSI">BSI / British Standards</option>
+                            <option value="SANS">SANS / South African Family</option>
+                            <option value="BIS">IS / Indian National Family</option>
+                            <option value="CUSTOM">Custom Welded Plate Girder</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Profile Class Type</label>
+                        <select id="profileType" onchange="updateProfileSizes()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Designation / Size Class</label>
+                        <select id="profileSize" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Total Length (m)</label>
+                        <input type="number" id="memberLength" step="0.01" min="0.1" placeholder="e.g. 6.50" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                    </div>
+                </div>
+
+                <div id="customPlateForm" class="hidden border border-slate-800 rounded-xl bg-slate-950/60 p-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="col-span-full mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-ruler text-amber-400 text-xs"></i>
+                        <h4 class="text-xs font-bold uppercase text-amber-400 tracking-wider">Welded Plate Built-Up Matrix Specs (Manual Overrides)</h4>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Web Height (mm)</label>
+                        <input type="number" id="customWebH" value="500" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Web Thick (mm)</label>
+                        <input type="number" id="customWebT" value="12" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Top Flange W (mm)</label>
+                        <input type="number" id="customTopW" value="300" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Top Flange T (mm)</label>
+                        <input type="number" id="customTopT" value="20" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Bot Flange W (mm)</label>
+                        <input type="number" id="customBotW" value="300" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Bot Flange T (mm)</label>
+                        <input type="number" id="customBotT" value="20" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex justify-center pt-2">
+            <button onclick="addMemberToBOM()" class="bg-amber-500 hover:bg-amber-600 active:transform active:scale-[0.98] text-slate-950 font-black tracking-wide text-sm py-3.5 px-10 rounded-xl shadow-xl shadow-amber-500/10 flex items-center gap-2.5 transition-all">
+                <i class="fa-solid fa-plus text-xs"></i> Add Staged Member
+            </button>
+        </div>
+
+        <section class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/20">3</span>
+                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 3: Structural BOM Matrix View</h2>
                 </div>
                 <span id="bomCountBadge" class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Empty</span>
             </div>
@@ -120,6 +159,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-900/80 border-b border-slate-800 text-[11px] font-bold tracking-wider uppercase text-slate-400">
+                                <th class="py-3 px-4 text-center text-amber-400 w-24">Piece #</th>
                                 <th class="py-3 px-4">Standard Code</th>
                                 <th class="py-3 px-4">Profile Type</th>
                                 <th class="py-3 px-4">Size Designator / Mass</th>
@@ -161,39 +201,6 @@
         <section class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
             <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/20">3</span>
-                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 3: Equipment & Crane Parameter Matrix</h2>
-                </div>
-                <span class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Execution Matcher</span>
-            </div>
-
-            <div class="p-6 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Equipment Name (Typed by hand)</label>
-                        <input type="text" id="equipmentName" placeholder="e.g. Sulphur Transfer Pump P-102A, Valve Cluster V-12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Required Operating Radius (m)</label>
-                        <input type="number" id="operatingRadius" step="0.1" min="1" placeholder="e.g. 24.5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-                    </div>
-                </div>
-
-                <div class="border border-slate-800 rounded-xl bg-slate-900/20 p-5">
-                    <div class="flex items-center gap-2 mb-4">
-                        <i class="fa-solid fa-truck-monster text-amber-400 text-sm"></i>
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-white">Select Fleet Cranes Available for Verification</h3>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="craneFleetCheckboxGrid">
-                        </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                <div class="flex items-center gap-3">
                     <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/20">4</span>
                     <h2 class="text-base font-semibold text-white tracking-wide">Phase 4: Project & Plant Operating Area Context</h2>
                 </div>
@@ -218,8 +225,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Project Assigned Element Member Identifier Tag</label>
-                    <input type="text" id="projectMemberText" placeholder="e.g. Tie-Beam Section L3-B4, Heavy Header Frame Girder" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Required Operating Radius (m)</label>
+                    <input type="number" id="operatingRadius" step="0.1" min="1" placeholder="e.g. 24.5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
                 </div>
             </div>
         </section>
@@ -243,7 +250,6 @@
     </footer>
 
     <script>
-        // Comprehensive library containing structural standards with all weight designations & your drawing sheets custom girders
         const structuralLibrary = {
             BSI: {
                 "Universal Beams (UB)": [
@@ -452,7 +458,10 @@
                 unitWeight = parseFloat(sizeOption.getAttribute('data-weight'));
             }
 
+            const pieceNumber = stagedBOMMembers.length + 1;
+
             stagedBOMMembers.push({
+                pieceNo: pieceNumber,
                 id: Date.now() + Math.random().toString(36).substr(2, 5),
                 codeFamily: family,
                 profileType: type,
@@ -468,6 +477,9 @@
 
         function removeMemberFromBOM(id) {
             stagedBOMMembers = stagedBOMMembers.filter(m => m.id !== id);
+            stagedBOMMembers.forEach((member, index) => {
+                member.pieceNo = index + 1;
+            });
             renderBOMTable();
         }
 
@@ -497,6 +509,7 @@
                 totalWeight += member.calculatedMass;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-900/40 transition-colors">
+                        <td class="py-3 px-4 text-center font-black text-amber-400 font-mono text-xs bg-slate-900/30">${member.pieceNo}</td>
                         <td class="py-3 px-4 font-semibold text-slate-400 text-xs">${member.codeFamily}</td>
                         <td class="py-3 px-4 text-slate-200 text-xs font-medium">${member.profileType}</td>
                         <td class="py-3 px-4 text-white font-mono text-xs">${member.designation}</td>
@@ -522,16 +535,16 @@
             }
 
             const area = document.getElementById('siteOperatingArea').value;
-            const memberIdText = document.getElementById('projectMemberText').value.trim();
-            const equipment = document.getElementById('equipmentName').value.trim();
             const radius = parseFloat(document.getElementById('operatingRadius').value);
+            const equipment = document.getElementById('equipmentName').value.trim();
+            const equipWeight = parseFloat(document.getElementById('equipmentWeight').value) || 0;
 
             if (!equipment) {
                 alert("Please provide an Equipment Name.");
                 return;
             }
             if (!radius || radius <= 0) {
-                alert("Please declare a valid operational radius.");
+                alert("Please declare a valid operational radius in Phase 4.");
                 return;
             }
 
@@ -540,32 +553,30 @@
                 targetCranes.push(box.value);
             });
 
+            const structuralMassSum = stagedBOMMembers.reduce((sum, item) => sum + item.calculatedMass, 0);
+
             archivedLiftSchedules.push({
                 liftSequenceId: `LIFT-${Date.now()}`,
                 siteOperatingArea: area,
-                projectMemberIdentifier: memberIdText || "Default Frame Assembly",
                 equipmentName: equipment,
+                equipmentWeightKg: equipWeight,
                 requiredOperatingRadiusMeters: radius,
                 selectedFleetCranesAllowed: targetCranes,
                 bomComponentsList: [...stagedBOMMembers],
-                totalLiftBOMCalculatedMassKg: stagedBOMMembers.reduce((sum, item) => sum + item.calculatedMass, 0)
+                totalStructuralMassKg: structuralMassSum,
+                combinedGrossPayloadMassKg: structuralMassSum + equipWeight
             });
 
-            alert(`Lift configuration committed! Elements packaged: ${stagedBOMMembers.length}`);
+            alert(`Lift configuration committed! Total payload calculated: ${(structuralMassSum + equipWeight).toFixed(2)} kg`);
             
-            // Wipe forms for the next lift execution build sequence
             stagedBOMMembers = [];
-            document.getElementById('projectMemberText').value = '';
-            document.getElementById('equipmentName').value = '';
-            document.getElementById('operatingRadius').value = '';
-            document.querySelectorAll('.crane-checkbox').forEach(box => box.checked = false);
-
+            document.getElementById('equipmentWeight').value = '';
             renderBOMTable();
         }
 
         function submitFinalRiggingScenario() {
             if (stagedBOMMembers.length > 0 && archivedLiftSchedules.length === 0) {
-                if(confirm("You have members staged in Phase 2 that haven't been committed to an Execution row yet. Commit them now?")) {
+                if(confirm("You have members staged in Phase 3 that haven't been committed to an Execution row yet. Commit them now?")) {
                     createNewLiftExecutionRow();
                 }
             }
