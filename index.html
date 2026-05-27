@@ -197,6 +197,53 @@
             </div>
         </section>
 
+        <section id="sketchSection" class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/20">3.5</span>
+                    <h2 class="text-base font-semibold text-white tracking-wide">Phase 3.5: Structural Hand Sketch Vision Data Intake</h2>
+                </div>
+                <span class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">AI Vision Engine</span>
+            </div>
+            
+            <div class="p-6">
+                <div id="sketchEquipmentAlert" class="hidden flex items-center gap-4 border border-amber-500/20 bg-amber-500/5 rounded-xl p-5">
+                    <div class="text-amber-400 p-2 bg-amber-500/10 rounded-lg">
+                        <i class="fa-solid fa-circle-info text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white tracking-wide">Hand Sketch Translation Layer Paused</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Heavy industrial equipment components possess dedicated, pre-engineered lift point positions matching the geometric center-line. Hand sketch COG calculation passes are bypassed automatically unless custom steel rigging frames are appended to Phase 3.</p>
+                    </div>
+                </div>
+
+                <div id="sketchUploaderContainer" class="space-y-4">
+                    <p class="text-xs text-slate-400 leading-relaxed max-w-3xl">
+                        Upload a distinct fields-operations hand drawing showcasing beam orientations, connection overlaps, and spatial constraints. For exact processing, ensure you print the appropriate <span class="text-amber-400 font-bold font-mono">Piece #</span> directly adjacent to each sketched profile element. The AI vision engine will interpret lines to output center-of-gravity rigging points.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                        <div class="md:col-span-1 flex flex-col justify-center items-center border-2 border-dashed border-slate-800 hover:border-slate-700 bg-slate-900/30 rounded-xl p-6 transition-all relative group cursor-pointer">
+                            <input type="file" id="sketchFileInput" accept="image/*" onchange="previewHandSketchImage(event)" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                            <div class="text-center space-y-2 pointer-events-none group-hover:scale-105 transition-transform">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-500 group-hover:text-amber-400 transition-colors"></i>
+                                <p class="text-xs font-bold text-slate-300">Upload Sketch Photo</p>
+                                <p class="text-[10px] text-slate-500">PNG, JPG, or HEIC format specs</p>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2 border border-slate-800 bg-slate-900/10 rounded-xl p-4 flex items-center justify-center min-h-[160px]">
+                            <div id="sketchPreviewPlaceholder" class="text-slate-600 text-xs text-center font-mono flex flex-col items-center gap-2">
+                                <i class="fa-solid fa-image text-xl"></i>
+                                <span>No Live Field Sketch Loaded In Session Asset Register</span>
+                            </div>
+                            <img id="sketchImageDisplay" src="#" alt="Hand sketch layout preview" class="hidden max-h-48 rounded-lg border border-slate-700 shadow-md object-contain">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
             <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -360,7 +407,6 @@
             { id: "crane_sany_scc1500", name: "Sany SCC1500A Crawler (150t)" }
         ];
 
-        // Dynamic presets mapping specific battery limits to critical safety factor margins
         const safetyFactorPresets = {
             "Sulphur Storage & Handling": 120,
             "Acid Plant & Reagents": 125,
@@ -376,13 +422,14 @@
 
         let stagedBOMMembers = [];
         let archivedLiftSchedules = [];
+        let sketchBase64Cache = null; 
 
         window.addEventListener('DOMContentLoaded', () => {
             initCraneFleetGrid();
             updateProfileTypes();
             adjustSafetyFactorPreset();
-            // Default setup date picker to today's date context
             document.getElementById('installationDate').value = new Date().toISOString().split('T')[0];
+            evaluateSketchUploaderVisibility();
         });
 
         function initCraneFleetGrid() {
@@ -473,6 +520,47 @@
             return (area / 1000000) * 7850; 
         }
 
+        function evaluateSketchUploaderVisibility() {
+            const alertEl = document.getElementById('sketchEquipmentAlert');
+            const uploadEl = document.getElementById('sketchUploaderContainer');
+
+            const hasSteel = stagedBOMMembers.some(m => !m.isEquipment);
+            const hasEquipment = stagedBOMMembers.some(m => m.isEquipment);
+
+            if (stagedBOMMembers.length > 0 && hasEquipment && !hasSteel) {
+                alertEl.classList.remove('hidden');
+                uploadEl.classList.add('hidden');
+            } else {
+                alertEl.classList.add('hidden');
+                uploadEl.classList.remove('hidden');
+            }
+        }
+
+        function previewHandSketchImage(event) {
+            const input = event.target;
+            const placeholder = document.getElementById('sketchPreviewPlaceholder');
+            const display = document.getElementById('sketchImageDisplay');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    sketchBase64Cache = e.target.result;
+                    display.src = sketchBase64Cache;
+                    placeholder.classList.add('hidden');
+                    display.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearSketchUploadDisplay() {
+            sketchBase64Cache = null;
+            document.getElementById('sketchFileInput').value = '';
+            document.getElementById('sketchPreviewPlaceholder').classList.remove('hidden');
+            document.getElementById('sketchImageDisplay').classList.add('hidden');
+            document.getElementById('sketchImageDisplay').src = '#';
+        }
+
         function addComponentToBOM() {
             const equipName = document.getElementById('equipmentName').value.trim();
             const equipWeight = parseFloat(document.getElementById('equipmentWeight').value);
@@ -487,7 +575,7 @@
                     id: 'EQ-' + Date.now() + Math.random().toString(36).substr(2, 4),
                     codeFamily: '-',
                     profileType: 'HEAVY EQUIPMENT',
-                    designation: '-', // Kept blank/placeholder for size designation column as per spec
+                    designation: '-', 
                     length: null,
                     unitWeight: null,
                     calculatedMass: equipWeight
@@ -538,11 +626,13 @@
             }
 
             renderBOMTable();
+            evaluateSketchUploaderVisibility();
         }
 
         function removeMemberFromBOM(id) {
             stagedBOMMembers = stagedBOMMembers.filter(m => m.id !== id);
             renderBOMTable();
+            evaluateSketchUploaderVisibility();
         }
 
         function renderBOMTable() {
@@ -579,9 +669,9 @@
                 let sizeDesignatorText = '';
 
                 if (member.isEquipment) {
-                    pieceLabel = member.id.split('-')[0] === 'EQ' ? member.labelKey : 'Equipment';
+                    pieceLabel = member.labelKey;
                     rowHighlightStyle = 'bg-amber-500/5 hover:bg-amber-500/10';
-                    sizeDesignatorText = '-'; // Keeps completely blank when adding only an equipment piece
+                    sizeDesignatorText = '-'; 
                 } else {
                     member.labelKey = `Piece #${structuralIndex}`;
                     pieceLabel = member.labelKey;
@@ -648,13 +738,16 @@
                 selectedFleetCranesAllowed: targetCranes,
                 bomComponentsList: [...stagedBOMMembers],
                 combinedGrossPayloadMassKg: massSum,
-                factoredDesignLoadKg: massSum * (factor / 100)
+                factoredDesignLoadKg: massSum * (factor / 100),
+                associatedSketchImageBase64: sketchBase64Cache 
             });
 
             alert(`Execution row committed! Factored payload weight: ${(massSum * (factor / 100)).toFixed(2)} kg across ${stagedBOMMembers.length} elements.`);
             
             stagedBOMMembers = [];
             renderBOMTable();
+            clearSketchUploadDisplay();
+            evaluateSketchUploaderVisibility();
         }
 
         function submitFinalRiggingScenario() {
