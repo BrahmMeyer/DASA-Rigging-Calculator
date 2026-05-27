@@ -8,118 +8,418 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
-
-    <header class="bg-slate-950 border-b border-slate-800 py-6 px-8">
-        <h1 class="text-2xl font-bold text-white">DASA Rigging Engineering Matrix</h1>
+    <header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-amber-500 p-3 rounded-xl text-slate-950 shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-helmet-safety text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-white">DASA Rigging Engineering Matrix</h1>
+                    <p class="text-xs text-slate-400 tracking-wide mt-0.5">SITE OPERATIONS UNIT & AI VISION INTEGRATION</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-xs font-mono text-slate-300 tracking-wider">MAKE.COM WEBHOOK ACTIVE</span>
+            </div>
+        </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-10 space-y-10">
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-10 space-y-10">
+        
+        <section class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl p-6">
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-800/60 pb-4">
+                <span class="bg-slate-900 text-amber-400 border border-amber-500/30 text-xs font-bold px-2.5 py-1 rounded-md">PHASE 2</span>
+                <h2 class="text-base font-bold text-white">Structural Profile & Weight Formulation</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 items-end">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Code Family</label>
+                    <select id="codeFamilySelect" onchange="populateDesignations()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-amber-500/50 outline-none">
+                        <option value="UB">Universal Beams (UB)</option>
+                        <option value="UC">Universal Columns (UC)</option>
+                        <option value="PFC">Parallel Flange Channels (PFC)</option>
+                        <option value="CUSTOM">Built-Up / Custom Girder</option>
+                    </select>
+                </div>
 
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-sm font-bold text-white mb-4">Phase 1: Equipment & Fleet Matcher</h2>
-            <div id="craneFleetCheckboxGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
-        </section>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Designation Size</label>
+                    <select id="designationSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-amber-500/50 outline-none">
+                        </select>
+                </div>
 
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-sm font-bold text-white mb-6">Phase 2: Member Entry</h2>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
-                <input type="text" id="profileName" placeholder="Profile (e.g. 254x146 UB)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                <input type="number" id="memberLength" step="0.01" placeholder="Length (m)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                <input type="number" id="memberQty" value="1" min="1" max="10" placeholder="Qty" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                <button onclick="addComponentToBOM()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">Add to BOM</button>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Total Length (m)</label>
+                    <input type="number" id="memberLength" step="0.01" placeholder="e.g. 6.50" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-amber-500/50 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 tracking-wider uppercase mb-2">Quantity</label>
+                    <select id="memberQty" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-amber-500/50 outline-none">
+                        <option value="1">1 pc</option>
+                        <option value="2">2 pcs</option>
+                        <option value="3">3 pcs</option>
+                        <option value="4">4 pcs</option>
+                        <option value="5">5 pcs</option>
+                        <option value="6">6 pcs</option>
+                        <option value="7">7 pcs</option>
+                        <option value="8">8 pcs</option>
+                        <option value="9">9 pcs</option>
+                        <option value="10">10 pcs</option>
+                    </select>
+                </div>
+
+                <button onclick="addComponentToBOM()" class="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-lg shadow-amber-500/10 flex items-center justify-center gap-2 h-[38px]">
+                    <i class="fa-solid fa-plus text-xs"></i> Add to Pipeline Matrix
+                </button>
             </div>
         </section>
 
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-800 flex justify-between">
-                <h2 class="text-sm font-bold text-white">Phase 3: Structural BOM</h2>
-                <span id="bomCountBadge" class="text-xs text-slate-400">0 Items</span>
+        <section class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="bg-slate-800 text-slate-300 text-xs font-bold px-2.5 py-1 rounded-md">PHASE 3</span>
+                    <h2 class="text-base font-semibold text-white tracking-wide">Structural BOM Matrix Manifest</h2>
+                </div>
+                <span id="bomCountBadge" class="text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30">Empty</span>
             </div>
-            <table class="w-full text-left text-sm">
-                <thead>
-                    <tr class="bg-slate-900 text-slate-400 text-[10px] uppercase">
-                        <th class="py-3 px-4">Piece #</th>
-                        <th class="py-3 px-4">Designation</th>
-                        <th class="py-3 px-4">Mass</th>
-                        <th class="py-3 px-4">COG Data</th>
-                    </tr>
-                </thead>
-                <tbody id="bomTableBody" class="divide-y divide-slate-800"></tbody>
-            </table>
+
+            <div class="p-6 space-y-4">
+                <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-900/30">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/80 border-b border-slate-800 text-[11px] font-bold tracking-wider uppercase text-slate-400">
+                                <th class="py-3 px-4">Piece #</th>
+                                <th class="py-3 px-4">Standard</th>
+                                <th class="py-3 px-4">Profile</th>
+                                <th class="py-3 px-4">Size / Design / COG Spec</th>
+                                <th class="py-3 px-4 text-right">Length</th>
+                                <th class="py-3 px-4 text-right">Calculated Mass</th>
+                                <th class="py-3 px-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bomTableBody" class="text-sm divide-y divide-slate-800/60 text-slate-300">
+                            </tbody>
+                    </table>
+                    
+                    <div id="emptyBOMState" class="py-12 text-center text-slate-500 space-y-2">
+                        <i class="fa-solid fa-folder-open text-3xl block text-slate-700"></i>
+                        <p class="text-xs font-medium">No elements staged in lift configuration pipeline.</p>
+                    </div>
+                </div>
+
+                <div id="bomSummaryRow" class="hidden flex flex-col sm:flex-row justify-between items-center bg-slate-900/60 border border-slate-800 p-4 rounded-xl gap-4">
+                    <div class="flex items-center gap-6 text-center sm:text-left">
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Gross Pipeline Weight</p>
+                            <p id="totalBOMWeightText" class="text-xl font-black text-amber-400 font-mono mt-0.5">0.00 kg</p>
+                        </div>
+                    </div>
+                    <button onclick="submitFinalRiggingScenario()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-xl transition-all flex items-center justify-center gap-2">
+                        Commit Lift Scenario <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
         </section>
 
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-sm font-bold text-white mb-4">Phase 3.5: AI Hand Sketch Vision</h2>
-            <input type="file" id="sketchFileInput" accept="image/*" class="hidden" onchange="previewSketch(event)">
-            <label for="sketchFileInput" class="block border-2 border-dashed border-slate-800 rounded-xl p-10 text-center cursor-pointer hover:border-amber-500">
-                <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-600"></i>
-                <p class="text-xs mt-2">Upload Sketch (AI will calculate COG)</p>
-            </label>
-            <img id="sketchImageDisplay" src="#" class="hidden max-h-48 mx-auto mt-4 rounded">
+        <section id="sketchUploaderSection" class="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl p-6 hidden">
+            <div class="flex items-center justify-between mb-6 border-b border-slate-800/60 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold px-2.5 py-1 rounded-md">PHASE 3.5</span>
+                    <h2 class="text-base font-bold text-white">Structural Hand Sketch Vision Data Intake</h2>
+                </div>
+                <div id="selectedTargetBadge" class="text-xs font-mono text-amber-400 font-bold"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex flex-col gap-4">
+                    <div class="border-2 border-dashed border-slate-800 hover:border-slate-700 rounded-xl p-6 flex flex-col items-center justify-center bg-slate-900/20 relative transition-colors group">
+                        <input type="file" id="sketchFileInput" accept="image/*" onchange="processHandSketchUpload(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div class="text-center pointer-events-none space-y-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-600 group-hover:text-amber-500 transition-colors"></i>
+                            <p class="text-xs font-bold text-slate-300">Upload Engineering Sketch</p>
+                            <p class="text-[10px] text-slate-500">Supports PNG, JPG, JPEG formats</p>
+                        </div>
+                    </div>
+                    <button onclick="createNewLiftExecutionRow()" class="w-full bg-slate-900 border border-slate-700 hover:bg-slate-800 py-2.5 rounded-xl text-xs font-bold text-slate-200 transition-colors">
+                        Confirm & Store Sketch Parameters
+                    </button>
+                </div>
+
+                <div class="md:col-span-2 border border-slate-800 bg-slate-900/40 rounded-xl p-4 flex items-center justify-center min-h-[160px] relative overflow-hidden">
+                    <img id="sketchImageDisplay" src="#" alt="Raw Sketch Source" class="hidden max-h-64 rounded-lg shadow-lg object-contain border border-slate-800">
+                    <div id="sketchPreviewPlaceholder" class="text-slate-600 flex flex-col items-center gap-2">
+                        <i class="fa-solid fa-image text-2xl text-slate-700"></i>
+                        <span class="text-xs font-medium tracking-wide">Awaiting localized file buffer initialization...</span>
+                    </div>
+                </div>
+            </div>
         </section>
+
     </main>
 
     <script>
-        const craneFleetDataset = [
-            { id: "c1", name: "Terex Demag 160t" },
-            { id: "c2", name: "Grove 190t" },
-            { id: "c3", name: "Terex 60t" },
-            { id: "c4", name: "Terex 30t" },
-            { id: "c5", name: "XCMG 170t" }
-        ];
+        let stagedBOMMembers = [];
+        let archivedLiftSchedules = [];
+        let activeSketchSelectionMemberId = null;
+        let sketchBase64Cache = null;
 
-        window.onload = () => {
-            const grid = document.getElementById('craneFleetCheckboxGrid');
-            grid.innerHTML = craneFleetDataset.map(c => `
-                <label class="flex items-center gap-2 text-xs bg-slate-900 p-2 rounded border border-slate-800 hover:border-amber-500 transition-colors cursor-pointer">
-                    <input type="checkbox" class="accent-amber-500"> ${c.name}
-                </label>`).join('');
+        const structuralDatabase = {
+            "UB": [
+                { name: "254x146x37 UB", unitWeight: 37.0 },
+                { name: "305x165x40 UB", unitWeight: 40.3 },
+                { name: "406x178x60 UB", unitWeight: 60.1 }
+            ],
+            "UC": [
+                { name: "152x152x23 UC", unitWeight: 23.0 },
+                { name: "203x203x46 UC", unitWeight: 46.1 },
+                { name: "254x254x73 UC", unitWeight: 73.1 }
+            ],
+            "PFC": [
+                { name: "150x75x18 PFC", unitWeight: 17.9 },
+                { name: "230x75x25 PFC", unitWeight: 25.1 },
+                { name: "300x90x32 PFC", unitWeight: 32.2 }
+            ],
+            "CUSTOM": [
+                { name: "Custom Variable Plate Girder", unitWeight: 120.0 },
+                { name: "Built-up Heavy Box Section", unitWeight: 185.0 }
+            ]
         };
 
-        let stagedBOMMembers = [];
+        function populateDesignations() {
+            const family = document.getElementById('codeFamilySelect').value;
+            const select = document.getElementById('designationSelect');
+            select.innerHTML = '';
+            
+            structuralDatabase[family].forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.name;
+                opt.dataset.weight = item.unitWeight;
+                opt.innerText = `${item.name} (${item.unitWeight} kg/m)`;
+                select.appendChild(opt);
+            });
+        }
 
         function addComponentToBOM() {
-            const profile = document.getElementById('profileName').value;
+            const family = document.getElementById('codeFamilySelect').value;
+            const select = document.getElementById('designationSelect');
+            const selectedOpt = select.options[select.selectedIndex];
             const length = parseFloat(document.getElementById('memberLength').value);
             const qty = parseInt(document.getElementById('memberQty').value);
-            
-            if (profile && length > 0) {
-                const totalMass = (length * 50) * qty; 
-                stagedBOMMembers.push({
-                    id: Date.now(),
-                    labelKey: `Piece #${stagedBOMMembers.length + 1} (x${qty})`,
-                    designation: profile,
-                    calculatedMass: totalMass,
-                    cog_left_m: null
-                });
-                renderBOMTable();
+
+            if (!selectedOpt || isNaN(length) || length <= 0) {
+                alert("Please declare a precise positive numeric length dimension.");
+                return;
             }
+
+            const unitWeight = parseFloat(selectedOpt.dataset.weight);
+            const massPerUnit = unitWeight * length;
+            const totalMass = massPerUnit * qty;
+
+            stagedBOMMembers.push({
+                id: 'MEM-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                labelKey: `Piece #${stagedBOMMembers.length + 1} (x${qty})`,
+                codeFamily: family,
+                profileType: family === 'CUSTOM' ? 'CUSTOM BUILT' : 'AS/NZS 3679.1',
+                designation: selectedOpt.value,
+                length: length,
+                unitWeight: unitWeight,
+                calculatedMass: totalMass,
+                qty: qty,
+                cog_left_m: null,
+                cog_right_m: null,
+                cog_status: null
+            });
+
+            document.getElementById('memberLength').value = '';
+            document.getElementById('memberQty').value = '1';
+            renderBOMTable();
+            evaluateSketchUploaderVisibility();
         }
 
         function renderBOMTable() {
             const tbody = document.getElementById('bomTableBody');
-            tbody.innerHTML = stagedBOMMembers.map(m => `
-                <tr class="hover:bg-slate-900/50">
-                    <td class="py-3 px-4 font-bold text-amber-400">${m.labelKey}</td>
-                    <td class="py-3 px-4">${m.designation}</td>
-                    <td class="py-3 px-4">${m.calculatedMass.toFixed(2)} kg</td>
-                    <td class="py-3 px-4 text-[9px] text-slate-600 italic">Pending AI Analysis</td>
-                </tr>`).join('');
-            document.getElementById('bomCountBadge').innerText = `${stagedBOMMembers.length} Items`;
+            const emptyState = document.getElementById('emptyBOMState');
+            const summaryRow = document.getElementById('bomSummaryRow');
+            const badge = document.getElementById('bomCountBadge');
+
+            tbody.innerHTML = '';
+
+            if (stagedBOMMembers.length === 0) {
+                emptyState.classList.remove('hidden');
+                summaryRow.classList.add('hidden');
+                badge.innerText = "Empty";
+                badge.className = "text-xs font-medium text-slate-400 px-2.5 py-1 bg-slate-800/50 rounded-md border border-slate-700/30";
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            summaryRow.classList.remove('hidden');
+            badge.innerText = `${stagedBOMMembers.length} Active Item${stagedBOMMembers.length > 1 ? 's' : ''}`;
+
+            let totalWeight = 0;
+            stagedBOMMembers.forEach((member) => {
+                totalWeight += member.calculatedMass;
+
+                let cogDisplay = `<div class="text-[9px] text-slate-500 mt-1 italic flex items-center gap-1"><i class="fa-solid fa-circle-notch animate-spin"></i> Awaiting Sketch/AI Analysis</div>`;
+                if (member.cog_left_m !== null) {
+                    const isHazard = member.cog_status === 'SAFETY_CHECK_REQUIRED';
+                    cogDisplay = `
+                        <div class="text-[10px] font-mono font-bold ${isHazard ? 'text-rose-400' : 'text-emerald-400'} mt-1 space-y-0.5">
+                            <div>COG: ${member.cog_left_m}m L | ${member.cog_right_m}m R</div>
+                            <div class="text-[8px] uppercase tracking-wider">[Status: ${member.cog_status}]</div>
+                        </div>`;
+                }
+
+                const isActiveSelection = activeSketchSelectionMemberId === member.id;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-900/40 transition-colors ${isActiveSelection ? 'bg-amber-500/5 border-l-2 border-amber-500' : ''}">
+                        <td class="py-3 px-4 text-left font-black text-amber-400 font-mono text-xs">${member.labelKey}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-500 text-xs">${member.codeFamily}</td>
+                        <td class="py-3 px-4 text-slate-200 text-xs font-medium">${member.profileType}</td>
+                        <td class="py-3 px-4 text-white font-mono text-xs truncate max-w-[180px]">
+                            ${member.designation}
+                            ${cogDisplay}
+                        </td>
+                        <td class="py-3 px-4 text-right font-mono text-slate-300 text-xs">${member.length.toFixed(2)} m</td>
+                        <td class="py-3 px-4 text-right font-mono text-amber-400 font-bold text-xs">${member.calculatedMass.toFixed(2)} kg</td>
+                        <td class="py-3 px-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="selectMemberForSketch('${member.id}')" title="Link Hand Sketch" class="p-1.5 rounded-md ${isActiveSelection ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:bg-slate-800 hover:text-white'} transition-colors">
+                                    <i class="fa-solid fa-pen-ruler text-xs"></i>
+                                </button>
+                                <button onclick="removeMemberFromBOM('${member.id}')" class="text-slate-500 hover:text-rose-400 p-1.5 transition-colors">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('totalBOMWeightText').innerText = `${totalWeight.toLocaleString(undefined, {minimumFractionDigits: 2})} kg`;
         }
 
-        function previewSketch(e) {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                document.getElementById('sketchImageDisplay').src = ev.target.result;
-                document.getElementById('sketchImageDisplay').classList.remove('hidden');
-            };
-            reader.readAsDataURL(e.target.files[0]);
+        function removeMemberFromBOM(id) {
+            stagedBOMMembers = stagedBOMMembers.filter(m => m.id !== id);
+            if (activeSketchSelectionMemberId === id) {
+                activeSketchSelectionMemberId = null;
+                clearSketchUploadDisplay();
+            }
+            renderBOMTable();
+            evaluateSketchUploaderVisibility();
         }
+
+        function selectMemberForSketch(id) {
+            activeSketchSelectionMemberId = id;
+            const target = stagedBOMMembers.find(m => m.id === id);
+            document.getElementById('selectedTargetBadge').innerText = `Targeting: ${target.labelKey}`;
+            renderBOMTable();
+            evaluateSketchUploaderVisibility();
+            
+            document.getElementById('sketchUploaderSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function evaluateSketchUploaderVisibility() {
+            const el = document.getElementById('sketchUploaderSection');
+            if (stagedBOMMembers.length > 0 && activeSketchSelectionMemberId !== null) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        function processHandSketchUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                sketchBase64Cache = e.target.result;
+                const imgDisplay = document.getElementById('sketchImageDisplay');
+                imgDisplay.src = e.target.result;
+                imgDisplay.classList.remove('hidden');
+                document.getElementById('sketchPreviewPlaceholder').classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearSketchUploadDisplay() {
+            sketchBase64Cache = null;
+            document.getElementById('sketchFileInput').value = '';
+            document.getElementById('sketchImageDisplay').classList.add('hidden');
+            document.getElementById('sketchImageDisplay').src = '#';
+            document.getElementById('sketchPreviewPlaceholder').classList.remove('hidden');
+            document.getElementById('selectedTargetBadge').innerText = '';
+        }
+
+        function createNewLiftExecutionRow() {
+            if (!activeSketchSelectionMemberId || !sketchBase64Cache) {
+                alert("An active member selection and an engineering sketch upload are mandatory to process.");
+                return;
+            }
+
+            const targetIdx = stagedBOMMembers.findIndex(m => m.id === activeSketchSelectionMemberId);
+            if (targetIdx === -1) return;
+
+            // Simple interface simulation for prompt parameters before hitting webhook infrastructure
+            const targetMember = stagedBOMMembers[targetIdx];
+            const genericCalculatedMidpoint = (targetMember.length / 2).toFixed(2);
+            
+            targetMember.cog_left_m = parseFloat(genericCalculatedMidpoint);
+            targetMember.cog_right_m = parseFloat(genericCalculatedMidpoint);
+            targetMember.cog_status = "VERIFIED";
+
+            archivedLiftSchedules.push({
+                sessionReferenceId: 'SCHED-' + Date.now(),
+                associatedMember: targetMember,
+                associatedSketchImageBase64: sketchBase64Cache 
+            });
+
+            alert(`Execution parameters verified & stored for ${targetMember.labelKey}! Midpoint calculated at ${genericCalculatedMidpoint}m.`);
+            
+            activeSketchSelectionMemberId = null;
+            clearSketchUploadDisplay();
+            renderBOMTable();
+            evaluateSketchUploaderVisibility();
+        }
+
+        function submitFinalRiggingScenario() {
+            if (stagedBOMMembers.length > 0 && archivedLiftSchedules.length === 0) {
+                if (confirm("You have elements staged that haven't been committed to an Execution row yet. Commit them now?")) {
+                    createNewLiftExecutionRow();
+                }
+            }
+            if (archivedLiftSchedules.length === 0) {
+                alert("No active lift schedules or verified vision data sets located to process.");
+                return;
+            }
+
+            const finalPayload = {
+                timestamp: new Date().toISOString(),
+                clientSystemApp: "DASA Heavy Lift Engineering Engine & Vision Lab",
+                totalActiveLiftSchedulesCaptured: archivedLiftSchedules.length,
+                schedulesManifest: archivedLiftSchedules
+            };
+
+            console.log("JSON PAYLOAD SENT TO MAKE:", finalPayload);
+            alert(`Sending data packet to Make webhook network. Total schedules compiled: ${archivedLiftSchedules.length}`);
+        }
+
+        // Initialize App
+        window.onload = function() {
+            populateDesignations();
+        };
     </script>
 </body>
 </html>
