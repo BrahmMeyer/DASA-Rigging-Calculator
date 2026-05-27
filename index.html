@@ -51,14 +51,8 @@
                     <input type="number" id="globalRadius" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Select Cranes</label>
-                    <select id="globalCraneSelect" multiple class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 h-32">
-                        <option value="terex_rt230" selected>Terex RT230 (30t)</option>
-                        <option value="terex_t560" selected>Terex T560-1 (60t)</option>
-                        <option value="xcmg_qy70k">XCMG QY70K-I (70t)</option>
-                        <option value="grove_rt890e">Grove RT890E (90t)</option>
-                        <option value="demag_ac160" selected>Demag AC 160-2 (200t)</option>
-                    </select>
+                    <label class="block text-xs font-medium text-slate-400 mb-2">Select Cranes</label>
+                    <div id="craneCheckboxes" class="space-y-2 max-h-40 overflow-y-auto"></div>
                 </div>
             </div>
         </section>
@@ -135,6 +129,17 @@
                     <tbody id="libraryTableBody" class="divide-y divide-slate-700"></tbody>
                 </table>
             </div>
+
+            <div class="mt-6 grid grid-cols-2 gap-6">
+                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6">
+                    <span class="text-sm font-medium">Total BOM Weight</span>
+                    <span id="totalBOMWeightDisplay" class="block text-3xl font-black text-amber-400">0.00 kg</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6">
+                    <span class="text-sm font-medium">Combined Weight Selected</span>
+                    <span id="combinedSelectedWeightDisplay" class="block text-3xl font-black text-emerald-400">0.00 kg</span>
+                </div>
+            </div>
         </section>
                 <!-- Phase 4 -->
         <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl">
@@ -164,9 +169,9 @@
         let nextId = 101;
 
         const memberOptions = {
-            "Universal Beam": ["UB 203x133x30", "UB 254x146x37", "UB 305x165x54", "UB 356x171x57", "UB 406x178x60", "UB 457x191x74"],
-            "Parallel Flange Channel": ["PFC 100x50", "PFC 125x65", "PFC 150x75", "PFC 200x75", "PFC 230x90", "PFC 300x100"],
-            "Universal Column": ["UC 152x152x23", "UC 203x203x46", "UC 254x254x73", "UC 305x305x97"],
+            "Universal Beam": ["UB 203x133x30", "UB 254x146x37", "UB 305x165x54", "UB 356x171x57", "UB 406x178x60"],
+            "Parallel Flange Channel": ["PFC 100x50", "PFC 125x65", "PFC 150x75", "PFC 200x75", "PFC 230x90"],
+            "Universal Column": ["UC 152x152x23", "UC 203x203x46", "UC 254x254x73"],
             "Plate Girder": ["Custom Built-up Girder"]
         };
 
@@ -185,8 +190,12 @@
         function addBeamToInventory() {
             const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
             const qty = parseInt(document.getElementById("inputBeamQty").value) || 1;
-            const weight = Math.round(length * 420);
+            let weight = Math.round(length * 420); // Default auto weight
             const member = document.getElementById("inputBeamMember").value;
+
+            if (member.includes("Girder")) {
+                weight = Math.round(length * 650); // Higher weight for girders
+            }
 
             for (let i = 0; i < qty; i++) {
                 INVENTORY_POOL.push({
@@ -201,7 +210,7 @@
 
         function addEquipmentToInventory() {
             const weight = parseFloat(document.getElementById("inputEquipWeight").value);
-            if (!weight) return alert("Enter weight");
+            if (!weight) return alert("Please enter weight");
             INVENTORY_POOL.push({
                 id: nextId++,
                 weight: weight,
@@ -214,10 +223,13 @@
         function renderInventoryTable() {
             const tbody = document.getElementById("libraryTableBody");
             tbody.innerHTML = "";
+            let totalAll = 0;
+
             INVENTORY_POOL.forEach(item => {
+                totalAll += item.weight;
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td class="py-4 px-6 text-center"><input type="checkbox"></td>
+                    <td class="py-4 px-6 text-center"><input type="checkbox" onchange="calculateSelectedWeight()"></td>
                     <td class="py-4 px-6 font-mono text-center">#${item.id}</td>
                     <td class="py-4 px-6 text-right">${item.weight} kg</td>
                     <td class="py-4 px-6 text-right">${item.length} m</td>
@@ -225,15 +237,25 @@
                 `;
                 tbody.appendChild(row);
             });
+
+            document.getElementById("totalBOMWeightDisplay").textContent = totalAll.toLocaleString() + " kg";
+            calculateSelectedWeight();
+        }
+
+        function calculateSelectedWeight() {
+            let selectedTotal = 0;
+            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
+            checkboxes.forEach((chk, index) => {
+                if (chk.checked) {
+                    selectedTotal += INVENTORY_POOL[index].weight;
+                }
+            });
+            document.getElementById("combinedSelectedWeightDisplay").textContent = selectedTotal.toLocaleString() + " kg";
         }
 
         function findCranesToSuitInventory() {
             const height = parseFloat(document.getElementById("phase2TargetHeight").value) || 15;
-            let message = `Suitable Cranes for ${height}m lift:\n\n`;
-            message += "• Demag AC 160-2 (200t) - OK\n";
-            message += "• Grove RT890E (90t) - OK\n";
-            message += "• Terex T560-1 (60t) - Check\n";
-            alert(message);
+            alert(`Finding cranes suitable for ${height}m lift based on selected members.`);
         }
 
         function stageNewElement() { alert("Staged."); }
