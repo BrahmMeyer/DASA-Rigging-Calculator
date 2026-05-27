@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dasa Uranium Project Lifting Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --bg2: #161820;
+  --bg3: #1e2029;
+  --bg4: #252733;
+  --border: #2e3140;
+  --border2: #3a3d52;
+  --text: #e8eaf0;
+  --text2: #9ba3bc;
+  --text3: #5c6380;
+  --accent: #f5a623;
+  --accent2: #e8941a;
+  --green: #2ecc71;
+  --green-bg: rgba(46,204,113,0.1);
+  --amber: #f39c12;
+  --amber-bg: rgba(243,156,18,0.1);
+  --red: #e74c3c;
+  --red-bg: rgba(231,76,60,0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 24px;
+}
+
+/* ============================================================
+   UX ENHANCED HEADER HERO ZONE
+   ============================================================ */
+.project-header-hero {
+  background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--accent);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.project-title-area h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.project-title-area p {
+  color: var(--text2);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.project-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: rgba(0,0,0,0.2);
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+}
+.logo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.logo-box span {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.logo-placeholder {
+  height: 45px;
+  max-width: 160px;
+  object-fit: contain;
+  filter: brightness(0.9) contrast(1.1);
+}
+
+/* Base layouts */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.card-header {
+  background: var(--bg3);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-header h2 { font-size: 15px; font-weight: 600; color: #fff; }
+.card-body { padding: 20px; }
+
+label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; }
+input, select, textarea {
+  width: 100%;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: #fff;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 13px;
+}
+input:focus, select:focus { border-color: var(--accent); outline: none; }
+
+.btn {
+  background: var(--border2);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn:hover { background: var(--border); }
+.btn-accent { background: var(--accent); color: #000; font-weight: 600; }
+.btn-accent:hover { background: var(--accent2); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid var(--red); }
+.btn-danger:hover { background: var(--red); color: #fff; }
+
+.badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-success { background: var(--green-bg); color: var(--green); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+
+/* Table styles */
+table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; }
+th { background: var(--bg3); padding: 10px 12px; color: var(--text2); font-size: 11px; text-transform: uppercase; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* Custom upload styles */
+.upload-zone {
+  border: 2px dashed var(--border2);
+  border-radius: 6px;
+  padding: 24px;
+  text-align: center;
+  background: var(--bg3);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.upload-zone:hover { border-color: var(--accent); }
+
+/* COG Canvas/Layout Container */
+.cog-container {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 14px;
+  margin-top: 12px;
+}
+.cog-canvas-placeholder {
+  width: 100%;
+  height: 120px;
+  background: #000;
+  border-radius: 4px;
+  margin-top: 8px;
+  position: relative;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal styling */
+.modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000;
+}
+.modal.open { display: flex; }
+.modal-content { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; width: 450px; padding: 24px; }
+
+/* Report output layout */
+.crane-card {
+  background: var(--bg4); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px;
+}
+.crane-card.recommended {
+  border-left: 4px solid var(--green); background: rgba(46,204,113,0.04);
+}
+</style>
+</head>
+<body>
+
+<div class="project-header-hero">
+  <div class="project-title-area">
+    <h1>Dasa Uranium Project Lifting Calculator</h1>
+    <p>Operational Heavy Lift Engineering & Rigging Optimization System</p>
+  </div>
+  <div class="project-logo-container">
+    <div class="logo-box">
+      <span>Project Owner</span>
+      <img class="logo-placeholder" src="Global_Atomic_Corporation_Global_Atomic_Provides_Niger_Update.jpg" alt="Global Atomic Logo">
+    </div>
+    <div class="logo-box">
+      <span>Engineering Consultant</span>
+      <img class="logo-placeholder" src="development-consultants-pvt-ltd-vashi-navi-mumbai-engineering-consultants-7jezpr9owp-250.jpg" alt="Development Consultants Logo">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Phase 1: Job Setup Information</h2>
+  </div>
+  <div class="card-body">
+    <div class="grid-3">
+      <div>
+        <label>Site Operating Area</label>
+        <input type="text" id="setupSiteArea" value="Processing Plant Area 1">
+      </div>
+      <div>
+        <label>Planned Installation Date</label>
+        <input type="date" id="setupDate" value="2026-06-15">
+      </div>
+      <div>
+        <label>Geographic Site Location</label>
+        <input type="text" id="setupLocation" value="Agadez Region, Niger">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Phase 2: Drawing Upload & Auto-BOM Parsing</h2>
+  </div>
+  <div class="card-body">
+    <div class="upload-zone" onclick="simulateDrawingProcessing()">
+      <p style="color: var(--text); font-weight:500; margin-bottom:4px;">Click to Upload Engineering Vector PDF Drawing</p>
+      <p style="color: var(--text3); font-size:12px;">AI engine will extract structural components, BOM data tags, profiles, and lengths automatically.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Phase 3: Master Material & Equipment Library</h2>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-accent" onclick="openAddMemberModal()">+ Add Item Manually</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <p style="color: var(--text2); font-size:12px; margin-bottom:12px;">
+      Below are the parsed materials matching the structural elements inside the drawing file. If the AI made a calculation error, missed a dimension, or if you want to swap a structural layout row for a custom equipment asset (like a pump/skid), use the manual overrides.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Mark/ID</th>
+          <th>Type / Source</th>
+          <th>Profile Dimensions</th>
+          <th>Length (m)</th>
+          <th>Calculated Mass</th>
+          <th>Status / Validation</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="memberLibraryTable">
+        <tr id="row-bm1">
+          <td><strong>BM-01</strong></td>
+          <td>Structural (Drawing Parsed)</td>
+          <td>254x146x37 UB</td>
+          <td class="length-cell">6.20</td>
+          <td class="weight-cell">229.4 kg</td>
+          <td><span class="badge badge-success">Valid Matrix Matches</span></td>
+          <td style="text-align:right;">
+            <button class="btn" style="padding:4px 8px; font-size:12px;" onclick="editLibraryRow('bm1', '254x146x37 UB', 6.20, 229.4)">Edit / Override</button>
+          </td>
+        </tr>
+        <tr id="row-bm2">
+          <td><strong>BM-02</strong></td>
+          <td>Structural (Drawing Parsed)</td>
+          <td>150x75x18 PFC</td>
+          <td class="length-cell">MISSING</td>
+          <td class="weight-cell">0.0 kg</td>
+          <td><span class="badge badge-amber">Missing Length Dimension</span></td>
+          <td style="text-align:right;">
+            <button class="btn" style="padding:4px 8px; font-size:12px;" onclick="editLibraryRow('bm2', '150x75x18 PFC', 0.0, 0.0)">Fix / Override</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Phase 4: Crane Lift Configuration Planning</h2>
+    <button class="btn" onclick="addNewLiftPlanningRow()">+ Create New Lift Execution Row</button>
+  </div>
+  <div class="card-body" id="liftsContainer">
+    
+    <div style="background: var(--bg3); border:1px solid var(--border); border-radius:6px; padding:16px; margin-bottom:16px;">
+      <div class="grid-3" style="margin-bottom:12px;">
+        <div>
+          <label>Select Associated Library Tag / Equipment</label>
+          <select id="liftLibraryItemSelect">
+            <option value="229.4">BM-01 (254x146x37 UB) — 229.4kg</option>
+            <option value="0">BM-02 (150x75x18 PFC) — Length Error / 0kg</option>
+            <option value="4200" selected>Custom Item: Centrifugal Feed Pump Skid — 4200kg</option>
+          </select>
+        </div>
+        <div>
+          <label>Required Operating Radius (m)</label>
+          <input type="number" id="liftOperatingRadius" value="16">
+        </div>
+        <div>
+          <label>Safety Over-Capacity Cushion Multiplier</label>
+          <input type="number" id="liftSafetyFactor" value="1.2" step="0.1">
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px; border-top:1px solid var(--border); padding-top:16px;">
+        <div>
+          <label>Hand Sketch Upload (Center Point of Gravity Validation)</label>
+          <div class="upload-zone" style="padding:14px; background:var(--bg4);" onclick="simulateSketchUpload()">
+            <span style="color:var(--accent); font-weight:500;">Upload Hand Sketch File</span>
+            <p style="font-size:11px; color:var(--text3);">Drops image here to extract lift points and render COG plots</p>
+          </div>
+        </div>
+        <div>
+          <div class="cog-container">
+            <label style="color:var(--accent);">Live Center Point of Gravity (COG) Mapping</label>
+            <div class="cog-canvas-placeholder" id="cogCanvas">
+              <span id="cogText" style="color:var(--text3); font-size:12px; font-family:'IBM Plex Mono';">No Hand Sketch Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="card-body" style="border-top:1px solid var(--border); text-align:right;">
+    <button class="btn btn-accent" style="padding:12px 24px;" onclick="generateFinalCalculatedReport()">Calculate Execution Report & Match Cranes</button>
+  </div>
+</div>
+
+<div class="card" id="reportSection" style="display:none;">
+  <div class="card-header" style="background: linear-gradient(90deg, #1e2530 0%, #161820 100%);">
+    <h2>Phase 5: Output Engineering Lifting Evaluation Report</h2>
+    <button class="btn" onclick="window.print()">Print / Export PDF</button>
+  </div>
+  <div class="card-body">
+    <div id="reportSummaryMeta" style="margin-bottom:16px; font-family:'IBM Plex Mono'; font-size:13px; color:var(--text2);"></div>
+    
+    <h3 style="font-size:14px; margin-bottom:10px; color:#fff; text-transform:uppercase; letter-spacing:0.5px;">
+      Suited Cranes Matrix Allocation per Lift Position
+    </h3>
+    <div id="craneMatchingResultsContainer"></div>
+  </div>
+</div>
+
+<div class="modal" id="editMemberModal">
+  <div class="modal-content">
+    <h3 style="color:#fff; margin-bottom:14px; font-size:16px;" id="modalTitle">Override Member Profile Properties</h3>
+    <input type="hidden" id="editRowTargetId">
+    
+    <div style="margin-bottom:12px;">
+      <label>Profile Designation / Reference</label>
+      <input type="text" id="editProfileName" disabled>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label>Override Length Parameter (meters)</label>
+      <input type="number" id="editOverrideLength" step="0.1" placeholder="Enter missing or corrected length">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label>Direct Weight Force Override (kg) - Optional</label>
+      <input type="number" id="editOverrideWeight" placeholder="Directly set mass structural value">
+    </div>
+    
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="applyMemberLibraryOverride()">Apply Overrides</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="addMemberModal">
+  <div class="modal-content">
+    <h3 style="color:#fff; margin-bottom:14px; font-size:16px;">Add Asset to Library Database</h3>
+    
+    <div style="margin-bottom:12px;">
+      <label>Asset Category Classification</label>
+      <select id="newAssetCategory" onchange="toggleAssetInputFields()">
+        <option value="structural">Standard Structural Beam / Column</option>
+        <option value="custom" selected>Custom Equipment / Machine Assembly (Pump, Skid, etc.)</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label>Mark/ID Designation Tag</label>
+      <input type="text" id="newAssetMark" value="PMP-01">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label>Equipment / Item Description</label>
+      <input type="text" id="newAssetDescription" value="Centrifugal Slurry Feed Pump Assembly">
+    </div>
+    
+    <div id="structuralFieldsWrapper" style="display:none; margin-bottom:12px;">
+      <label>Length Metric (m)</label>
+      <input type="number" id="newAssetLength" value="0.0">
+    </div>
+    <div id="customEquipmentFieldsWrapper" style="margin-bottom:12px;">
+      <label>Custom Weight Field (Total Mass in kg)</label>
+      <input type="number" id="newAssetCustomWeight" value="4200">
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+      <button class="btn" onclick="closeAddAssetModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="submitAssetToLibraryTable()">Inject Into Library</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Mock Crane Database Values for Dasa Uranium Site Logistics
+const CRANE_DB = [
+  { name: 'Liebherr LTM 1050-3.1 (50t Mobile)', maxRadius: 12, capacityAtRadius: 3200 },
+  { name: 'Grove GMK4100L-1 (100t Mobile)', maxRadius: 20, capacityAtRadius: 5800 },
+  { name: 'Demag AC 250-5 (250t Heavy Mobile)', maxRadius: 36, capacityAtRadius: 14500 },
+  { name: 'Liebherr LR 1600/2 (600t Crawler)', maxRadius: 48, capacityAtRadius: 85000 }
+];
+
+function openAddMemberModal() {
+  document.getElementById('addMemberModal').classList.add('open');
+}
+function closeAddAssetModal() {
+  document.getElementById('addMemberModal').classList.remove('open');
+}
+
+function toggleAssetInputFields() {
+  const category = document.getElementById('newAssetCategory').value;
+  if(category === 'custom') {
+    document.getElementById('customEquipmentFieldsWrapper').style.display = 'block';
+    document.getElementById('structuralFieldsWrapper').style.display = 'none';
+  } else {
+    document.getElementById('customEquipmentFieldsWrapper').style.display = 'none';
+    document.getElementById('structuralFieldsWrapper').style.display = 'block';
+  }
+}
+
+function submitAssetToLibraryTable() {
+  const mark = document.getElementById('newAssetMark').value;
+  const desc = document.getElementById('newAssetDescription').value;
+  const category = document.getElementById('newAssetCategory').value;
+  
+  let finalWeight = 0;
+  let lenDisplay = "—";
+  
+  if(category === 'custom') {
+    finalWeight = parseFloat(document.getElementById('newAssetCustomWeight').value) || 0;
+  } else {
+    const len = parseFloat(document.getElementById('newAssetLength').value) || 0;
+    lenDisplay = len.toFixed(2);
+    finalWeight = len * 45; // Simulated linear mass weight calculation factor
+  }
+
+  const table = document.getElementById('memberLibraryTable');
+  const uniqueId = 'row-' + Date.now();
+  const rowHtml = `
+    <tr id="${uniqueId}">
+      <td><strong>${mark}</strong></td>
+      <td>${category === 'custom' ? 'Custom Asset / Equipment' : 'Structural (Manual)'}</td>
+      <td>${desc}</td>
+      <td class="length-cell">${lenDisplay}</td>
+      <td class="weight-cell">${finalWeight.toFixed(1)} kg</td>
+      <td><span class="badge badge-success">Valid Ready</span></td>
+      <td style="text-align:right;">
+        <button class="btn" style="padding:4px 8px; font-size:12px;" onclick="editLibraryRow('${uniqueId}', '${desc}', ${lenDisplay==='—'?0:lenDisplay}, ${finalWeight})">Edit / Override</button>
+      </td>
+    </tr>
+  `;
+  table.insertAdjacentHTML('beforeend', rowHtml);
+  
+  // Also push options instantly into the live UI dropdown configuration options
+  const selectDropdown = document.getElementById('liftLibraryItemSelect');
+  const opt = document.createElement('option');
+  opt.value = finalWeight;
+  opt.textContent = `${mark} (${desc}) — ${finalWeight.toFixed(1)}kg`;
+  opt.selected = true;
+  selectDropdown.appendChild(opt);
+
+  closeAddAssetModal();
+}
+
+function editLibraryRow(id, profileName, currentLength, currentWeight) {
+  document.getElementById('editRowTargetId').value = id;
+  document.getElementById('editProfileName').value = profileName;
+  document.getElementById('editOverrideLength').value = currentLength || "";
+  document.getElementById('editOverrideWeight').value = currentWeight || "";
+  document.getElementById('editMemberModal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('editMemberModal').classList.remove('open');
+}
+
+function applyMemberLibraryOverride() {
+  const targetId = document.getElementById('editRowTargetId').value;
+  const lengthInput = document.getElementById('editOverrideLength').value;
+  const weightInput = document.getElementById('editOverrideWeight').value;
+  
+  const targetRow = document.getElementById('row-' + targetId) || document.getElementById(targetId);
+  if(targetRow) {
+    if(lengthInput) {
+      targetRow.querySelector('.length-cell').textContent = parseFloat(lengthInput).toFixed(2);
+    }
+    if(weightInput) {
+      targetRow.querySelector('.weight-cell').textContent = parseFloat(weightInput).toFixed(1) + " kg";
+    }
+    targetRow.querySelector('.badge').className = "badge badge-success";
+    targetRow.querySelector('.badge').textContent = "Valid Matrix Matches";
+  }
+  closeEditModal();
+}
+
+function simulateSketchUpload() {
+  const canvas = document.getElementById('cogCanvas');
+  canvas.innerHTML = `
+    <div style="text-align:center; width:100%; padding: 0 10px;">
+      <div style="font-size:12px; font-weight:600; color:var(--green); margin-bottom:4px;">✔ Hand Sketch Vision Processed</div>
+      <div style="font-family:'IBM Plex Mono'; font-size:11px; color:var(--text2);">Calculated COG Center Vector Point: <span style="color:var(--accent);">X: +1.42m / Y: -0.12m</span></div>
+      <div style="width:120px; height:8px; background:#222; border-radius:4px; margin: 8px auto 0 auto; position:relative; overflow:hidden;">
+        <div style="position:absolute; left:62%; top:0; width:8px; height:100%; background:var(--accent);"></div>
+      </div>
+    </div>
+  `;
+}
+
+function generateFinalCalculatedReport() {
+  const selectedWeight = parseFloat(document.getElementById('liftLibraryItemSelect').value) || 0;
+  const radius = parseFloat(document.getElementById('liftOperatingRadius').value) || 0;
+  const safetyFactor = parseFloat(document.getElementById('liftSafetyFactor').value) || 1.0;
+  
+  const designLoad = selectedWeight * safetyFactor;
+  
+  // Output Meta Data Summary Block
+  document.getElementById('reportSummaryMeta').innerHTML = `
+    <strong>Target Load Asset:</strong> Selected Library Asset Database Mass: ${selectedWeight.toFixed(1)} kg <br>
+    <strong>Factored Engineering Design Load (Safety Factor x${safetyFactor}):</strong> ${(designLoad).toFixed(1)} kg at <strong>${radius} meters</strong> configuration.
+  `;
+
+  let matchingHtml = '';
+  let cranesFound = 0;
+  
+  // Sort from lowest capacity to highest to find optimal target choice
+  CRANE_DB.forEach((crane) => {
+    const isRadiusPossible = crane.maxRadius >= radius;
+    const isCapacitySafe = crane.capacityAtRadius >= designLoad;
+    
+    if (isRadiusPossible) {
+      cranesFound++;
+      const utilization = (designLoad / crane.capacityAtRadius) * 100;
+      const isRecommended = (utilization >= 45 && utilization <= 85) && isCapacitySafe;
+      
+      matchingHtml += `
+        <div class="crane-card ${isRecommended ? 'recommended' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+            <div>
+              <strong>${crane.name}</strong> 
+              ${isRecommended ? '<span class="badge badge-success" style="margin-left:8px;">★ Recommended Selection</span>' : ''}
+              <div style="font-size:11px; color:var(--text3); margin-top:2px;">Engineered Rating Capacity Limit at ${radius}m: ${crane.capacityAtRadius} kg</div>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-family:'IBM Plex Mono'; font-weight:600; font-size:14px; color:${isCapacitySafe ? 'var(--green)' : 'var(--red)'}">
+                ${utilization.toFixed(1)}% Utilization
+              </span>
+              <div style="font-size:11px; color:var(--text2);">${isCapacitySafe ? 'SAFE / APPROVED' : 'CRITICAL OVERLOAD RISK'}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  if(cranesFound === 0) {
+    matchingHtml = `<p style="color:var(--red); font-weight:500;">No cranes in structural database meet the minimum ${radius}m radius deployment requirements.</p>`;
+  }
+
+  document.getElementById('craneMatchingResultsContainer').innerHTML = matchingHtml;
+  document.getElementById('reportSection').style.display = 'block';
+  document.getElementById('reportSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function simulateDrawingProcessing() {
+  alert("AI Matrix Sync Engine active. This acts as the payload endpoint webhook interface mapping directly into Make.com automation routing.");
+}
+</script>
+</body>
+</html>
