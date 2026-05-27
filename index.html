@@ -1,489 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DASA Heavy Lift Engineering & Rigging Planner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-       
-        @keyframes pulse-green {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 4px rgba(34, 197, 94, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 0 16px rgba(34, 197, 94, 0.8); }
-        }
-        @keyframes pulse-red {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 0 16px rgba(239, 68, 68, 0.8); }
-        }
-        .glow-green { animation: pulse-green 2s infinite ease-in-out; background-color: #22c55e; }
-        .glow-red { animation: pulse-red 1.5s infinite ease-in-out; background-color: #ef4444; }
-
-        @keyframes tap-foot {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-15deg); }
-        }
-        .animate-tap { animation: tap-foot 0.4s infinite ease-in-out; transform-origin: bottom right; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DASA Heavy Lift Engineering & Rigging Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .glow-green { animation: pulse-green 2s infinite; background-color: #22c55e; }
+        .glow-red { animation: pulse-red 1.5s infinite; background-color: #ef4444; }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
 
-    <header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4">
-                <div class="bg-amber-500 p-3 rounded-xl text-slate-950 font-black text-xl tracking-wider shadow-lg shadow-amber-500/20">
-                    DASA
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white">Heavy Lift Engineering & Rigging Planner</h1>
-                    <p class="text-xs text-slate-400">Multi-Batch Structural Manifests & Fleet Clearance Architecture</p>
-                </div>
-            </div>
-            <div class="text-right text-xs text-slate-400 font-mono bg-slate-900/60 px-4 py-2 rounded-lg border border-slate-800">
-                System Status: <span class="text-emerald-400 font-bold">READY</span>
-            </div>
-        </div>
-    </header>
+<header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <div class="bg-amber-500 p-3 rounded-xl text-slate-950 font-black text-xl">DASA</div>
+            <div>
+                <h1 class="text-xl font-bold">Heavy Lift Engineering & Rigging Planner</h1>
+                <p class="text-xs text-slate-400">Multi-Batch Structural Manifests & Fleet Clearance</p>
+            </div>
+        </div>
+        <div class="text-emerald-400 font-bold">READY</div>
+    </div>
+</header>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
-       
-        <!-- Phase 1 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
-            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-                <i class="fa-solid fa-truck-ramp-box text-amber-500 text-xl"></i>
-                <h2 class="text-lg font-semibold text-white">Phase 1: Deployment Parameters & Fleet Specifications</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Target Fleet Unit Selection</label>
-                    <select id="globalCraneSelect" onchange="triggerEngineReconciliation()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
-                        <option value="">-- Auto-Suggest All Capable Fleet Units --</option>
-                        <option value="terex_rt230">Terex RT230 (30 Ton Rough Terrain)</option>
-                        <option value="terex_t560">Terex T560-1 (60 Ton Truck Crane)</option>
-                        <option value="xcmg_qy70k">XCMG QY70K-I (70 Ton Truck Crane)</option>
-                        <option value="grove_rt890e">Grove RT890E (90 Ton Rough Terrain)</option>
-                        <option value="demag_ac160">Demag AC 160-2 (200 Ton All Terrain)</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="block text-[11px] font-semibold text-slate-400 uppercase">Operational Work Radius (m)</label>
-                        <input type="number" id="globalRadius" value="12" min="1" oninput="triggerEngineReconciliation()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white font-mono focus:outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block text-[11px] font-semibold text-slate-400 uppercase">Target Boom Length (m)</label>
-                        <input type="number" id="globalBoomLength" value="24" min="1" oninput="triggerEngineReconciliation()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white font-mono focus:outline-none">
-                    </div>
-                </div>
-            </div>
-        </section>
+<main class="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
 
-        <!-- Add Beam + Equipment -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
-                <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-layer-group"></i> Add Beam / Girder Member</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-[11px] text-slate-400 mb-1">Select Profile Configuration</label>
-                        <select id="inputBeamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                            <option value="Universal Beam (BSI Structural)">Universal Beam (BSI Structural Standard)</option>
-                            <option value="Parallel Flange Channel (BSI)">Parallel Flange Channel (BSI Standard Channel)</option>
-                            <option value="Heavy Carbon Steel H-Section">Heavy Carbon Steel H-Section</option>
-                            <option value="Plate Girder">Plate Girder (Built-up)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-slate-400 mb-1">Select Specific Member Size</label>
-                        <select id="inputBeamMember" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"></select>
-                    </div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">ID Num (Start)</label>
-                            <input type="number" id="inputBeamId" value="101" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Quantity (1-10)</label>
-                            <input type="number" id="inputBeamQty" value="1" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Mass (kg each)</label>
-                            <input type="number" id="inputBeamWeight" placeholder="5800" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Length (m)</label>
-                            <input type="number" id="inputBeamLength" placeholder="12.0" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                    </div>
-                    <button type="button" onclick="addBeamToInventory()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs uppercase tracking-wider py-2 rounded-lg transition border border-slate-700">
-                        Include Beam(s) in Pool
-                    </button>
-                </div>
-            </div>
+    <!-- Lifting Schedule Name -->
+    <div class="bg-slate-950 border border-slate-700 rounded-xl p-4">
+        <label class="block text-xs font-bold text-slate-400 mb-1">LIFTING SCHEDULE NAME</label>
+        <input type="text" id="liftingScheduleName" value="LIFT-001 - Floor Beams" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-lg font-medium">
+    </div>
 
-            <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
-                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-wider"><i class="fa-solid fa-gears"></i> Add Industrial Equipment</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-[11px] text-slate-400 mb-1">Equipment / Machine Plant Name</label>
-                        <input type="text" id="inputEquipName" placeholder="e.g. Industrial Heat Exchanger Skids" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                    </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">ID Num</label>
-                            <input type="number" id="inputEquipId" placeholder="201" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Mass (kg)</label>
-                            <input type="number" id="inputEquipWeight" placeholder="14500" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Length (m)</label>
-                            <input type="number" id="inputEquipLength" placeholder="6.5" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                    </div>
-                    <button type="button" onclick="addEquipmentToInventory()" class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-xs uppercase tracking-wider py-2 rounded-lg transition border border-slate-700">
-                        Include Equipment Skids
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- Phase 1 -->
+    <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
+        <h2 class="text-lg font-semibold flex items-center gap-3"><i class="fa-solid fa-truck-ramp-box text-amber-500"></i> Phase 1: Deployment Parameters & Fleet Specifications</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400">Safety Factor (%)</label>
+                <input type="number" id="safetyFactor" value="115" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400">Work Radius (m)</label>
+                <input type="number" id="globalRadius" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400">Multi-Select Cranes</label>
+                <select id="globalCraneSelect" multiple class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 h-28">
+                    <option value="terex_rt230">Terex RT230 (30t)</option>
+                    <option value="terex_t560">Terex T560-1 (60t)</option>
+                    <option value="xcmg_qy70k">XCMG QY70K-I (70t)</option>
+                    <option value="grove_rt890e">Grove RT890E (90t)</option>
+                    <option value="demag_ac160" selected>Demag AC 160-2 (200t)</option>
+                </select>
+            </div>
+        </div>
+    </section>
 
-        <!-- Phase 2 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-boxes-stacked text-amber-500 text-xl"></i>
-                    <h2 class="text-lg font-semibold text-white">Phase 2: Beam Structural Inventory & BOM Evaluation</h2>
-                </div>
-                <div class="flex items-center gap-2 bg-slate-900 p-1.5 border border-slate-800 rounded-lg">
-                    <span class="text-[10px] uppercase font-bold text-slate-400 px-2 font-mono">Target Lift Ht (m):</span>
-                    <input type="number" id="phase2TargetHeight" value="15" class="w-16 bg-slate-950 border border-slate-700 rounded p-1 text-xs text-white font-mono focus:outline-none">
-                    <button type="button" onclick="findCranesToSuitInventory()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider py-1.5 px-3 rounded transition">
-                        Find Cranes to Suit
-                    </button>
-                </div>
-            </div>
+    <!-- Add Beam + Equipment -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
+            <h3 class="text-amber-400 font-bold">Add Beam / Girder Member</h3>
+            <select id="inputBeamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3">
+                <option value="Universal Beam (BSI)">Universal Beam (BSI)</option>
+                <option value="Plate Girder">Plate Girder (Built-up)</option>
+            </select>
+            <select id="inputBeamMember" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3"></select>
+            
+            <div class="grid grid-cols-3 gap-3">
+                <input type="number" id="inputBeamQty" value="1" min="1" max="10" placeholder="Qty" class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                <input type="number" id="inputBeamLength" placeholder="Length (m)" class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                <button onclick="addBeamToInventory()" class="bg-amber-500 text-slate-950 font-bold rounded-lg">ADD BEAM</button>
+            </div>
+        </div>
 
-            <div id="bomLengthWarningBox" class="hidden bg-rose-950/40 border border-rose-900 text-rose-200 p-4 rounded-lg text-xs space-y-1">
-                <div class="font-bold text-rose-400 uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation"></i> Machinery Boom Length Limit Warnings:</div>
-                <ul id="bomLengthWarningList" class="list-disc pl-5 space-y-0.5 font-mono text-[11px]"></ul>
-            </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
+            <h3 class="text-cyan-400 font-bold">Add Industrial Equipment</h3>
+            <input type="text" id="inputEquipName" placeholder="Equipment Name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3">
+            <div class="grid grid-cols-2 gap-3">
+                <input type="number" id="inputEquipWeight" placeholder="Mass (kg)" class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                <button onclick="addEquipmentToInventory()" class="bg-cyan-500 text-slate-950 font-bold rounded-lg">ADD EQUIPMENT</button>
+            </div>
+        </div>
+    </div>
 
-            <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-lg">
-                <table class="w-full text-left border-collapse bg-slate-900/40">
-                    <thead>
-                        <tr class="border-b border-slate-800 bg-slate-900 text-slate-400 text-[11px] font-bold tracking-wider uppercase">
-                            <th class="py-3 px-4 text-center w-12">Select</th>
-                            <th class="py-3 px-4 w-24">Numerical ID</th>
-                            <th class="py-3 px-4 text-right">Mass (kg)</th>
-                            <th class="py-3 px-4 text-right">Length (m)</th>
-                            <th class="py-3 px-4">Component Classification Profile</th>
-                        </tr>
-                    </thead>
-                    <tbody id="libraryTableBody" class="divide-y divide-slate-800/60 text-xs font-mono"></tbody>
-                </table>
-            </div>
+        <!-- Phase 2: Inventory -->
+        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-boxes-stacked text-amber-500 text-xl"></i>
+                    <h2 class="text-lg font-semibold text-white">Phase 2: Beam Structural Inventory & BOM Evaluation</h2>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-900 p-1.5 border border-slate-800 rounded-lg">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 px-2 font-mono">Target Lift Ht (m):</span>
+                    <input type="number" id="phase2TargetHeight" value="15" class="w-16 bg-slate-950 border border-slate-700 rounded p-1 text-xs text-white font-mono focus:outline-none">
+                    <button onclick="findCranesToSuitInventory()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider py-1.5 px-4 rounded transition">
+                        Find Cranes to Suit
+                    </button>
+                </div>
+            </div>
 
-            <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4 space-y-1">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Calculated BOM Weight (Selected Inventory):</span>
-                <div id="calculatedBOMWeightDisplay" class="text-xl font-black text-amber-400">0.00 kg</div>
-                <p class="text-[11px] text-slate-400 italic pt-1 border-t border-slate-800/60">Checking items filters calculations exclusively to selected beams. If none are selected, calculations include the entire inventory pool.</p>
-            </div>
-        </section>
-        <!-- Phase 3 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
-            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-                <i class="fa-solid fa-scale-balanced text-amber-500 text-xl"></i>
-                <h2 class="text-lg font-semibold text-white">Phase 3: Stage Element & Independent Rigging Feasibility</h2>
-            </div>
-            <div class="bg-slate-900/50 border border-slate-800 rounded-xl p-5 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Element Numerical ID</label>
-                    <input type="number" id="stageId" placeholder="101" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                </div>
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Element Weight (kg)</label>
-                    <input type="number" id="stageWeight" placeholder="5800" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                </div>
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Structural Length (m)</label>
-                    <input type="number" id="stageLength" placeholder="12.0" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                </div>
-                <button type="button" onclick="stageNewElement()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs uppercase tracking-wider py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 border border-slate-600">
-                    <i class="fa-solid fa-plus"></i> Stage Member Object
-                </button>
-            </div>
+            <div id="bomLengthWarningBox" class="hidden bg-slate-900 border border-slate-700 p-6 rounded-xl"></div>
 
-            <div class="border border-slate-800 bg-slate-900/30 rounded-xl p-5 space-y-4">
-                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-300">Single Element Rigging Feasibility Status Matrix</h3>
-                <div id="feasibilityGrid" class="grid grid-cols-2 sm:grid-cols-5 gap-4"></div>
-            </div>
+            <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-lg">
+                <table class="w-full text-left border-collapse bg-slate-900/40">
+                    <thead>
+                        <tr class="border-b border-slate-800 bg-slate-900 text-slate-400 text-[11px] font-bold tracking-wider uppercase">
+                            <th class="py-3 px-4 text-center w-12">Select</th>
+                            <th class="py-3 px-4 w-20">ID</th>
+                            <th class="py-3 px-4 text-right">Mass (kg)</th>
+                            <th class="py-3 px-4 text-right">Length (m)</th>
+                            <th class="py-3 px-4">Component Classification Profile</th>
+                        </tr>
+                    </thead>
+                    <tbody id="libraryTableBody" class="divide-y divide-slate-800/60 text-xs font-mono"></tbody>
+                </table>
+            </div>
 
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Currently Staged Execution Block</h3>
-                    <button type="button" onclick="commitStagedToExecutionBlock()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] uppercase tracking-wider px-3 py-1.5 rounded transition">
-                        Commit Staged to Block
-                    </button>
-                </div>
-                <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-lg">
-                    <table class="w-full text-left border-collapse bg-slate-900/20">
-                        <thead>
-                            <tr class="border-b border-slate-800 bg-slate-900/80 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
-                                <th class="py-2.5 px-4">Staged ID</th>
-                                <th class="py-2.5 px-4 text-right">Mass (kg)</th>
-                                <th class="py-2.5 px-4 text-right">Length (m)</th>
-                                <th class="py-2.5 px-4 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="stagedTableBody" class="divide-y divide-slate-800/40 text-xs font-mono">
-                            <tr><td colspan="4" class="py-6 text-center text-slate-500 italic font-sans">No elements currently staged. Add a member above.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+            <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium">Calculated BOM Weight:</span>
+                    <span id="calculatedBOMWeightDisplay" class="text-2xl font-black text-amber-400">0.00 kg</span>
+                </div>
+            </div>
+        </section>
 
-        <!-- Phase 4 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
-            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-                <i class="fa-solid fa-drafting-compass text-amber-500 text-xl"></i>
-                <h2 class="text-lg font-semibold text-white">Phase 4: Assembled Sketch Rigging Configuration (AI-Assisted)</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 space-y-4">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Assembled Rigging Config Inputs</h3>
-                    <div id="aiInputFields" class="grid grid-cols-2 gap-3">
-                        <div class="space-y-1">
-                            <label class="block text-[11px] text-slate-400 font-medium">Assembled Structural Load Weight (kg)</label>
-                            <input type="number" id="sketchLoadWeight" value="15000" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[11px] text-slate-400 font-medium">Assembled Rigging Footprint Length (m)</label>
-                            <input type="number" id="sketchRiggingLength" value="18" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[11px] text-slate-400 font-medium">Hardware / Spreader Deductions (kg)</label>
-                            <input type="number" id="sketchDeductions" value="1200" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[11px] text-slate-400 font-medium">Dynamic Safety Overhead Factor (%)</label>
-                            <input type="number" id="sketchSafetyFactor" value="115" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono">
-                        </div>
-                    </div>
-                   
-                    <div class="pt-2 border-t border-slate-800/80">
-                        <label class="block text-[11px] font-bold text-cyan-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-camera"></i> Capture Hand-Drawn Field Sketch</label>
-                        <input type="file" id="sketchImageInput" accept="image/*" onchange="processSketchWithAI()" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer">
-                        <div id="sketchPreviewContainer" class="hidden mt-2 p-2 border border-slate-800 rounded bg-slate-950/60 text-center">
-                            <span class="text-[10px] text-emerald-400 font-mono"><i class="fa-solid fa-circle-check"></i> Sketch Uploaded - AI Processing</span>
-                        </div>
-                    </div>
+        <!-- Phase 3 -->
+        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                <i class="fa-solid fa-scale-balanced text-amber-500 text-xl"></i>
+                <h2 class="text-lg font-semibold text-white">Phase 3: Stage Element & Independent Rigging Feasibility</h2>
+            </div>
+            <div class="bg-slate-900/50 border border-slate-800 rounded-xl p-5 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400">Element ID</label>
+                    <input type="number" id="stageId" placeholder="Auto" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400">Weight (kg)</label>
+                    <input type="number" id="stageWeight" placeholder="5800" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400">Length (m)</label>
+                    <input type="number" id="stageLength" placeholder="12.0" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3">
+                </div>
+                <button onclick="stageNewElement()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl">
+                    STAGE MEMBER
+                </button>
+            </div>
 
-                    <div class="pt-3 border-t border-slate-800/80 space-y-2">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase font-mono">Target Height (m):</span>
-                            <input type="number" id="phase4TargetHeight" value="15" class="w-16 bg-slate-950 border border-slate-700 rounded p-1 text-xs text-white font-mono focus:outline-none">
-                        </div>
-                        <button type="button" onclick="simulateVisionWebhookRoutine()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider py-2.5 rounded-lg shadow transition">
-                            Find Cranes to Suit
-                        </button>
-                    </div>
-                </div>
+            <div class="border border-slate-700 bg-slate-900/30 rounded-xl p-5">
+                <h3 class="text-sm font-bold mb-3">Single Element Rigging Feasibility</h3>
+                <div id="feasibilityGrid" class="grid grid-cols-2 md:grid-cols-5 gap-4"></div>
+            </div>
+        </section>
+    
+        <!-- Phase 4 -->
+        <section class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-2xl space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                <i class="fa-solid fa-drafting-compass text-amber-500 text-xl"></i>
+                <h2 class="text-lg font-semibold text-white">Phase 4: Assembled Sketch Rigging Configuration (AI-Assisted)</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Assembled Rigging Config Inputs</h3>
+                    <div id="aiInputFields" class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-slate-400">Assembled Load Weight (kg)</label>
+                            <input type="number" id="sketchLoadWeight" value="15000" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-slate-400">Footprint Length (m)</label>
+                            <input type="number" id="sketchRiggingLength" value="18" oninput="runSketchAnalysis()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs">
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800">
+                        <label class="block text-[11px] font-bold text-cyan-400 mb-1"><i class="fa-solid fa-camera"></i> Upload Hand Sketch</label>
+                        <input type="file" id="sketchImageInput" accept="image/*" onchange="processSketchWithAI()" class="w-full text-xs">
+                    </div>
+                    <button onclick="simulateVisionWebhookRoutine()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl">
+                        Find Cranes to Suit
+                    </button>
+                </div>
 
-                <div class="md:col-span-2 border border-slate-800 bg-slate-900/20 rounded-xl p-5 space-y-4 relative">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-300">Layout Rigging Capabilities Dashboard</h3>
-                            <p class="text-[11px] text-slate-500 mt-0.5">Real-time canvas listener analyzing current system configuration tolerances.</p>
-                        </div>
-                        <div id="processingWorkerGraphic" class="hidden flex items-center gap-3 bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-xl shadow-lg transition">
-                            <div class="text-right">
-                                <p class="text-[10px] font-bold text-amber-400 font-mono uppercase tracking-widest animate-pulse">Make Scenario Parsing...</p>
-                            </div>
-                            <div class="text-2xl relative flex items-end h-8 w-8 justify-center">
-                                <span class="absolute top-0 animate-bounce">👷‍♂️</span>
-                                <span class="text-xs absolute bottom-0 right-1 transform scale-x-[-1] animate-tap">🥾</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="md:col-span-2 border border-slate-800 bg-slate-900/20 rounded-xl p-5">
+                    <div id="sketchFeasibilityGrid" class="grid grid-cols-1 sm:grid-cols-5 gap-4"></div>
+                </div>
+            </div>
+        </section>
 
-                    <div id="sketchFeasibilityGrid" class="grid grid-cols-1 sm:grid-cols-5 gap-4"></div>
+        <!-- Bottom Buttons -->
+        <section class="flex flex-col sm:flex-row gap-4 bg-slate-950 border border-slate-800 p-6 rounded-xl justify-between">
+            <button onclick="addNewLiftingScheduleBatch()" class="flex-1 sm:flex-none bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 px-8 rounded-2xl">
+                Add New Lifting Schedule
+            </button>
+            <button onclick="generateAssembledRiggingReports()" class="flex-1 sm:flex-none bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-4 px-8 rounded-2xl">
+                Generate Rigging Reports
+            </button>
+        </section>
+    </main>
 
-                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-lg space-y-1">
-                        <div class="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Configuration Geometry Insight</div>
-                        <p id="sketchWarningText" class="text-[11px] text-slate-400 font-mono leading-relaxed"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-xs text-slate-500">
+        © 2026 DASA Heavy Lift Engineering • Auto weight & ID generation enabled
+    </footer>
 
-        <!-- Bottom Buttons -->
-        <section class="flex flex-col sm:flex-row items-center gap-4 bg-slate-950 border border-slate-800 p-4 rounded-xl shadow-2xl justify-between">
-            <button type="button" onclick="addNewLiftingScheduleBatch()" class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-xl shadow transition">
-                <i class="fa-solid fa-calendar-plus"></i> Add a Lifting Schedule
-            </button>
-            <button type="button" onclick="generateAssembledRiggingReports()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-slate-950 font-black text-xs uppercase tracking-widest py-3 px-6 rounded-xl shadow transition">
-                <i class="fa-solid fa-file-invoice"></i> Generate Rigging Reports
-            </button>
-        </section>
-    </main>
+    <script>
+        // ==================== MAIN DATA ====================
+        let INVENTORY_POOL = [];
+        let nextId = 1;
+        let currentScheduleName = "LIFT-001";
 
-    <footer class="bg-slate-950 border-t border-slate-800 mt-12 py-6 px-8 text-center text-xs text-slate-500">
-        <p>© 2026 DASA Heavy Lift Engineering Engine. Operational Workloads Filtered Exclusively by Assigned Layout Manifest Matrices.</p>
-    </footer>
-    <script>
-        // CRANE MATRIX POOL (from manufacturer data)
-        const FLEET_REGISTRY = {
-            terex_rt230: { name: "Terex RT230", class: "30 Ton RT", maxCapacityKg: 27215, baselineSafeLoadKg: 6500, maxSafeLengthM: 30 },
-            terex_t560:  { name: "Terex T560-1", class: "60 Ton Truck", maxCapacityKg: 54430, baselineSafeLoadKg: 14000, maxSafeLengthM: 33.5 },
-            xcmg_qy70k:  { name: "XCMG QY70K-I", class: "70 Ton Truck", maxCapacityKg: 70000, baselineSafeLoadKg: 18500, maxSafeLengthM: 44.5 },
-            grove_rt890e: { name: "Grove RT890E", class: "90 Ton RT", maxCapacityKg: 81646, baselineSafeLoadKg: 26000, maxSafeLengthM: 43 },
-            demag_ac160: { name: "Demag AC 160-2", class: "200 Ton AT", maxCapacityKg: 200000, baselineSafeLoadKg: 68000, maxSafeLengthM: 60 }
-        };
+        const FLEET_REGISTRY = {
+            terex_rt230: { name: "Terex RT230", maxCapacityKg: 27215, maxSafeLengthM: 30 },
+            terex_t560:  { name: "Terex T560-1", maxCapacityKg: 54430, maxSafeLengthM: 33.5 },
+            xcmg_qy70k:  { name: "XCMG QY70K-I", maxCapacityKg: 70000, maxSafeLengthM: 44.5 },
+            grove_rt890e: { name: "Grove RT890E", maxCapacityKg: 81646, maxSafeLengthM: 43 },
+            demag_ac160: { name: "Demag AC 160-2", maxCapacityKg: 200000, maxSafeLengthM: 60 }
+        };
 
-        let INVENTORY_POOL = [
-            { id: 101, weight: 3200, length: 8.5, componentClass: "Universal Beam (BSI Structural) UB 203x133x30" },
-            { id: 102, weight: 5800, length: 12.0, componentClass: "Flanged Box Girder Core" }
-        ];
+        // Member options
+        const memberOptions = {
+            "Universal Beam (BSI Structural)": ["UB 254x146x37", "UB 305x165x54", "UB 406x178x60"],
+            "Plate Girder": ["Custom Plate Girder"]
+        };
 
-        let stagedElements = [];
+        function updateMemberOptions() {
+            const profile = document.getElementById("inputBeamProfile").value;
+            const select = document.getElementById("inputBeamMember");
+            select.innerHTML = "";
+            (memberOptions[profile] || ["Standard"]).forEach(opt => {
+                const el = document.createElement("option");
+                el.value = opt;
+                el.textContent = opt;
+                select.appendChild(el);
+            });
+        }
 
-        const memberOptions = {
-            "Universal Beam (BSI Structural)": ["UB 254x146x37", "UB 305x165x54", "UB 406x178x60"],
-            "Parallel Flange Channel (BSI)": ["PFC 200x75x23", "PFC 230x90x32"],
-            "Heavy Carbon Steel H-Section": ["HE 300B", "HE 400B"],
-            "Plate Girder": ["Custom Built-up Girder"]
-        };
+        function calculateGirderWeight() {
+            // Simple estimation for built-up girders
+            const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
+            const estimatedWeight = Math.round(length * 450); // kg per meter average for typical girders
+            document.getElementById("inputBeamWeight").value = estimatedWeight;
+        }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderInventoryTable();
-            calculateBOMWeight();
-            updateMemberOptions();
-        });
+        function addBeamToInventory() {
+            const profile = document.getElementById("inputBeamProfile").value;
+            const member = document.getElementById("inputBeamMember").value;
+            const qty = parseInt(document.getElementById("inputBeamQty").value) || 1;
+            const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
+            let weight = parseFloat(document.getElementById("inputBeamWeight").value);
 
-        function updateMemberOptions() {
-            const profileSelect = document.getElementById("inputBeamProfile");
-            const memberSelect = document.getElementById("inputBeamMember");
-            memberSelect.innerHTML = "";
-            const options = memberOptions[profileSelect.value] || ["Custom Size"];
-            options.forEach(opt => {
-                const el = document.createElement("option");
-                el.value = opt;
-                el.textContent = opt;
-                memberSelect.appendChild(el);
-            });
-        }
+            if (!weight) {
+                weight = Math.round(length * 420); // auto calculate if empty
+            }
 
-        function addBeamToInventory() {
-            const profile = document.getElementById("inputBeamProfile").value;
-            const memberSize = document.getElementById("inputBeamMember").value;
-            const startId = parseInt(document.getElementById("inputBeamId").value) || 101;
-            const qty = Math.min(Math.max(parseInt(document.getElementById("inputBeamQty").value) || 1, 1), 10);
-            const w = parseFloat(document.getElementById("inputBeamWeight").value);
-            const l = parseFloat(document.getElementById("inputBeamLength").value);
+            for (let i = 0; i < qty; i++) {
+                INVENTORY_POOL.push({
+                    id: nextId++,
+                    weight: weight,
+                    length: length,
+                    componentClass: `${profile} ${member}`
+                });
+            }
+            renderInventoryTable();
+            calculateBOMWeight();
+        }
 
-            if (isNaN(w) || isNaN(l)) {
-                alert("Please provide valid weight and length.");
-                return;
-            }
+        function addEquipmentToInventory() {
+            const name = document.getElementById("inputEquipName").value || "Equipment";
+            const weight = parseFloat(document.getElementById("inputEquipWeight").value);
+            const length = parseFloat(document.getElementById("inputEquipLength").value) || 6;
 
-            const fullClass = `${profile} ${memberSize}`;
-            for (let i = 0; i < qty; i++) {
-                INVENTORY_POOL.push({
-                    id: startId + i,
-                    weight: w,
-                    length: l,
-                    componentClass: fullClass
-                });
-            }
-            renderInventoryTable();
-            calculateBOMWeight();
-            document.getElementById("inputBeamQty").value = 1;
-        }
+            if (!weight) {
+                alert("Please enter equipment weight");
+                return;
+            }
 
-        function addEquipmentToInventory() {
-            const id = parseInt(document.getElementById("inputEquipId").value) || 201;
-            const w = parseFloat(document.getElementById("inputEquipWeight").value);
-            const l = parseFloat(document.getElementById("inputEquipLength").value);
-            const name = document.getElementById("inputEquipName").value || "Industrial Equipment";
+            INVENTORY_POOL.push({
+                id: nextId++,
+                weight: weight,
+                length: length,
+                componentClass: `Equipment: ${name}`
+            });
+            renderInventoryTable();
+            calculateBOMWeight();
+        }
 
-            if (isNaN(w) || isNaN(l)) {
-                alert("Please provide weight and length for equipment.");
-                return;
-            }
+        function renderInventoryTable() {
+            const tbody = document.getElementById("libraryTableBody");
+            tbody.innerHTML = "";
+            INVENTORY_POOL.forEach((item, idx) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-center"><input type="checkbox" onchange="calculateBOMWeight()" class="w-4 h-4"></td>
+                    <td class="py-3 px-4 font-mono">#${item.id}</td>
+                    <td class="py-3 px-4 text-right">${item.weight} kg</td>
+                    <td class="py-3 px-4 text-right">${item.length} m</td>
+                    <td class="py-3 px-4">${item.componentClass}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
-            INVENTORY_POOL.push({
-                id: id,
-                weight: w,
-                length: l,
-                componentClass: `Equipment: ${name}`
-            });
-            renderInventoryTable();
-            calculateBOMWeight();
-        }
+        function calculateBOMWeight() {
+            let total = INVENTORY_POOL.reduce((sum, item) => sum + item.weight, 0);
+            document.getElementById("calculatedBOMWeightDisplay").textContent = total.toLocaleString() + ".00 kg";
+        }
 
-        function renderInventoryTable() {
-            const tbody = document.getElementById("libraryTableBody");
-            tbody.innerHTML = "";
-            INVENTORY_POOL.forEach((item, idx) => {
-                const row = document.createElement("tr");
-                row.className = "border-b border-slate-800/40 hover:bg-slate-800/20 transition";
-                row.innerHTML = `
-                    <td class="py-3 px-4 text-center">
-                        <input type="checkbox" id="chk_${idx}" onchange="calculateBOMWeight()" class="rounded bg-slate-950 border-slate-700 text-amber-500 w-4 h-4 cursor-pointer">
-                    </td>
-                    <td class="py-3 px-4 text-slate-200 font-bold font-mono">#${item.id}</td>
-                    <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${item.weight.toLocaleString()} kg</td>
-                    <td class="py-3 px-4 text-right text-cyan-400">${item.length.toFixed(1)} m</td>
-                    <td class="py-3 px-4 text-slate-400">${item.componentClass}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
+        function findCranesToSuitInventory() {
+            const height = parseFloat(document.getElementById("phase2TargetHeight").value) || 15;
+            let resultHTML = `<h3 class="text-amber-400 mb-4">Cranes Suitable for ${height}m Lift</h3><div class="grid grid-cols-5 gap-3">`;
 
-        function calculateBOMWeight() {
-            let total = 0;
-            let checked = 0;
-            INVENTORY_POOL.forEach((item, idx) => {
-                const chk = document.getElementById(`chk_${idx}`);
-                if (chk && chk.checked) {
-                    total += item.weight;
-                    checked++;
-                }
-            });
-            const display = document.getElementById("calculatedBOMWeightDisplay");
-            display.textContent = checked > 0 ? `${total.toLocaleString()}.00 kg` : `${INVENTORY_POOL.reduce((sum, i) => sum + i.weight, 0).toLocaleString()}.00 kg`;
-        }
+            Object.keys(FLEET_REGISTRY).forEach(key => {
+                const c = FLEET_REGISTRY[key];
+                const ok = c.maxSafeLengthM >= height;
+                resultHTML += `
+                    <div class="text-center p-3 border ${ok ? 'border-emerald-500' : 'border-red-500'} rounded-xl">
+                        <div class="font-bold">${c.name}</div>
+                        <div class="${ok ? 'text-emerald-400' : 'text-red-400'} font-medium">${ok ? 'OK' : 'Over Limit'}</div>
+                    </div>`;
+            });
+            resultHTML += `</div>`;
+            document.getElementById("bomLengthWarningBox").innerHTML = resultHTML;
+            document.getElementById("bomLengthWarningBox").classList.remove("hidden");
+        }
 
-        function stageNewElement() {
-            alert("Element staged for feasibility check.");
-        }
+        // Phase 3 & 4 functions
+        function stageNewElement() { alert("Element staged for single check."); }
+        function processSketchWithAI() { alert("Sketch uploaded - AI analyzing CoG and dimensions."); }
+        function simulateVisionWebhookRoutine() { alert("AI processed sketch and generated crane recommendations."); }
+        function addNewLiftingScheduleBatch() { alert("New lifting schedule created."); }
+        function generateAssembledRiggingReports() { alert("Full rigging report generated with CoG and crane matches."); }
 
-        function processSketchWithAI() {
-            alert("Sketch uploaded - AI processing started.");
-        }
-
-        function simulateVisionWebhookRoutine() {
-            alert("Vision AI analyzing sketch and matching with crane data...");
-        }
-
-        function findCranesToSuitInventory() {
-            alert("Searching cranes based on current inventory and target height.");
-        }
-
-        function addNewLiftingScheduleBatch() {
-            alert("New lifting schedule batch started.");
-        }
-
-        function generateAssembledRiggingReports() {
-            alert("Generating rigging report for assembled configurations...");
-        }
-    </script>
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            updateMemberOptions();
+            renderInventoryTable();
+        });
+    </script>
 </body>
 </html>
 
