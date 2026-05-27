@@ -439,7 +439,6 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-// Mock Crane Database Values for Dasa Uranium Site Logistics
 const CRANE_DB = [
   { name: 'Liebherr LTM 1050-3.1 (50t Mobile)', maxRadius: 12, capacityAtRadius: 3200 },
   { name: 'Grove GMK4100L-1 (100t Mobile)', maxRadius: 20, capacityAtRadius: 5800 },
@@ -447,8 +446,67 @@ const CRANE_DB = [
   { name: 'Liebherr LR 1600/2 (600t Crawler)', maxRadius: 48, capacityAtRadius: 85000 }
 ];
 
+// ============================================================
+// LIVE MAKE.COM WEBHOOK INTEGRATION FOR PDF DRAWING PROCESSING
+// ============================================================
+async function simulateDrawingProcessing() {
+  const WEBHOOK_URL = "https://hook.eu1.make.com/h9689mldrpedqp245nletjp9yglgewyf";
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.pdf,application/pdf';
+
+  fileInput.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadZone = document.querySelector('.upload-zone');
+    const originalText = uploadZone.innerHTML;
+    uploadZone.innerHTML = `<p style="color: var(--accent); font-weight:600;">⚡ AI Matrix Parsing Drawing Data... Please wait.</p>`;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      const base64Data = reader.result.split(',')[1];
+
+      const payload = {
+        fileName: file.name,
+        fileType: file.type,
+        uploadedAt: new Date().toISOString(),
+        siteArea: document.getElementById('setupSiteArea').value,
+        location: document.getElementById('setupLocation').value,
+        pdfBufferBase64: base64Data
+      };
+
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          alert("Drawing successfully sent to Make.com! Check your scenario run history.");
+        } else {
+          alert("Payload rejected. Webhook returned status: " + response.status);
+        }
+      } catch (error) {
+        console.error("Transmission Error:", error);
+        alert("Failed to reach Make.com gateway webhook.");
+      } finally {
+        uploadZone.innerHTML = originalText;
+      }
+    };
+  };
+
+  fileInput.click();
+}
+
 function openAddMemberModal() {
   document.getElementById('addMemberModal').classList.add('open');
+}
+iforcloseAddAssetModal() {
+  document.getElementById('addMemberModal').classList.remove('open');
 }
 function closeAddAssetModal() {
   document.getElementById('addMemberModal').classList.remove('open');
@@ -478,7 +536,7 @@ function submitAssetToLibraryTable() {
   } else {
     const len = parseFloat(document.getElementById('newAssetLength').value) || 0;
     lenDisplay = len.toFixed(2);
-    finalWeight = len * 45; // Simulated linear mass weight calculation factor
+    finalWeight = len * 45; 
   }
 
   const table = document.getElementById('memberLibraryTable');
@@ -498,7 +556,6 @@ function submitAssetToLibraryTable() {
   `;
   table.insertAdjacentHTML('beforeend', rowHtml);
   
-  // Also push options instantly into the live UI dropdown configuration options
   const selectDropdown = document.getElementById('liftLibraryItemSelect');
   const opt = document.createElement('option');
   opt.value = finalWeight;
@@ -528,7 +585,7 @@ function applyMemberLibraryOverride() {
   
   const targetRow = document.getElementById('row-' + targetId) || document.getElementById(targetId);
   if(targetRow) {
-    if(lengthInput) {
+    if(lengthInput && lengthInput !== "0") {
       targetRow.querySelector('.length-cell').textContent = parseFloat(lengthInput).toFixed(2);
     }
     if(weightInput) {
@@ -560,7 +617,6 @@ function generateFinalCalculatedReport() {
   
   const designLoad = selectedWeight * safetyFactor;
   
-  // Output Meta Data Summary Block
   document.getElementById('reportSummaryMeta').innerHTML = `
     <strong>Target Load Asset:</strong> Selected Library Asset Database Mass: ${selectedWeight.toFixed(1)} kg <br>
     <strong>Factored Engineering Design Load (Safety Factor x${safetyFactor}):</strong> ${(designLoad).toFixed(1)} kg at <strong>${radius} meters</strong> configuration.
@@ -569,7 +625,6 @@ function generateFinalCalculatedReport() {
   let matchingHtml = '';
   let cranesFound = 0;
   
-  // Sort from lowest capacity to highest to find optimal target choice
   CRANE_DB.forEach((crane) => {
     const isRadiusPossible = crane.maxRadius >= radius;
     const isCapacitySafe = crane.capacityAtRadius >= designLoad;
@@ -608,8 +663,8 @@ function generateFinalCalculatedReport() {
   document.getElementById('reportSection').scrollIntoView({ behavior: 'smooth' });
 }
 
-function simulateDrawingProcessing() {
-  alert("AI Matrix Sync Engine active. This acts as the payload endpoint webhook interface mapping directly into Make.com automation routing.");
+function addNewLiftPlanningRow() {
+  alert("Additional sequential lift planning configuration wrapper injected.");
 }
 </script>
 </body>
