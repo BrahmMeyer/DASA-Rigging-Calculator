@@ -15,44 +15,36 @@
 
     <header class="bg-slate-950 border-b border-slate-800 py-6 px-8">
         <h1 class="text-2xl font-bold text-white">DASA Rigging Engineering Matrix</h1>
+        <p class="text-xs text-slate-400">SITE OPERATIONS & AI VISION INTEGRATION</p>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-10 space-y-10">
 
         <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-sm font-bold text-white mb-6">Phase 2: Member Entry</h2>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
-                <input type="text" id="profileName" placeholder="Profile (e.g. 254x146 UB)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                <input type="number" id="memberLength" step="0.01" placeholder="Length (m)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                <select id="memberQty" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                    <option value="1">Qty: 1</option>
-                    <option value="2">Qty: 2</option>
-                    <option value="3">Qty: 3</option>
-                    <option value="4">Qty: 4</option>
-                    <option value="5">Qty: 5</option>
-                    <option value="6">Qty: 6</option>
-                    <option value="7">Qty: 7</option>
-                    <option value="8">Qty: 8</option>
-                    <option value="9">Qty: 9</option>
-                    <option value="10">Qty: 10</option>
+            <h2 class="text-sm font-bold text-white mb-4">Phase 1: Equipment & Fleet Matcher</h2>
+            <div id="craneFleetCheckboxGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
+            <h2 class="text-sm font-bold text-white mb-4">Phase 2: Member Entry</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <select id="codeFamily" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                    <option value="BSI">BSI / British Standards</option>
+                    <option value="SANS">SANS / South African</option>
                 </select>
-                <button onclick="addComponentToBOM()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">Add to BOM</button>
+                <input type="text" id="profileName" placeholder="Profile Designation" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                <input type="number" id="memberLength" placeholder="Length (m)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                <select id="memberQty" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                    <option value="1">Qty: 1</option><option value="5">Qty: 5</option><option value="10">Qty: 10</option>
+                </select>
             </div>
+            <button onclick="addComponentToBOM()" class="mt-4 bg-amber-500 hover:bg-amber-600 text-slate-950 px-6 py-2 rounded-lg font-bold text-sm w-full">Add to Pipeline</button>
         </section>
 
         <section class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-800 flex justify-between">
-                <h2 class="text-sm font-bold text-white">Phase 3: Structural BOM</h2>
-                <span id="bomCountBadge" class="text-xs text-slate-400">0 Items</span>
-            </div>
-            <table class="w-full text-left text-sm">
-                <thead>
-                    <tr class="bg-slate-900 text-slate-400 text-[10px] uppercase">
-                        <th class="py-3 px-4">Piece #</th>
-                        <th class="py-3 px-4">Designation</th>
-                        <th class="py-3 px-4">Mass</th>
-                        <th class="py-3 px-4">COG Data</th>
-                    </tr>
+            <table class="w-full text-sm text-left">
+                <thead class="bg-slate-900 text-slate-400 uppercase text-[10px]">
+                    <tr><th class="py-3 px-4">Piece #</th><th class="py-3 px-4">Designation</th><th class="py-3 px-4">Mass</th><th class="py-3 px-4">COG Data</th></tr>
                 </thead>
                 <tbody id="bomTableBody" class="divide-y divide-slate-800"></tbody>
             </table>
@@ -63,13 +55,26 @@
             <input type="file" id="sketchFileInput" accept="image/*" class="hidden" onchange="previewSketch(event)">
             <label for="sketchFileInput" class="block border-2 border-dashed border-slate-800 rounded-xl p-10 text-center cursor-pointer hover:border-amber-500">
                 <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-600"></i>
-                <p class="text-xs mt-2">Upload Sketch (AI will calculate COG)</p>
             </label>
             <img id="sketchImageDisplay" src="#" class="hidden max-h-48 mx-auto mt-4 rounded">
         </section>
+
     </main>
 
     <script>
+        const craneFleetDataset = [
+            { id: "c1", name: "Liebherr LTM 1100" }, { id: "c2", name: "Liebherr LTM 1200" },
+            { id: "c3", name: "Grove GMK5250L" }, { id: "c4", name: "Sany SCC1500A" }
+        ];
+
+        window.onload = () => {
+            const grid = document.getElementById('craneFleetCheckboxGrid');
+            grid.innerHTML = craneFleetDataset.map(c => `
+                <label class="flex items-center gap-2 text-xs bg-slate-900 p-2 rounded border border-slate-800">
+                    <input type="checkbox"> ${c.name}
+                </label>`).join('');
+        };
+
         let stagedBOMMembers = [];
 
         function addComponentToBOM() {
@@ -78,15 +83,12 @@
             const qty = parseInt(document.getElementById('memberQty').value);
             
             if (profile && length > 0) {
-                const totalMass = (length * 50) * qty; // Simplified weight logic
+                const totalMass = (length * 50) * qty; 
                 stagedBOMMembers.push({
-                    id: Date.now(),
                     labelKey: `Piece #${stagedBOMMembers.length + 1} (x${qty})`,
                     designation: profile,
-                    length: length,
                     calculatedMass: totalMass,
-                    cog_left_m: null,
-                    cog_right_m: null
+                    cog_left_m: null, cog_right_m: null
                 });
                 renderBOMTable();
             }
@@ -94,21 +96,13 @@
 
         function renderBOMTable() {
             const tbody = document.getElementById('bomTableBody');
-            tbody.innerHTML = '';
-            stagedBOMMembers.forEach((m) => {
-                const cogDisplay = m.cog_left_m ? 
-                    `<div class="text-[9px] text-amber-400 font-mono">COG: ${m.cog_left_m}m L | ${m.cog_right_m}m R</div>` : 
-                    `<div class="text-[9px] text-slate-600 italic">Pending AI Analysis</div>`;
-                
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-900/50">
-                        <td class="py-3 px-4 font-bold text-amber-400">${m.labelKey}</td>
-                        <td class="py-3 px-4">${m.designation}</td>
-                        <td class="py-3 px-4">${m.calculatedMass.toFixed(2)} kg</td>
-                        <td class="py-3 px-4">${cogDisplay}</td>
-                    </tr>`;
-            });
-            document.getElementById('bomCountBadge').innerText = `${stagedBOMMembers.length} Items`;
+            tbody.innerHTML = stagedBOMMembers.map(m => `
+                <tr class="hover:bg-slate-900/50">
+                    <td class="py-3 px-4 font-bold text-amber-400">${m.labelKey}</td>
+                    <td class="py-3 px-4">${m.designation}</td>
+                    <td class="py-3 px-4">${m.calculatedMass.toFixed(2)} kg</td>
+                    <td class="py-3 px-4 text-xs italic text-slate-600">${m.cog_left_m ? 'COG Analyzed' : 'Pending AI'}</td>
+                </tr>`).join('');
         }
 
         function previewSketch(e) {
@@ -116,7 +110,6 @@
             reader.onload = (ev) => {
                 document.getElementById('sketchImageDisplay').src = ev.target.result;
                 document.getElementById('sketchImageDisplay').classList.remove('hidden');
-                // Here you would trigger your Webhook to send image to OpenAI
             };
             reader.readAsDataURL(e.target.files[0]);
         }
