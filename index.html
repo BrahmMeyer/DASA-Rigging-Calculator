@@ -20,7 +20,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         
-        /* Modal Backdrop Smooth Blends */
         .modal-overlay {
             background-color: rgba(2, 6, 23, 0.85);
             backdrop-filter: blur(8px);
@@ -32,18 +31,19 @@
     <header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-5">
-                <a href="https://globalatomiccorp.com/Operations/Uranium/Dasa-Project/default.aspx" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center justify-center bg-amber-500 hover:bg-amber-400 transition-all duration-300 px-6 py-3 rounded-xl text-slate-950 font-black tracking-wider text-2xl shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 w-44">
-                    <span>DASA</span>
-                    <span class="text-[9px] font-bold tracking-tight uppercase text-slate-800 group-hover:text-slate-950 mt-0.5 transition-colors">Uranium Mine Project</span>
+                <a href="https://globalatomiccorp.com/Operations/Uranium/Dasa-Project/default.aspx" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center justify-center bg-amber-500 hover:bg-amber-400 transition-all duration-300 px-6 py-3 rounded-xl text-slate-950 shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 w-52 text-center">
+                    <span class="font-black tracking-wider text-2xl leading-none">DASA</span>
+                    <span class="text-xs font-bold tracking-tight uppercase text-slate-950 mt-1.5 transition-colors">Uranium Mine Project</span>
+                    <span class="text-[10px] font-extrabold text-blue-700 group-hover:text-blue-900 tracking-wider uppercase mt-0.5">Click Here</span>
                 </a>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">Heavy Lift Engineering & Rigging Planner</h1>
                     <p class="text-sm text-slate-400 font-medium">Multi-Batch Structural Manifests & Fleet Clearance</p>
                 </div>
             </div>
-            <div class="text-right">
-                <div class="text-xl font-black tracking-widest text-sky-400 leading-none">DCPL</div>
-                <div class="text-[11px] font-medium text-slate-200 mt-1 tracking-wide">Development Consultants Private</div>
+            <div class="flex flex-col justify-center items-center md:items-end text-center md:text-right h-full py-1">
+                <div class="text-xl font-black tracking-widest text-sky-400 leading-normal">DCPL</div>
+                <div class="text-[11px] font-medium text-slate-200 tracking-wide leading-normal">Development Consultants Private</div>
             </div>
         </div>
     </header>
@@ -128,7 +128,7 @@
                             <span id="craneSelectionLabel" class="text-sm font-medium text-slate-300">Select Crane(s)...</span>
                             <i class="fa-solid fa-chevron-down text-slate-400" id="craneChevron"></i>
                         </button>
-                        <div id="craneDropdown" class="hidden absolute right-0 z-50 bg-slate-950 border border-slate-700 rounded-xl mt-2 max-h-72 overflow-y-auto shadow-2xl custom-scrollbar" style="min-width:360px;">
+                        <div id="craneDropdown" class="hidden absolute right-0 z-50 w-full bg-slate-950 border border-slate-700 rounded-xl mt-2 max-h-72 overflow-y-auto shadow-2xl custom-scrollbar" style="min-width:360px;">
                             <div class="p-3 space-y-1" id="craneSelectionContainer">
                                 </div>
                         </div>
@@ -189,7 +189,7 @@
         </div>
         <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-                <h2 class="text-lg font-semibold flex items-center gap-2">
+                <h2 class="text-lg font-semibold flex items-center gap-2 text-slate-100 self-center">
                     <i class="fa-solid fa-list-check text-amber-500"></i> Phase 2: Beam Structural Inventory & BOM Evaluation
                 </h2>
                 <div class="flex items-end gap-4 w-full lg:w-auto justify-end">
@@ -201,7 +201,7 @@
                         <button onclick="findCranesToSuitInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-8 rounded-xl transition-all h-[46px] flex items-center justify-center shadow-md">
                             FIND SUITABLE CRANES
                         </button>
-                        <button type="button" onclick="showHelpModal('findCranes')" class="w-[46px] h-[46px] inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl font-bold transition-all border border-slate-700 text-sm">?</button>
+                        <button type="button" onclick="showHelpModal('findCranes')" class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700 self-center mb-0.5">?</button>
                     </div>
                 </div>
             </div>
@@ -261,7 +261,7 @@
         let INVENTORY_POOL = [];
         let nextId = 101;
 
-        // Expanded Structural Profiles Asset Dropdown Injection (Update 8)
+        // Expanded Structural Profiles Asset Dropdown Injection
         const memberOptions = {
             "Universal Beam": [
                 "UB 203x133x30", "UB 254x146x37", "UB 305x165x54", "UB 356x171x57", "UB 406x178x60",
@@ -280,16 +280,15 @@
             ]
         };
 
-        // Complete Fleet Logistical Configuration Records
+        // Update 2: Local uploaded physical filename references linked precisely to active configuration records
         const CRANE_DATA = {
-            "Demag AC 160-2": { maxCap: 200, minRadius: 3, maxRadius: 64, maxBoom: 64, img: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=80&q=80", type: "All-Terrain" },
-            "Grove RT890E": { maxCap: 90, minRadius: 2.7, maxRadius: 43.2, maxBoom: 43.2, img: "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=80&q=80", type: "Rough-Terrain" },
-            "XCMG QY70K-I": { maxCap: 70, minRadius: 3, maxRadius: 44.5, maxBoom: 44.5, img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=80&q=80", type: "Truck Crane" },
-            "Terex T560-1": { maxCap: 60, minRadius: 3, maxRadius: 33.5, maxBoom: 33.5, img: "https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?auto=format&fit=crop&w=80&q=80", type: "Truck Crane" },
-            "Terex RT230": { maxCap: 27.2, minRadius: 3, maxRadius: 28.7, maxBoom: 28.7, img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=80&q=80", type: "Rough-Terrain" }
+            "Demag AC 160-2": { maxCap: 200, minRadius: 3, maxRadius: 64, maxBoom: 64, img: "DEMAG AC160-2.png", type: "All-Terrain" },
+            "Grove RT890E": { maxCap: 90, minRadius: 2.7, maxRadius: 43.2, maxBoom: 43.2, img: "GROVE RT-890e.jpg", type: "Rough-Terrain" },
+            "XCMG QY70K-I": { maxCap: 70, minRadius: 3, maxRadius: 44.5, maxBoom: 44.5, img: "XCMG.jpg", type: "Truck Crane" },
+            "Terex T560-1": { maxCap: 60, minRadius: 3, maxRadius: 33.5, maxBoom: 33.5, img: "t-560-1-truck-crane.png", type: "Truck Crane" },
+            "Terex RT230": { maxCap: 27.2, minRadius: 3, maxRadius: 28.7, maxBoom: 28.7, img: "terex rt230.png", type: "Rough-Terrain" }
         };
 
-        // --- Contextual UX Content Registries (Layman Translations) ---
         const HELP_CONTENT = {
             safetyFactor: {
                 title: "Understanding Safety Factors",
@@ -423,13 +422,11 @@
             renderInventoryTable();
         }
 
-        // Row Removal Routine (Update 2)
         function deleteInventoryItem(id) {
             INVENTORY_POOL = INVENTORY_POOL.filter(item => item.id !== id);
             renderInventoryTable();
         }
 
-        // Precision UI Centralized Realignment Routine (Update 3)
         function renderInventoryTable() {
             const tbody = document.getElementById("libraryTableBody");
             tbody.innerHTML = "";
@@ -439,7 +436,7 @@
                 const row = document.createElement("tr");
                 row.className = "hover:bg-slate-900/40 transition-colors";
                 row.innerHTML = `
-                    <td class="py-4 px-6 text-center"><input type="checkbox" onchange="calculateSelectedWeight()" class="w-4 h-4 accent-emerald-500 rounded"></td>
+                    <td class="py-4 px-6 text-center"><input type="checkbox" data-id="${item.id}" onchange="calculateSelectedWeight()" class="w-4 h-4 accent-emerald-500 rounded"></td>
                     <td class="py-4 px-6 font-mono text-center text-slate-400">#${item.id}</td>
                     <td class="py-4 px-6 text-right font-semibold text-slate-100">${item.weight.toLocaleString()} kg</td>
                     <td class="py-4 px-6 text-right text-slate-300 font-medium">${item.length} m</td>
@@ -458,9 +455,11 @@
 
         function calculateSelectedWeight() {
             let selectedTotal = 0;
-            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
-            checkboxes.forEach((chk, index) => {
-                if (chk.checked) selectedTotal += INVENTORY_POOL[index].weight;
+            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']:checked");
+            checkboxes.forEach((chk) => {
+                const itemId = parseInt(chk.getAttribute('data-id'));
+                const matchedItem = INVENTORY_POOL.find(item => item.id === itemId);
+                if (matchedItem) selectedTotal += matchedItem.weight;
             });
             document.getElementById("combinedSelectedWeightDisplay").textContent = selectedTotal.toLocaleString() + " kg";
         }
@@ -472,13 +471,12 @@
             const sf = parseFloat(document.getElementById("safetyFactor").value) / 100 || 1.15;
             
             let selectedWeight = 0;
-            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
-            let checkedCount = 0;
-            checkboxes.forEach((chk, index) => { 
-                if (chk.checked) {
-                    selectedWeight += INVENTORY_POOL[index].weight; 
-                    checkedCount++;
-                }
+            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']:checked");
+            
+            checkboxes.forEach((chk) => {
+                const itemId = parseInt(chk.getAttribute('data-id'));
+                const matchedItem = INVENTORY_POOL.find(item => item.id === itemId);
+                if (matchedItem) selectedWeight += matchedItem.weight;
             });
             
             const requiredCap = (selectedWeight * sf) / 1000;
@@ -486,7 +484,7 @@
                 alert(`Selection missing: Please pick active fleet items from the dropdown list layout above.`);
                 return;
             }
-            if (checkedCount === 0) {
+            if (checkboxes.length === 0) {
                 alert(`Calculation anchor missing: Check the items in your inventory table that you intend to lift.`);
                 return;
             }
@@ -499,16 +497,17 @@
             alert(msg);
         }
 
-        // Webhook Pipeline Hook for Web Automation Systems (Update 10)
         function generateAssembledRiggingReports() {
             let selectedWeight = 0;
             const inventoryManifest = [];
-            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
+            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']:checked");
             
-            checkboxes.forEach((chk, index) => {
-                if (chk.checked) {
-                    selectedWeight += INVENTORY_POOL[index].weight;
-                    inventoryManifest.push(INVENTORY_POOL[index]);
+            checkboxes.forEach((chk) => {
+                const itemId = parseInt(chk.getAttribute('data-id'));
+                const matchedItem = INVENTORY_POOL.find(item => item.id === itemId);
+                if (matchedItem) {
+                    selectedWeight += matchedItem.weight;
+                    inventoryManifest.push(matchedItem);
                 }
             });
 
