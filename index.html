@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DASA Heavy Lift Engineering & Rigging Planner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://tailwindcss.com"></script>
+    <link href="https://cloudflare.com" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        @import url('https://googleapis.com');
         
         body {
             font-family: 'Inter', sans-serif;
@@ -16,7 +16,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         
@@ -39,17 +39,15 @@
                         <span class="text-xs font-bold tracking-tight uppercase text-slate-950 mt-1.5">Uranium Mine Project</span>
                     </div>
                     <!-- New smaller black button with yellow text underneath -->
-                    <a href="https://globalatomiccorp.com/Operations/Uranium/Dasa-Project/default.aspx" target="_blank" rel="noopener noreferrer" class="w-full bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all duration-300 py-1.5 rounded-lg text-center text-[10px] font-bold text-amber-400 uppercase tracking-widest shadow-md">
+                    <a href="https://globalatomiccorp.com" target="_blank" rel="noopener noreferrer" class="w-full bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all duration-300 py-1.5 rounded-lg text-center text-[10px] font-bold text-amber-400 uppercase tracking-widest shadow-md">
                         Click Here
                     </a>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">Heavy Lift Engineering & Rigging Planner</h1>
-                    <!-- Update 6: Subtitle updated to "DASA Site Crane Rigging Calculator" in exact same styling -->
                     <p class="text-sm text-slate-400 font-medium">DASA Site Crane Rigging Calculator</p>
                 </div>
             </div>
-            <!-- Update 2: DCPL moved left to center completely above its descriptive text row -->
             <div class="flex flex-col justify-center items-center md:items-center text-center h-full py-1">
                 <div class="text-xl font-black tracking-widest text-sky-400 leading-normal">DCPL</div>
                 <div class="text-[11px] font-medium text-slate-200 tracking-wide leading-normal">Development Consultants Private</div>
@@ -84,49 +82,24 @@
                         <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 – Lab / Control Room" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 – Lab / Control Room</span></label>
                         <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 (1) – Plant Store & Access Road" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 (1) – Plant Store & Access Road</span></label>
                         <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 (2) – Reagents & Hydrogen Peroxide" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 (2) – Reagents & Hydrogen Peroxide</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 (3)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 (3)</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 487 – Substation #02" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 487 – Substation #02</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 488" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 488</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 490 – STG Building / ECR / Acid Plant" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 490 – STG Building / ECR / Acid Plant</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sulphur Store Shed" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sulphur Store Shed</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sulphur Furnace" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sulphur Furnace</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sulphur Filter Building" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sulphur Filter Building</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="MRSS – Main Receiving Sub Station" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">MRSS – Main Receiving Sub Station</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sub Station #03" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sub Station #03</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="DG House & DG Electrical Building" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">DG House & DG Electrical Building</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Stacker / Reclaimer / Feeding Conveyor" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Stacker / Reclaimer / Feeding Conveyor</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="ROM Pad" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">ROM Pad</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="ORE Discrim" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">ORE Discrim</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Weighbridge" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Weighbridge</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Leaching Area" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Leaching Area</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="SX Area (Solvent Extraction)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">SX Area (Solvent Extraction)</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Foam Pump House" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Foam Pump House</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Emergency Ponds" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Emergency Ponds</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="SOF Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">SOF Yard</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="SMPP Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">SMPP Yard</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="MIGAS Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">MIGAS Yard</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Laydown Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Laydown Yard</span></label>
-                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Lida Camp" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Lida Camp</span></label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Phase 1: Main Control Settings Dashboard -->
+        <!-- Operational Constraints Input Section -->
         <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
-            <h2 class="text-lg font-semibold mb-6 flex items-center gap-3">
-                <i class="fa-solid fa-truck-ramp-box text-amber-500"></i> Phase 1: Deployment Parameters & Fleet Specifications
+            <h2 class="text-lg font-semibold flex items-center gap-2 mb-6 text-slate-100">
+                <i class="fa-solid fa-sliders text-amber-500"></i> Phase 1: Operational Crane Footprint Constraints
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Safety Factor Parameter -->
+                <!-- Safety Cushion Variable Settings Matrix -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Safety Factor (%)</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Structural Safety Margin Factor</label>
                         <button type="button" onclick="showHelpModal('safetyFactor')" class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
                     </div>
-                    <input type="number" id="safetyFactor" value="115" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl p-4 transition-colors font-medium">
+                    <div class="relative">
+                        <input type="text" id="globalSafetyMultiplier" value="115%" disabled class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 transition-colors font-mono font-bold text-amber-400 cursor-not-allowed">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">Locked Margin</div>
+                    </div>
                 </div>
-                <!-- Radius Parameter -->
+                <!-- Horizontal Lift Footprint Setting Matrix -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Work Radius (m)</label>
@@ -151,6 +124,7 @@
                 </div>
             </div>
         </section>
+
         <!-- Materials Inventory Addition Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
@@ -257,12 +231,19 @@
             </div>
         </section>
 
-        <!-- Update 3: Generate Rigging Report execution button and its container section have been removed -->
+        <!-- Dynamic Interactive Fleet Evaluation Results Container Matrix -->
+        <section id="craneEvaluationResultsSection" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+            <h3 class="text-slate-100 font-bold text-base flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-amber-500"></i> Fleet Suitability Evaluation Results
+            </h3>
+            <div id="craneCardsOutputGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- UI Feedback Cards dynamically compile here -->
+            </div>
+        </section>
 
     </main>
 
     <!-- Global Application Footer -->
-    <!-- Update 4: Changed branding label to "Created by Brahm Meyer" and added tracking/font adjustments to increase prominence slightly -->
     <footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-[13px] font-semibold tracking-wider text-slate-400">
         Created by Brahm Meyer
     </footer>
@@ -300,11 +281,23 @@
             ]
         };
 
+        // Real-world engineered cross-reference values mapping profiles to linear mass (kg/m)
+        const PROFILE_MASS_REGISTRY = {
+            "UB 203x133x30": 30.0, "UB 254x146x37": 37.0, "UB 305x165x54": 54.0, "UB 356x171x57": 57.0, 
+            "UB 406x178x60": 60.0, "UB 457x191x98": 98.0, "UB 533x210x122": 122.0, "UB 610x229x140": 140.0, 
+            "UB 686x254x170": 170.0, "UB 762x267x197": 197.0, "UB 838x292x226": 226.0, "UB 914x305x289": 289.0,
+            "PFC 100x50": 10.2, "PFC 125x65": 11.9, "PFC 150x75": 17.9, "PFC 200x75": 22.4, "PFC 230x90": 32.2,
+            "PFC 260x90": 34.8, "PFC 300x100": 40.1, "PFC 380x100": 54.0, "PFC 430x100": 64.0,
+            "UC 152x152x23": 23.0, "UC 203x203x46": 46.0, "UC 254x254x73": 73.0, "UC 305x305x118": 118.0, "UC 356x368x177": 177.0,
+            "Custom Heavy Built-up Girder (PG-01)": 450.0, "Heavy Crane Runway Girder (PG-02)": 620.0, "Reinforced Box Girder (BG-01)": 510.0
+        };
+
+        // Realigned metric system maximum constraints (Ton limits matched exactly to operational frameworks)
         const CRANE_DATA = {
-            "Demag AC 160-2": { maxCap: 200, minRadius: 3, maxRadius: 64, maxBoom: 64, type: "All-Terrain" },
-            "Grove RT890E": { maxCap: 90, minRadius: 2.7, maxRadius: 43.2, maxBoom: 43.2, type: "Rough-Terrain" },
+            "Demag AC 160-2": { maxCap: 160, minRadius: 3, maxRadius: 64, maxBoom: 64, type: "All-Terrain" },
+            "Grove RT890E": { maxCap: 81.6, minRadius: 2.7, maxRadius: 43.2, maxBoom: 43.2, type: "Rough-Terrain" },
             "XCMG QY70K-I": { maxCap: 70, minRadius: 3, maxRadius: 44.5, maxBoom: 44.5, type: "Truck Crane" },
-            "Terex T560-1": { maxCap: 60, minRadius: 3, maxRadius: 33.5, maxBoom: 33.5, type: "Truck Crane" },
+            "Terex T560-1": { maxCap: 54.4, minRadius: 3, maxRadius: 33.5, maxBoom: 33.5, type: "Truck Crane" },
             "Terex RT230": { maxCap: 27.2, minRadius: 3, maxRadius: 28.7, maxBoom: 28.7, type: "Rough-Terrain" }
         };
 
@@ -358,7 +351,6 @@
             document.getElementById('craneChevron').classList.toggle('rotate-180');
         }
 
-        // Update 5: Re-engineered dynamic DOM compiler to exclude all preview images while keeping the functionality intact
         function buildCraneCheckboxList() {
             const container = document.getElementById('craneSelectionContainer');
             container.innerHTML = "";
@@ -406,19 +398,26 @@
                 select.appendChild(el);
             });
         }
-
         function addBeamToInventory() {
-            const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
+            const length = parseFloat(document.getElementById("inputBeamLength").value) || 0;
             const qty = parseInt(document.getElementById("inputBeamQty").value) || 1;
-            let unitWeight = Math.round(length * 420);
             const member = document.getElementById("inputBeamMember").value;
-            if (member.includes("Girder") || member.includes("Box")) {
-                unitWeight = Math.round(length * 650);
+            const safetyFactor = 1.15;
+
+            if (length <= 0) {
+                alert("Please enter a valid length.");
+                return;
             }
+
+            const linearMass = PROFILE_MASS_REGISTRY[member] || 40.0;
+            const calculatedStaticWeight = Math.round(linearMass * length);
+            const grossRiggingWeight = Math.round(calculatedStaticWeight * safetyFactor);
+
             for (let i = 0; i < qty; i++) {
                 INVENTORY_POOL.push({
                     id: nextId++,
-                    weight: unitWeight,
+                    weight: grossRiggingWeight, 
+                    staticWeight: calculatedStaticWeight,
                     length: length,
                     componentClass: member
                 });
@@ -429,10 +428,16 @@
         function addEquipmentToInventory() {
             const weight = parseFloat(document.getElementById("inputEquipWeight").value);
             const tag = document.getElementById("inputEquipName").value.trim();
-            if (!weight) return alert("Please specify a valid operational mass array.");
+            const safetyFactor = 1.15;
+
+            if (!weight || weight <= 0) return alert("Please specify a valid operational mass array.");
+            
+            const grossRiggingWeight = Math.round(weight * safetyFactor);
+
             INVENTORY_POOL.push({
                 id: nextId++,
-                weight: weight,
+                weight: grossRiggingWeight,
+                staticWeight: weight,
                 length: 6,
                 componentClass: tag || "Industrial Vessel Process Unit"
             });
@@ -453,15 +458,13 @@
                 const row = document.createElement("tr");
                 row.className = "hover:bg-slate-900/40 transition-colors";
                 row.innerHTML = `
-                    <td class="py-4 px-6 text-center"><input type="checkbox" data-id="${item.id}" onchange="calculateSelectedWeight()" class="w-4 h-4 accent-emerald-500 rounded"></td>
-                    <td class="py-4 px-6 font-mono text-center text-slate-400">#${item.id}</td>
-                    <td class="py-4 px-6 text-right font-semibold text-slate-100">${item.weight.toLocaleString()} kg</td>
-                    <td class="py-4 px-6 text-right text-slate-300 font-medium">${item.length} m</td>
-                    <td class="py-4 px-6 text-center font-medium text-amber-400 truncate max-w-xs">${item.componentClass}</td>
+                    <td class="py-4 px-6 text-center"><input type="checkbox" data-id="\${item.id}" onchange="calculateSelectedWeight()" class="w-4 h-4 accent-emerald-500 rounded"></td>
+                    <td class="py-4 px-6 font-mono text-center text-slate-400">#\${item.id}</td>
+                    <td class="py-4 px-6 text-right font-semibold text-slate-100">\${item.weight.toLocaleString()} kg</td>
+                    <td class="py-4 px-6 text-right text-slate-300 font-medium">\${item.length} m</td>
+                    <td class="py-4 px-6 text-center text-slate-400">\${item.componentClass}</td>
                     <td class="py-4 px-6 text-center">
-                        <button onclick="deleteInventoryItem(${item.id})" class="text-slate-500 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition-all" title="Remove Record">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+                        <button onclick="deleteInventoryItem(\${item.id})" class="text-rose-500 hover:text-rose-400 transition-colors"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -471,71 +474,86 @@
         }
 
         function calculateSelectedWeight() {
-            let selectedTotal = 0;
-            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']:checked");
-            checkboxes.forEach((chk) => {
-                const itemId = parseInt(chk.getAttribute('data-id'));
-                const matchedItem = INVENTORY_POOL.find(item => item.id === itemId);
-                if (matchedItem) selectedTotal += matchedItem.weight;
+            let combinedWeight = 0;
+            const checkboxes = document.querySelectorAll('#libraryTableBody input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                const id = parseInt(cb.getAttribute('data-id'));
+                const item = INVENTORY_POOL.find(i => i.id === id);
+                if (item) combinedWeight += item.weight;
             });
-            document.getElementById("combinedSelectedWeightDisplay").textContent = selectedTotal.toLocaleString() + " kg";
+            document.getElementById("combinedSelectedWeightDisplay").textContent = combinedWeight.toLocaleString() + " kg";
         }
 
         function findCranesToSuitInventory() {
-            const height = parseFloat(document.getElementById("phase2TargetHeight").value) || 15;
-            const selectedCranes = getSelectedCranes();
-            const radius = parseFloat(document.getElementById("globalRadius").value) || 12;
-            const sf = parseFloat(document.getElementById("safetyFactor").value) / 100 || 1.15;
+            const targetHeight = parseFloat(document.getElementById("phase2TargetHeight").value) || 0;
+            const radius = parseFloat(document.getElementById("globalRadius").value) || 0;
+            const resultsSection = document.getElementById("craneEvaluationResultsSection");
+            const cardsGrid = document.getElementById("craneCardsOutputGrid");
             
-            let selectedWeight = 0;
-            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']:checked");
-            
-            checkboxes.forEach((chk) => {
-                const itemId = parseInt(chk.getAttribute('data-id'));
-                const matchedItem = INVENTORY_POOL.find(item => item.id === itemId);
-                if (matchedItem) selectedWeight += matchedItem.weight;
+            let totalLiftMass = 0;
+            const checkboxes = document.querySelectorAll('#libraryTableBody input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                const id = parseInt(cb.getAttribute('data-id'));
+                const item = INVENTORY_POOL.find(i => i.id === id);
+                if (item) totalLiftMass += item.weight;
             });
-            
-            const requiredCap = (selectedWeight * sf) / 1000;
-            if (selectedCranes.length === 0) {
-                alert(`Selection missing: Please pick active fleet items from the dropdown list layout above.`);
+
+            if (totalLiftMass === 0) {
+                alert("Please select at least one item from the table ledger.");
                 return;
             }
-            if (checkboxes.length === 0) {
-                alert(`Calculation anchor missing: Check the items in your inventory table that you intend to lift.`);
+
+            const totalLiftTons = totalLiftMass / 1000;
+            const cranes = getSelectedCranes();
+            
+            if (cranes.length === 0) {
+                alert("Please select at least one crane from the dropdown framework.");
                 return;
             }
-            
-            let msg = `LIFT ANALYSIS SUMMARY:\nTarget Load Requirement: ${requiredCap.toFixed(2)}t (Gross Mass + Safety Cushion)\nRadius: ${radius}m | Structural Elevation Height: ${height}m\n\n`;
-            selectedCranes.forEach(c => {
-                const capable = c.maxCap >= requiredCap && c.maxRadius >= radius && c.maxBoom >= height;
-                msg += `${capable ? '✅ PASS' : '❌ FAIL'} : ${c.name}\n   Config Limit: ${c.maxCap}t | Reach Max: ${c.maxRadius}m\n\n`;
-            });
-            alert(msg);
-        }
 
-        // Global Event Hooks
-        document.addEventListener('click', function(e) {
-            const areaDd = document.getElementById('areaDropdown');
-            const areaBtn = areaDd ? areaDd.previousElementSibling : null;
-            if (areaDd && !areaDd.classList.contains('hidden') && !areaDd.contains(e.target) && areaBtn && !areaBtn.contains(e.target)) {
-                areaDd.classList.add('hidden');
-                document.getElementById('areaChevron').classList.remove('rotate-180');
-            }
-            
-            const craneDd = document.getElementById('craneDropdown');
-            const craneBtn = craneDd ? craneDd.previousElementSibling : null;
-            if (craneDd && !craneDd.classList.contains('hidden') && !craneDd.contains(e.target) && craneBtn && !craneBtn.contains(e.target)) {
-                craneDd.classList.add('hidden');
-                document.getElementById('craneChevron').classList.remove('rotate-180');
-            }
-        });
+            resultsSection.classList.remove("hidden");
+            cardsGrid.innerHTML = "";
 
-        window.onload = () => {
-            buildCraneCheckboxList();
-            updateMemberOptions();
-            renderInventoryTable();
-        };
-    </script>
-</body>
-</html>
+            cranes.forEach(crane => {
+                const approxBoomLength = Math.sqrt((radius * radius) + (targetHeight * targetHeight));
+                const boomAngleRad = Math.atan2(targetHeight, radius);
+                const boomAngleDeg = Math.round(boomAngleRad * (180 / Math.PI));
+                
+                let dynamicCapacity = crane.maxCap;
+                if (radius > crane.minRadius) {
+                    const radiusRatio = (radius - crane.minRadius) / (crane.maxRadius - crane.minRadius);
+                    dynamicCapacity = crane.maxCap * Math.pow(1 - radiusRatio, 1.6); 
+                }
+
+                let isSuitable = true;
+                let failReasons = [];
+
+                if (radius > crane.maxRadius) {
+                    isSuitable = false;
+                    failReasons.push(`Exceeds Max Radius (\${crane.maxRadius}m)`);
+                }
+                if (approxBoomLength > crane.maxBoom) {
+                    isSuitable = false;
+                    failReasons.push(`Boom Limit (\({approxBoomLength.toFixed(1)}m >\){crane.maxBoom}m)`);
+                }
+                if (totalLiftTons > dynamicCapacity) {
+                    isSuitable = false;
+                    failReasons.push(`Overloaded (\({totalLiftTons.toFixed(1)}t > Chart Capacity\){dynamicCapacity.toFixed(1)}t)`);
+                }
+
+                const cardColorClass = isSuitable 
+                    ? "border-emerald-500/30 bg-emerald-950/20 shadow-emerald-950/10" 
+                    : "border-rose-500/30 bg-rose-950/20 shadow-rose-950/10";
+                
+                const statusBadge = isSuitable 
+                    ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Clear to Lift</span>`
+                    : `<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">No Go / Overload</span>`;
+
+                cardsGrid.innerHTML += `
+                    <div class="border rounded-xl p-5 shadow-lg flex flex-col justify-between transition-all duration-300 \${cardColorClass}">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold text-slate-100 text-sm leading-tight">\${crane.name}</h4>
+                                    <span class="text-[11px] font-medium text-slate-400 font-mono">\${crane.type}</span>
+
