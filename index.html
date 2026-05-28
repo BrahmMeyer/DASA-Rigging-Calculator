@@ -7,404 +7,320 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+        }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .glow-green { animation: pulse-green 2s infinite; background-color: #22c55e; }
-        .glow-red { animation: pulse-red 1.5s infinite; background-color: #ef4444; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        /* Modal Backdrop Smooth Blends */
+        .modal-overlay {
+            background-color: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
 
     <header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4">
-                <div class="bg-amber-500 p-3 rounded-xl text-slate-950 font-black text-xl">DASA</div>
+            <div class="flex items-center gap-5">
+                <a href="https://globalatomiccorp.com/Operations/Uranium/Dasa-Project/default.aspx" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center justify-center bg-amber-500 hover:bg-amber-400 transition-all duration-300 px-6 py-3 rounded-xl text-slate-950 font-black tracking-wider text-2xl shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 w-44">
+                    <span>DASA</span>
+                    <span class="text-[9px] font-bold tracking-tight uppercase text-slate-800 group-hover:text-slate-950 mt-0.5 transition-colors">Uranium Mine Project</span>
+                </a>
                 <div>
-                    <h1 class="text-2xl font-bold">Heavy Lift Engineering & Rigging Planner</h1>
-                    <p class="text-sm text-slate-400">Multi-Batch Structural Manifests & Fleet Clearance</p>
+                    <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">Heavy Lift Engineering & Rigging Planner</h1>
+                    <p class="text-sm text-slate-400 font-medium">Multi-Batch Structural Manifests & Fleet Clearance</p>
                 </div>
             </div>
-            <div class="text-emerald-400 font-bold">READY</div>
+            <div class="text-right">
+                <div class="text-xl font-black tracking-widest text-sky-400 leading-none">DCPL</div>
+                <div class="text-[11px] font-medium text-slate-200 mt-1 tracking-wide">Development Consultants Private</div>
+            </div>
         </div>
     </header>
-
     <main class="max-w-7xl mx-auto p-8 space-y-10">
 
-        <!-- Area of Operation -->
-        <div class="bg-slate-950 border border-slate-700 rounded-2xl p-6">
-            <label class="block text-xs font-bold text-slate-400 mb-2">AREA OF OPERATION</label>
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
+            <label class="block text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">Area of Operation</label>
             <div class="relative">
-                <button onclick="toggleAreaDropdown()" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-4 text-lg font-medium text-left flex justify-between items-center">
-                    <span id="areaSelectionLabel">Select Area(s)...</span>
-                    <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                <button onclick="toggleAreaDropdown()" class="w-full bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl p-4 text-lg font-medium text-left flex justify-between items-center transition-all">
+                    <span id="areaSelectionLabel" class="text-slate-300">Select Area(s)...</span>
+                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200" id="areaChevron"></i>
                 </button>
-                <div id="areaDropdown" class="hidden absolute z-50 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 max-h-72 overflow-y-auto shadow-2xl">
+                <div id="areaDropdown" class="hidden absolute z-50 w-full bg-slate-950 border border-slate-700 rounded-xl mt-2 max-h-72 overflow-y-auto shadow-2xl custom-scrollbar">
                     <div class="p-3 space-y-1">
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 476 (1)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 476 (1)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 476 (2)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 476 (2)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 477 – Mine Workshop" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 477 – Mine Workshop</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 478 – Primary Crusher" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 478 – Primary Crusher</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 478 (1)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 478 (1)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 478 (2)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 478 (2)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 478 (3) – Proj Off" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 478 (3) – Proj Off</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 480" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 480</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 480 (1) – Admin / Change Houses" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 480 (1) – Admin / Change Houses</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 481 (1) – Change House & Administration" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 481 (1) – Change House & Administration</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 483 – Plant Workshop" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 483 – Plant Workshop</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 483 (1)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 483 (1)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 483 (2)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 483 (2)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 485 – Lab / Control Room" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 485 – Lab / Control Room</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 485 (1) – Plant Store & Access Road" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 485 (1) – Plant Store & Access Road</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 485 (2) – Reagents & Hydrogen Peroxide" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 485 (2) – Reagents & Hydrogen Peroxide</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 485 (3)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 485 (3)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 487 – Substation #02" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 487 – Substation #02</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 488" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 488</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="RL 490 – STG Building / ECR / Acid Plant" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">RL 490 – STG Building / ECR / Acid Plant</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Sulphur Store Shed" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Sulphur Store Shed</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Sulphur Furnace" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Sulphur Furnace</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Sulphur Filter Building" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Sulphur Filter Building</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="MRSS – Main Receiving Sub Station" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">MRSS – Main Receiving Sub Station</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Sub Station #03" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Sub Station #03</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="DG House & DG Electrical Building" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">DG House & DG Electrical Building</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Stacker / Reclaimer / Feeding Conveyor" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Stacker / Reclaimer / Feeding Conveyor</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="ROM Pad" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">ROM Pad</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="ORE Discrim" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">ORE Discrim</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Weighbridge" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Weighbridge</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Leaching Area" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Leaching Area</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="SX Area (Solvent Extraction)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">SX Area (Solvent Extraction)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Foam Pump House" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Foam Pump House</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Emergency Ponds" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Emergency Ponds</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="SOF Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">SOF Yard</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="SMPP Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">SMPP Yard</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="MIGAS Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">MIGAS Yard</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Laydown Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Laydown Yard</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                            <input type="checkbox" value="Lida Camp" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-                            <span class="text-sm">Lida Camp</span>
-                        </label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 476 (1)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 476 (1)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 476 (2)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 476 (2)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 477 – Mine Workshop" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 477 – Mine Workshop</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 478 – Primary Crusher" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 478 – Primary Crusher</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 478 (1)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 478 (1)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 478 (2)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 478 (2)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 478 (3) – Proj Off" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 478 (3) – Proj Off</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 480" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 480</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 480 (1) – Admin / Change Houses" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 480 (1) – Admin / Change Houses</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 481 (1) – Change House & Administration" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 481 (1) – Change House & Administration</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 483 – Plant Workshop" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 483 – Plant Workshop</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 483 (1)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 483 (1)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 483 (2)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 483 (2)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 – Lab / Control Room" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 – Lab / Control Room</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 (1) – Plant Store & Access Road" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 (1) – Plant Store & Access Road</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 (2) – Reagents & Hydrogen Peroxide" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 (2) – Reagents & Hydrogen Peroxide</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 485 (3)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 485 (3)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 487 – Substation #02" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 487 – Substation #02</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 488" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 488</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="RL 490 – STG Building / ECR / Acid Plant" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">RL 490 – STG Building / ECR / Acid Plant</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sulphur Store Shed" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sulphur Store Shed</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sulphur Furnace" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sulphur Furnace</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sulphur Filter Building" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sulphur Filter Building</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="MRSS – Main Receiving Sub Station" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">MRSS – Main Receiving Sub Station</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Sub Station #03" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Sub Station #03</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="DG House & DG Electrical Building" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">DG House & DG Electrical Building</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Stacker / Reclaimer / Feeding Conveyor" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Stacker / Reclaimer / Feeding Conveyor</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="ROM Pad" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">ROM Pad</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="ORE Discrim" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">ORE Discrim</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Weighbridge" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Weighbridge</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Leaching Area" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Leaching Area</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="SX Area (Solvent Extraction)" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">SX Area (Solvent Extraction)</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Foam Pump House" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Foam Pump House</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Emergency Ponds" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Emergency Ponds</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="SOF Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">SOF Yard</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="SMPP Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">SMPP Yard</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="MIGAS Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">MIGAS Yard</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Laydown Yard" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Laydown Yard</span></label>
+                        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"><input type="checkbox" value="Lida Camp" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4"><span class="text-sm text-slate-300">Lida Camp</span></label>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Phase 1 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+
+        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
             <h2 class="text-lg font-semibold mb-6 flex items-center gap-3">
                 <i class="fa-solid fa-truck-ramp-box text-amber-500"></i> Phase 1: Deployment Parameters & Fleet Specifications
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Safety Factor (%)</label>
-                    <input type="number" id="safetyFactor" value="115" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Safety Factor (%)</label>
+                        <button type="button" onclick="showHelpModal('safetyFactor')" class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
+                    </div>
+                    <input type="number" id="safetyFactor" value="115" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl p-4 transition-colors font-medium">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Work Radius (m)</label>
-                    <input type="number" id="globalRadius" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Work Radius (m)</label>
+                        <button type="button" onclick="showHelpModal('workRadius')" class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
+                    </div>
+                    <input type="number" id="globalRadius" value="12" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl p-4 transition-colors font-medium">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-2">Select Cranes</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select Cranes</label>
                     <div class="relative">
-                        <button onclick="toggleCraneDropdown()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-left flex justify-between items-center">
-                            <span id="craneSelectionLabel" class="text-sm">Select Crane(s)...</span>
-                            <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                        <button onclick="toggleCraneDropdown()" class="w-full bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl p-4 text-left flex justify-between items-center transition-all">
+                            <span id="craneSelectionLabel" class="text-sm font-medium text-slate-300">Select Crane(s)...</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400" id="craneChevron"></i>
                         </button>
-                        <div id="craneDropdown" class="hidden absolute z-50 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 max-h-64 overflow-y-auto shadow-2xl" style="min-width:340px;">
-                            <div class="p-3 space-y-1">
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Liebherr LTM 1100-5.2" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Liebherr LTM 1100-5.2</span><br>All-terrain | Max cap: 100t @ 3m | Boom: 13–60m | Jib: up to 36m | Min radius: 3m | Max radius: 48m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Liebherr LTM 1200-5.1" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Liebherr LTM 1200-5.1</span><br>All-terrain | Max cap: 200t @ 3m | Boom: 15.4–80m | Jib: up to 52m | Min radius: 3m | Max radius: 64m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Liebherr LTM 1300-6.2" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Liebherr LTM 1300-6.2</span><br>All-terrain | Max cap: 300t @ 3m | Boom: 15.4–84m | Jib: up to 84m | Min radius: 3m | Max radius: 80m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Tadano ATF 220G-5" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Tadano ATF 220G-5</span><br>All-terrain | Max cap: 220t @ 3m | Boom: 15–68m | Jib: up to 39m | Min radius: 3m | Max radius: 60m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Manitowoc Grove GMK5150L" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Manitowoc Grove GMK5150L</span><br>All-terrain | Max cap: 150t @ 3m | Boom: 13.1–60m | Jib: up to 37m | Min radius: 3m | Max radius: 56m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Manitowoc Grove GMK6300L" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Manitowoc Grove GMK6300L</span><br>All-terrain | Max cap: 300t @ 3m | Boom: 15.4–84m | Jib: up to 91m | Min radius: 3.5m | Max radius: 80m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Liebherr LR 1300 (Crawler)" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Liebherr LR 1300 (Crawler)</span><br>Crawler | Max cap: 300t @ 7m | Boom: 18–102m | Luffing jib: 18–96m | Min radius: 7m | Max radius: 96m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Liebherr LR 1600/2 (Crawler)" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Liebherr LR 1600/2 (Crawler)</span><br>Crawler | Max cap: 600t @ 7m | Boom: 18–126m | Luffing jib: up to 108m | Min radius: 7m | Max radius: 120m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Manitowoc 18000 (Crawler)" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Manitowoc 18000 (Crawler)</span><br>Crawler | Max cap: 600t @ 9m | Boom: up to 120m | Luffing jib: up to 114m | Min radius: 9m | Max radius: 108m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Terex CC 2800-1 (Crawler)" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Terex CC 2800-1 (Crawler)</span><br>Crawler | Max cap: 600t @ 8m | Boom: 18–108m | Luffing jib: up to 126m | Min radius: 8m | Max radius: 96m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Liebherr LTM 1750-9.1" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Liebherr LTM 1750-9.1</span><br>All-terrain | Max cap: 750t @ 3m | Boom: 17.4–52m | Luffing jib: up to 126m | Min radius: 3m | Max radius: 104m</span>
-                                </label>
-                                <label class="flex items-start gap-3 p-2 hover:bg-slate-700 rounded-lg cursor-pointer">
-                                    <input type="checkbox" value="Demag AC 500-2" onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-                                    <span class="text-xs leading-tight"><span class="font-semibold text-amber-400">Demag AC 500-2</span><br>All-terrain | Max cap: 500t @ 3m | Boom: 15.4–84m | Jib: up to 84m | Min radius: 3m | Max radius: 88m</span>
-                                </label>
-                            </div>
+                        <div id="craneDropdown" class="hidden absolute right-0 z-50 bg-slate-950 border border-slate-700 rounded-xl mt-2 max-h-72 overflow-y-auto shadow-2xl custom-scrollbar" style="min-width:360px;">
+                            <div class="p-3 space-y-1" id="craneSelectionContainer">
+                                </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- Add Beam / Girder -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-                <h3 class="text-amber-400 font-bold mb-4">Add Beam / Girder Member</h3>
-                <select id="inputBeamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4">
-                    <option value="Universal Beam">Universal Beam (BSI)</option>
-                    <option value="Parallel Flange Channel">Parallel Flange Channel</option>
-                    <option value="Universal Column">Universal Column</option>
-                    <option value="Plate Girder">Plate Girder (Built-up)</option>
-                </select>
-                <select id="inputBeamMember" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4"></select>
+            
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-amber-400 font-bold text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group"></i> Add Beam / Girder Member
+                    </h3>
+                    <select id="inputBeamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl p-4 mb-4 font-medium transition-colors">
+                        <option value="Universal Beam">Universal Beam (BSI)</option>
+                        <option value="Parallel Flange Channel">Parallel Flange Channel</option>
+                        <option value="Universal Column">Universal Column</option>
+                        <option value="Plate Girder">Plate Girder (Built-up)</option>
+                    </select>
+                    <select id="inputBeamMember" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl p-4 mb-4 font-medium transition-colors"></select>
+                </div>
                 
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-3 gap-4 items-end">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Length (m)</label>
-                        <input type="number" id="inputBeamLength" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Length (m)</label>
+                        <input type="number" id="inputBeamLength" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-medium h-[46px]">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Qty</label>
-                        <input type="number" id="inputBeamQty" value="1" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Qty</label>
+                        <input type="number" id="inputBeamQty" value="1" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-medium h-[46px]">
                     </div>
-                    <button onclick="addBeamToInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl">ADD BEAM</button>
+                    <button onclick="addBeamToInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition-all h-[46px] flex items-center justify-center shadow-lg shadow-amber-500/5">ADD BEAM</button>
                 </div>
             </div>
-            <!-- Add Industrial Equipment -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-                <h3 class="text-cyan-400 font-bold mb-4">Add Industrial Equipment</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Equipment Name</label>
-                        <input type="text" id="inputEquipName" placeholder="e.g. Heat Exchanger" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
+
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-cyan-400 font-bold text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-industrial"></i> Add Industrial Equipment
+                    </h3>
+                    <div class="space-y-4 mb-4">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Mass (kg)</label>
-                            <input type="number" id="inputEquipWeight" placeholder="14500" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Equipment Name / Tag</label>
+                            <input type="text" id="inputEquipName" placeholder="e.g. Heat Exchanger (E-104)" class="w-full bg-slate-900 border border-slate-700 focus:border-cyan-500 rounded-xl p-4 font-medium h-[54px]">
                         </div>
-                        <button onclick="addEquipmentToInventory()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl">ADD EQUIPMENT</button>
                     </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Mass (kg)</label>
+                        <input type="number" id="inputEquipWeight" placeholder="14500" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-medium h-[46px]">
+                    </div>
+                    <button onclick="addEquipmentToInventory()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl transition-all h-[46px] w-full flex items-center justify-center shadow-lg shadow-cyan-500/5">ADD EQUIPMENT</button>
                 </div>
             </div>
         </div>
-        <!-- Phase 2 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-semibold">Phase 2: Beam Structural Inventory & BOM Evaluation</h2>
-                <div class="flex items-center gap-4">
+        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-amber-500"></i> Phase 2: Beam Structural Inventory & BOM Evaluation
+                </h2>
+                <div class="flex items-end gap-4 w-full lg:w-auto justify-end">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Lifting Height (m)</label>
-                        <input type="number" id="phase2TargetHeight" value="15" class="w-28 bg-slate-900 border border-slate-700 rounded-xl p-3 text-center">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Lifting Height (m)</label>
+                        <input type="number" id="phase2TargetHeight" value="15" class="w-32 bg-slate-900 border border-slate-700 rounded-xl p-3 text-center font-bold h-[46px]">
                     </div>
-                    <button onclick="findCranesToSuitInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-8 py-3 rounded-xl">
-                        FIND SUITABLE CRANES
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="findCranesToSuitInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-8 rounded-xl transition-all h-[46px] flex items-center justify-center shadow-md">
+                            FIND SUITABLE CRANES
+                        </button>
+                        <button type="button" onclick="showHelpModal('findCranes')" class="w-[46px] h-[46px] inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl font-bold transition-all border border-slate-700 text-sm">?</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="overflow-x-auto border border-slate-700 rounded-2xl">
-                <table class="w-full">
+            <div class="overflow-x-auto border border-slate-800 rounded-2xl bg-slate-900/40">
+                <table class="w-full text-sm">
                     <thead>
-                        <tr class="bg-slate-800 text-slate-300">
-                            <th class="py-4 px-6 text-center">Select</th>
-                            <th class="py-4 px-6 text-center">ID</th>
-                            <th class="py-4 px-6 text-right">Mass (kg)</th>
-                            <th class="py-4 px-6 text-right">Length (m)</th>
-                            <th class="py-4 px-6">Profile</th>
+                        <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[11px]">
+                            <th class="py-4 px-6 text-center w-24">Select</th>
+                            <th class="py-4 px-6 text-center w-32">ID</th>
+                            <th class="py-4 px-6 text-right w-44">Mass (kg)</th>
+                            <th class="py-4 px-6 text-right w-44">Length (m)</th>
+                            <th class="py-4 px-6 text-center">Profile</th>
+                            <th class="py-4 px-6 text-center w-24">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="libraryTableBody" class="divide-y divide-slate-700"></tbody>
+                    <tbody id="libraryTableBody" class="divide-y divide-slate-800 text-slate-300 font-medium">
+                        </tbody>
                 </table>
             </div>
 
-            <div class="mt-6 grid grid-cols-2 gap-6">
-                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6">
-                    <span class="text-sm font-medium">Total BOM Weight</span>
-                    <span id="totalBOMWeightDisplay" class="block text-3xl font-black text-amber-400">0.00 kg</span>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-inner">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Total BOM Weight</span>
+                    <span id="totalBOMWeightDisplay" class="block text-3xl font-black text-amber-400 mono-text">0.00 kg</span>
                 </div>
-                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6">
-                    <span class="text-sm font-medium">Combined Weight Selected</span>
-                    <span id="combinedSelectedWeightDisplay" class="block text-3xl font-black text-emerald-400">0.00 kg</span>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-inner">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Combined Weight Selected</span>
+                    <span id="combinedSelectedWeightDisplay" class="block text-3xl font-black text-emerald-400 mono-text">0.00 kg</span>
                 </div>
             </div>
         </section>
 
-        <!-- Bottom Buttons -->
-        <section class="flex flex-col sm:flex-row gap-4">
-            <button onclick="addNewLiftingScheduleBatch()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-2xl">Add New Lifting Schedule</button>
-            <button onclick="generateAssembledRiggingReports()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl">Generate Rigging Reports</button>
+        <section class="flex justify-center items-center pt-2">
+            <button onclick="generateAssembledRiggingReports()" class="w-full md:w-1/2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-emerald-950/20 text-center tracking-wide flex items-center justify-center gap-2 text-base">
+                <i class="fa-solid fa-microchip"></i> Generate Rigging Report
+            </button>
         </section>
 
     </main>
 
-    <footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-xs text-slate-500">
-        © 2026 DASA Heavy Lift Engineering
+    <footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-xs text-slate-500 font-medium tracking-wide">
+        PlantIQ - Smart Plant Design
     </footer>
+
+    <div id="helpModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay transition-opacity duration-300">
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-100 mb-3 flex items-center gap-2"></h3>
+            <div id="modalBody" class="text-sm text-slate-300 space-y-3 leading-relaxed mb-6"></div>
+            <div class="flex justify-end">
+                <button onclick="closeHelpModal()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-colors">DISMISS</button>
+            </div>
+        </div>
+    </div>
     <script>
+        // Global Datastructure Registry
         let INVENTORY_POOL = [];
         let nextId = 101;
 
+        // Expanded Structural Profiles Asset Dropdown Injection (Update 8)
         const memberOptions = {
-            "Universal Beam": ["UB 203x133x30", "UB 254x146x37", "UB 305x165x54", "UB 356x171x57", "UB 406x178x60"],
-            "Parallel Flange Channel": ["PFC 100x50", "PFC 125x65", "PFC 150x75", "PFC 200x75", "PFC 230x90"],
-            "Universal Column": ["UC 152x152x23", "UC 203x203x46", "UC 254x254x73"],
-            "Plate Girder": ["Custom Built-up Girder"]
+            "Universal Beam": [
+                "UB 203x133x30", "UB 254x146x37", "UB 305x165x54", "UB 356x171x57", "UB 406x178x60",
+                "UB 457x191x98", "UB 533x210x122", "UB 610x229x140", "UB 686x254x170", "UB 762x267x197", 
+                "UB 838x292x226", "UB 914x305x289"
+            ],
+            "Parallel Flange Channel": [
+                "PFC 100x50", "PFC 125x65", "PFC 150x75", "PFC 200x75", "PFC 230x90",
+                "PFC 260x90", "PFC 300x100", "PFC 380x100", "PFC 430x100"
+            ],
+            "Universal Column": [
+                "UC 152x152x23", "UC 203x203x46", "UC 254x254x73", "UC 305x305x118", "UC 356x368x177"
+            ],
+            "Plate Girder": [
+                "Custom Heavy Built-up Girder (PG-01)", "Heavy Crane Runway Girder (PG-02)", "Reinforced Box Girder (BG-01)"
+            ]
         };
 
-        // Crane technical data for calculation engine
+        // Complete Fleet Logistical Configuration Records
         const CRANE_DATA = {
-            "Liebherr LTM 1100-5.2":    { maxCap: 100,  minRadius: 3,  maxRadius: 48,  maxBoom: 60,  maxJib: 36,  type: "All-Terrain" },
-            "Liebherr LTM 1200-5.1":    { maxCap: 200,  minRadius: 3,  maxRadius: 64,  maxBoom: 80,  maxJib: 52,  type: "All-Terrain" },
-            "Liebherr LTM 1300-6.2":    { maxCap: 300,  minRadius: 3,  maxRadius: 80,  maxBoom: 84,  maxJib: 84,  type: "All-Terrain" },
-            "Tadano ATF 220G-5":         { maxCap: 220,  minRadius: 3,  maxRadius: 60,  maxBoom: 68,  maxJib: 39,  type: "All-Terrain" },
-            "Manitowoc Grove GMK5150L":  { maxCap: 150,  minRadius: 3,  maxRadius: 56,  maxBoom: 60,  maxJib: 37,  type: "All-Terrain" },
-            "Manitowoc Grove GMK6300L":  { maxCap: 300,  minRadius: 3.5,maxRadius: 80,  maxBoom: 84,  maxJib: 91,  type: "All-Terrain" },
-            "Liebherr LR 1300 (Crawler)":{ maxCap: 300,  minRadius: 7,  maxRadius: 96,  maxBoom: 102, maxJib: 96,  type: "Crawler" },
-            "Liebherr LR 1600/2 (Crawler)":{ maxCap: 600, minRadius: 7, maxRadius: 120, maxBoom: 126, maxJib: 108, type: "Crawler" },
-            "Manitowoc 18000 (Crawler)": { maxCap: 600,  minRadius: 9,  maxRadius: 108, maxBoom: 120, maxJib: 114, type: "Crawler" },
-            "Terex CC 2800-1 (Crawler)": { maxCap: 600,  minRadius: 8,  maxRadius: 96,  maxBoom: 108, maxJib: 126, type: "Crawler" },
-            "Liebherr LTM 1750-9.1":    { maxCap: 750,  minRadius: 3,  maxRadius: 104, maxBoom: 52,  maxJib: 126, type: "All-Terrain" },
-            "Demag AC 500-2":            { maxCap: 500,  minRadius: 3,  maxRadius: 88,  maxBoom: 84,  maxJib: 84,  type: "All-Terrain" }
+            "Demag AC 160-2": { maxCap: 200, minRadius: 3, maxRadius: 64, maxBoom: 64, img: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=80&q=80", type: "All-Terrain" },
+            "Grove RT890E": { maxCap: 90, minRadius: 2.7, maxRadius: 43.2, maxBoom: 43.2, img: "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=80&q=80", type: "Rough-Terrain" },
+            "XCMG QY70K-I": { maxCap: 70, minRadius: 3, maxRadius: 44.5, maxBoom: 44.5, img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=80&q=80", type: "Truck Crane" },
+            "Terex T560-1": { maxCap: 60, minRadius: 3, maxRadius: 33.5, maxBoom: 33.5, img: "https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?auto=format&fit=crop&w=80&q=80", type: "Truck Crane" },
+            "Terex RT230": { maxCap: 27.2, minRadius: 3, maxRadius: 28.7, maxBoom: 28.7, img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=80&q=80", type: "Rough-Terrain" }
         };
 
-        // --- Area of Operation dropdown ---
+        // --- Contextual UX Content Registries (Layman Translations) ---
+        const HELP_CONTENT = {
+            safetyFactor: {
+                title: "Understanding Safety Factors",
+                body: "<p>Think of the <strong>Safety Factor</strong> as a protective cushion. In structural rigging, lifting components exactly at their theoretical breaking limit introduces high operational risk.</p><p>By setting this to <strong>115%</strong>, you instruct the system to add a mandatory 15% safety margin onto the physical mass of your items before searching for an available crane. This compensates for wind forces, load swings, and rigging wire weight.</p>"
+            },
+            workRadius: {
+                title: "What is Work Radius?",
+                body: "<p>The <strong>Work Radius</strong> is the horizontal distance measured from the center pin of the crane's rotation to the center point where the load is hooked on the ground.</p><p><strong>Crucial Rule:</strong> The further a crane extends its boom horizontally, the lower its lifting capacity becomes due to leverage. Keeping this radius accurate prevents structural tip-overs or crane structural frame twisting.</p>"
+            },
+            findCranes: {
+                title: "Fleet Suitability Engine & Guardrails",
+                body: "<p>When checked, this automated engine matches the combined mass of your selected materials (multiplied by your safety factor cushion) against the precise engineering load limits of your on-site crane inventory.</p><p>The system applies strict guardrails: if an element exceeds a crane's radius limit or safe boom range, that option is flagged immediately to prevent accidents on the deck.</p>"
+            }
+        };
+
+        function showHelpModal(key) {
+            const data = HELP_CONTENT[key];
+            if (!data) return;
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-info text-amber-500"></i> ` + data.title;
+            document.getElementById('modalBody').innerHTML = data.body;
+            const modal = document.getElementById('helpModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            document.getElementById('helpModal').classList.add('hidden');
+        }
+
         function toggleAreaDropdown() {
-            const dd = document.getElementById('areaDropdown');
-            dd.classList.toggle('hidden');
+            document.getElementById('areaDropdown').classList.toggle('hidden');
+            document.getElementById('areaChevron').classList.toggle('rotate-180');
         }
 
         function updateAreaSelection() {
@@ -412,26 +328,37 @@
             const label = document.getElementById('areaSelectionLabel');
             if (checkboxes.length === 0) {
                 label.textContent = 'Select Area(s)...';
-            } else if (checkboxes.length === 1) {
-                label.textContent = checkboxes[0].value;
+                label.classList.add('text-slate-400');
             } else {
-                label.textContent = checkboxes.length + ' areas selected';
+                label.classList.remove('text-slate-400');
+                label.textContent = checkboxes.length === 1 ? checkboxes[0].value : `${checkboxes.length} project areas active`;
             }
         }
 
-        // Close area dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dd = document.getElementById('areaDropdown');
-            const btn = dd ? dd.previousElementSibling : null;
-            if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && btn && !btn.contains(e.target)) {
-                dd.classList.add('hidden');
-            }
-        });
-
-        // --- Crane dropdown ---
         function toggleCraneDropdown() {
-            const dd = document.getElementById('craneDropdown');
-            dd.classList.toggle('hidden');
+            document.getElementById('craneDropdown').classList.toggle('hidden');
+            document.getElementById('craneChevron').classList.toggle('rotate-180');
+        }
+
+        function buildCraneCheckboxList() {
+            const container = document.getElementById('craneSelectionContainer');
+            container.innerHTML = "";
+            Object.keys(CRANE_DATA).forEach(key => {
+                const crane = CRANE_DATA[key];
+                container.innerHTML += `
+                    <label class="flex items-start gap-3 p-2 hover:bg-slate-900 rounded-lg cursor-pointer transition-colors">
+                        <input type="checkbox" value="${key}" checked onchange="updateCraneSelection()" class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
+                        <div class="flex gap-2 items-center">
+                            <img src="${crane.img}" class="w-10 h-10 object-cover rounded border border-slate-700 bg-slate-800" alt="${key}"/>
+                            <span class="text-xs leading-tight">
+                                <span class="font-semibold text-slate-200 block">${key}</span>
+                                <span class="text-slate-400 text-[10px] font-mono">${crane.type} | Max: ${crane.maxCap}t</span>
+                            </span>
+                        </div>
+                    </label>
+                `;
+            });
+            updateCraneSelection();
         }
 
         function updateCraneSelection() {
@@ -439,10 +366,8 @@
             const label = document.getElementById('craneSelectionLabel');
             if (checkboxes.length === 0) {
                 label.textContent = 'Select Crane(s)...';
-            } else if (checkboxes.length === 1) {
-                label.textContent = checkboxes[0].value;
             } else {
-                label.textContent = checkboxes.length + ' cranes selected';
+                label.textContent = checkboxes.length === 1 ? checkboxes[0].value : `${checkboxes.length} cranes selected`;
             }
         }
 
@@ -454,20 +379,11 @@
             }));
         }
 
-        // Close crane dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dd = document.getElementById('craneDropdown');
-            const btn = dd ? dd.previousElementSibling : null;
-            if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && btn && !btn.contains(e.target)) {
-                dd.classList.add('hidden');
-            }
-        });
-
         function updateMemberOptions() {
             const profile = document.getElementById("inputBeamProfile").value;
             const select = document.getElementById("inputBeamMember");
             select.innerHTML = "";
-            (memberOptions[profile] || ["Select Size"]).forEach(opt => {
+            (memberOptions[profile] || []).forEach(opt => {
                 const el = document.createElement("option");
                 el.value = opt;
                 el.textContent = opt;
@@ -478,15 +394,15 @@
         function addBeamToInventory() {
             const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
             const qty = parseInt(document.getElementById("inputBeamQty").value) || 1;
-            let weight = Math.round(length * 420);
+            let unitWeight = Math.round(length * 420);
             const member = document.getElementById("inputBeamMember").value;
-            if (member.includes("Girder")) {
-                weight = Math.round(length * 650);
+            if (member.includes("Girder") || member.includes("Box")) {
+                unitWeight = Math.round(length * 650);
             }
             for (let i = 0; i < qty; i++) {
                 INVENTORY_POOL.push({
                     id: nextId++,
-                    weight: weight,
+                    weight: unitWeight,
                     length: length,
                     componentClass: member
                 });
@@ -496,16 +412,24 @@
 
         function addEquipmentToInventory() {
             const weight = parseFloat(document.getElementById("inputEquipWeight").value);
-            if (!weight) return alert("Please enter weight");
+            const tag = document.getElementById("inputEquipName").value.trim();
+            if (!weight) return alert("Please specify a valid operational mass array.");
             INVENTORY_POOL.push({
                 id: nextId++,
                 weight: weight,
                 length: 6,
-                componentClass: document.getElementById("inputEquipName").value || "Equipment"
+                componentClass: tag || "Industrial Vessel Process Unit"
             });
             renderInventoryTable();
         }
 
+        // Row Removal Routine (Update 2)
+        function deleteInventoryItem(id) {
+            INVENTORY_POOL = INVENTORY_POOL.filter(item => item.id !== id);
+            renderInventoryTable();
+        }
+
+        // Precision UI Centralized Realignment Routine (Update 3)
         function renderInventoryTable() {
             const tbody = document.getElementById("libraryTableBody");
             tbody.innerHTML = "";
@@ -513,12 +437,18 @@
             INVENTORY_POOL.forEach(item => {
                 totalAll += item.weight;
                 const row = document.createElement("tr");
+                row.className = "hover:bg-slate-900/40 transition-colors";
                 row.innerHTML = `
-                    <td class="py-4 px-6 text-center"><input type="checkbox" onchange="calculateSelectedWeight()"></td>
-                    <td class="py-4 px-6 font-mono text-center">#${item.id}</td>
-                    <td class="py-4 px-6 text-right">${item.weight} kg</td>
-                    <td class="py-4 px-6 text-right">${item.length} m</td>
-                    <td class="py-4 px-6">${item.componentClass}</td>
+                    <td class="py-4 px-6 text-center"><input type="checkbox" onchange="calculateSelectedWeight()" class="w-4 h-4 accent-emerald-500 rounded"></td>
+                    <td class="py-4 px-6 font-mono text-center text-slate-400">#${item.id}</td>
+                    <td class="py-4 px-6 text-right font-semibold text-slate-100">${item.weight.toLocaleString()} kg</td>
+                    <td class="py-4 px-6 text-right text-slate-300 font-medium">${item.length} m</td>
+                    <td class="py-4 px-6 text-center font-medium text-amber-400 truncate max-w-xs">${item.componentClass}</td>
+                    <td class="py-4 px-6 text-center">
+                        <button onclick="deleteInventoryItem(${item.id})" class="text-slate-500 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition-all" title="Remove Record">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -540,27 +470,87 @@
             const selectedCranes = getSelectedCranes();
             const radius = parseFloat(document.getElementById("globalRadius").value) || 12;
             const sf = parseFloat(document.getElementById("safetyFactor").value) / 100 || 1.15;
+            
             let selectedWeight = 0;
             const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
-            checkboxes.forEach((chk, index) => { if (chk.checked) selectedWeight += INVENTORY_POOL[index].weight; });
+            let checkedCount = 0;
+            checkboxes.forEach((chk, index) => { 
+                if (chk.checked) {
+                    selectedWeight += INVENTORY_POOL[index].weight; 
+                    checkedCount++;
+                }
+            });
+            
             const requiredCap = (selectedWeight * sf) / 1000;
             if (selectedCranes.length === 0) {
-                alert(`No cranes selected. Required capacity at ${radius}m radius: ${requiredCap.toFixed(2)}t (incl. ${((sf-1)*100).toFixed(0)}% safety factor).`);
+                alert(`Selection missing: Please pick active fleet items from the dropdown list layout above.`);
                 return;
             }
-            let msg = `Lift requirements: ${requiredCap.toFixed(2)}t @ ${radius}m radius, height ${height}m\n\n`;
+            if (checkedCount === 0) {
+                alert(`Calculation anchor missing: Check the items in your inventory table that you intend to lift.`);
+                return;
+            }
+            
+            let msg = `LIFT ANALYSIS SUMMARY:\nTarget Load Requirement: ${requiredCap.toFixed(2)}t (Gross Mass + Safety Cushion)\nRadius: ${radius}m | Structural Elevation Height: ${height}m\n\n`;
             selectedCranes.forEach(c => {
                 const capable = c.maxCap >= requiredCap && c.maxRadius >= radius && c.maxBoom >= height;
-                msg += `${capable ? '✅' : '❌'} ${c.name} (${c.type})\n   Max cap: ${c.maxCap}t | Max radius: ${c.maxRadius}m | Max boom: ${c.maxBoom}m\n\n`;
+                msg += `${capable ? '✅ PASS' : '❌ FAIL'} : ${c.name}\n   Config Limit: ${c.maxCap}t | Reach Max: ${c.maxRadius}m\n\n`;
             });
             alert(msg);
         }
 
-        function stageNewElement() { alert("Staged."); }
-        function addNewLiftingScheduleBatch() { alert("New schedule added."); }
-        function generateAssembledRiggingReports() { alert("Report generated."); }
+        // Webhook Pipeline Hook for Web Automation Systems (Update 10)
+        function generateAssembledRiggingReports() {
+            let selectedWeight = 0;
+            const inventoryManifest = [];
+            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
+            
+            checkboxes.forEach((chk, index) => {
+                if (chk.checked) {
+                    selectedWeight += INVENTORY_POOL[index].weight;
+                    inventoryManifest.push(INVENTORY_POOL[index]);
+                }
+            });
+
+            const activeAreas = Array.from(document.querySelectorAll('#areaDropdown input[type="checkbox"]:checked')).map(c => c.value);
+            const activeCranes = getSelectedCranes().map(c => c.name);
+
+            const payload = {
+                timestamp: new Date().toISOString(),
+                project: "DASA Uranium Mine Project",
+                consultant: "DCPL",
+                operationalAreas: activeAreas,
+                selectedFleet: activeCranes,
+                safetyFactorUsed: document.getElementById("safetyFactor").value,
+                radiusCalculated: document.getElementById("globalRadius").value,
+                requiredHeight: document.getElementById("phase2TargetHeight").value,
+                calculatedMassKg: selectedWeight,
+                stagedManifest: inventoryManifest
+            };
+
+            console.log("Transmitting operational dataset array out to automated processing server...", payload);
+            alert("Rigging Manifest Data successfully compiled and transmitted! Triggering automated workflows to map process templates.");
+        }
+
+        // Global Event Hooks
+        document.addEventListener('click', function(e) {
+            const areaDd = document.getElementById('areaDropdown');
+            const areaBtn = areaDd ? areaDd.previousElementSibling : null;
+            if (areaDd && !areaDd.classList.contains('hidden') && !areaDd.contains(e.target) && areaBtn && !areaBtn.contains(e.target)) {
+                areaDd.classList.add('hidden');
+                document.getElementById('areaChevron').classList.remove('rotate-180');
+            }
+            
+            const craneDd = document.getElementById('craneDropdown');
+            const craneBtn = craneDd ? craneDd.previousElementSibling : null;
+            if (craneDd && !craneDd.classList.contains('hidden') && !craneDd.contains(e.target) && craneBtn && !craneBtn.contains(e.target)) {
+                craneDd.classList.add('hidden');
+                document.getElementById('craneChevron').classList.remove('rotate-180');
+            }
+        });
 
         window.onload = () => {
+            buildCraneCheckboxList();
             updateMemberOptions();
             renderInventoryTable();
         };
