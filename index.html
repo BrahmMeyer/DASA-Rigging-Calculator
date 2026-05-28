@@ -1,273 +1,941 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DASA Heavy Lift Engineering & Rigging Planner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .glow-green { animation: pulse-green 2s infinite; background-color: #22c55e; }
-        .glow-red { animation: pulse-red 1.5s infinite; background-color: #ef4444; }
-    </style>
+<style>
+
+body{
+    background:#0f172a;
+    color:#f1f5f9;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.dashboard-container{
+    width:95%;
+    margin:auto;
+    padding:20px;
+}
+
+.section-card{
+    background:#1e293b;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #334155;
+}
+
+.section-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:15px;
+    color:#38bdf8;
+}
+
+.input-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:none;
+    background:#334155;
+    color:white;
+}
+
+button{
+    background:#22c55e;
+    color:white;
+    border:none;
+    padding:14px 24px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+.results-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+}
+
+.crane-card{
+    padding:20px;
+    border-radius:12px;
+    border:2px solid;
+}
+
+.card-green{
+    background:#052e16;
+    border-color:#22c55e;
+}
+
+.card-orange{
+    background:#3f2a00;
+    border-color:#f59e0b;
+}
+
+.card-red{
+    background:#450a0a;
+    border-color:#ef4444;
+}
+
+.status-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.metric{
+    margin-bottom:8px;
+}
+
+.warning-box{
+    background:#7c2d12;
+    padding:12px;
+    border-radius:8px;
+    margin-top:12px;
+}
+
+.success-box{
+    background:#14532d;
+    padding:12px;
+    border-radius:8px;
+    margin-top:12px;
+}
+
+.ai-report{
+    background:#0f172a;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    line-height:1.6;
+}
+
+.hidden{
+    display:none;
+}
+
+.loading-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.85);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    font-size:28px;
+    font-weight:bold;
+    color:white;
+}
+
+</style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
 
-    <header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4">
-                <div class="bg-amber-500 p-3 rounded-xl text-slate-950 font-black text-xl">DASA</div>
-                <div>
-                    <h1 class="text-2xl font-bold">Heavy Lift Engineering & Rigging Planner</h1>
-                    <p class="text-sm text-slate-400">Multi-Batch Structural Manifests & Fleet Clearance</p>
-                </div>
-            </div>
-            <div class="text-emerald-400 font-bold">READY</div>
+<body>
+
+<div class="loading-overlay hidden" id="loadingOverlay">
+    Running Lift Calculations...
+</div>
+
+<div class="dashboard-container">
+
+    <div class="section-card">
+
+        <div class="section-title">
+            Shutdown Lift Planning Dashboard
         </div>
-    </header>
 
-    <main class="max-w-7xl mx-auto p-8 space-y-10">
+        <div class="input-grid">
 
-        <!-- Lifting Schedule Name -->
-        <div class="bg-slate-950 border border-slate-700 rounded-2xl p-6">
-            <label class="block text-xs font-bold text-slate-400 mb-2">LIFTING SCHEDULE NAME</label>
-            <input type="text" id="liftingScheduleName" value="LIFT-001 - Floor Beams" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-4 text-lg font-medium">
-        </div>
-                <!-- Phase 1 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <h2 class="text-lg font-semibold mb-6 flex items-center gap-3">
-                <i class="fa-solid fa-truck-ramp-box text-amber-500"></i> Phase 1: Deployment Parameters & Fleet Specifications
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Safety Factor (%)</label>
-                    <input type="number" id="safetyFactor" value="115" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Work Radius (m)</label>
-                    <input type="number" id="globalRadius" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-2">Select Cranes</label>
-                    <div id="craneCheckboxes" class="space-y-2 max-h-40 overflow-y-auto"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Add Beam / Girder -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-                <h3 class="text-amber-400 font-bold mb-4">Add Beam / Girder Member</h3>
-                <select id="inputBeamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4">
-                    <option value="Universal Beam">Universal Beam (BSI)</option>
-                    <option value="Parallel Flange Channel">Parallel Flange Channel</option>
-                    <option value="Universal Column">Universal Column</option>
-                    <option value="Plate Girder">Plate Girder (Built-up)</option>
+            <div>
+                <label>Work Area</label>
+                <select id="workArea">
+                    <option>SAG Mill</option>
+                    <option>Ball Mill</option>
+                    <option>Crusher Area</option>
+                    <option>Flotation Area</option>
+                    <option>Pipe Rack</option>
+                    <option>Workshop</option>
+                    <option>Structural Steel</option>
+                    <option>Tank Farm</option>
+                    <option>Scaffolding Zone</option>
+                    <option>Pre-Assembly Yard</option>
                 </select>
-                <select id="inputBeamMember" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4"></select>
-                
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Length (m)</label>
-                        <input type="number" id="inputBeamLength" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Qty</label>
-                        <input type="number" id="inputBeamQty" value="1" min="1" max="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
-                    </div>
-                    <button onclick="addBeamToInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl">ADD BEAM</button>
-                </div>
             </div>
-                        <!-- Add Industrial Equipment -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
-                <h3 class="text-cyan-400 font-bold mb-4">Add Industrial Equipment</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Equipment Name</label>
-                        <input type="text" id="inputEquipName" placeholder="e.g. Heat Exchanger" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Mass (kg)</label>
-                            <input type="number" id="inputEquipWeight" placeholder="14500" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4">
-                        </div>
-                        <button onclick="addEquipmentToInventory()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl">ADD EQUIPMENT</button>
-                    </div>
-                </div>
+
+            <div>
+                <label>Lift Description</label>
+                <input type="text" id="liftDescription" placeholder="Lift 01 - SAG Mill Beams">
             </div>
+
+            <div>
+                <label>Beam Type</label>
+                <select id="beamType">
+                    <option value="W100x19">W100x19</option>
+                    <option value="W150x22">W150x22</option>
+                    <option value="W200x26">W200x26</option>
+                    <option value="W250x33">W250x33</option>
+                    <option value="W310x39">W310x39</option>
+                    <option value="W360x44">W360x44</option>
+                    <option value="W410x60">W410x60</option>
+                    <option value="W460x74">W460x74</option>
+                    <option value="W530x82">W530x82</option>
+                    <option value="W610x101">W610x101</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Beam Length (m)</label>
+                <input type="number" id="beamLength" value="12">
+            </div>
+
+            <div>
+                <label>Quantity</label>
+                <input type="number" id="beamQuantity" value="1">
+            </div>
+
+            <div>
+                <label>Custom Equipment Weight (kg)</label>
+                <input type="number" id="customWeight" placeholder="Optional">
+            </div>
+
+            <div>
+                <label>Lift Height (m)</label>
+                <input type="number" id="liftHeight" value="18">
+            </div>
+
+            <div>
+                <label>Selected Crane</label>
+                <select id="selectedCrane">
+                    <option value="RT890E">RT890E</option>
+                    <option value="90T Crawler">90T Crawler</option>
+                    <option value="160T Crawler">160T Crawler</option>
+                    <option value="250T Crawler">250T Crawler</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Sling Angle</label>
+                <input type="number" id="slingAngle" value="60">
+            </div>
+
+            <div>
+                <label>Wind Speed km/h</label>
+                <input type="number" id="windSpeed" value="18">
+            </div>
+
         </div>
 
-        <!-- Phase 2 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-semibold">Phase 2: Beam Structural Inventory & BOM Evaluation</h2>
-                <div class="flex items-center gap-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Lifting Height (m)</label>
-                        <input type="number" id="phase2TargetHeight" value="15" class="w-28 bg-slate-900 border border-slate-700 rounded-xl p-3 text-center">
-                    </div>
-                    <button onclick="findCranesToSuitInventory()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-8 py-3 rounded-xl">
-                        FIND SUITABLE CRANES
-                    </button>
-                </div>
+        <br>
+
+        <button onclick="runLiftCalculation()">
+            RUN LIFT CHECK
+        </button>
+
+    </div>
+
+    <div id="resultsSection" class="hidden">
+
+        <div class="section-card">
+
+            <div class="section-title">
+                Lift Analysis Results
             </div>
 
-            <div class="overflow-x-auto border border-slate-700 rounded-2xl">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-slate-800 text-slate-300">
-                            <th class="py-4 px-6 text-center">Select</th>
-                            <th class="py-4 px-6 text-center">ID</th>
-                            <th class="py-4 px-6 text-right">Mass (kg)</th>
-                            <th class="py-4 px-6 text-right">Length (m)</th>
-                            <th class="py-4 px-6">Profile</th>
-                        </tr>
-                    </thead>
-                    <tbody id="libraryTableBody" class="divide-y divide-slate-700"></tbody>
-                </table>
+            <div class="results-grid" id="resultsGrid">
+
             </div>
 
-            <div class="mt-6 grid grid-cols-2 gap-6">
-                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6">
-                    <span class="text-sm font-medium">Total BOM Weight</span>
-                    <span id="totalBOMWeightDisplay" class="block text-3xl font-black text-amber-400">0.00 kg</span>
-                </div>
-                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6">
-                    <span class="text-sm font-medium">Combined Weight Selected</span>
-                    <span id="combinedSelectedWeightDisplay" class="block text-3xl font-black text-emerald-400">0.00 kg</span>
-                </div>
+        </div>
+
+    </div>
+
+</div>
+      <!-- RESULTS PANEL -->
+      <div class="results-panel">
+        <div class="results-header">
+          <h2>Lift Feasibility Results</h2>
+          <div class="result-status" id="overallStatus">
+            Awaiting Calculation
+          </div>
+        </div>
+
+        <!-- MAIN RESULT CARDS -->
+        <div class="result-grid">
+
+          <!-- LOAD SUMMARY -->
+          <div class="result-card">
+            <h3>Load Summary</h3>
+
+            <div class="summary-row">
+              <span>Total Beam Weight</span>
+              <strong id="beamWeight">0 kg</strong>
             </div>
-        </section>
-                <!-- Phase 4 -->
-        <section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <h2 class="text-lg font-semibold mb-4">Phase 4: Assembled Sketch Rigging Configuration (AI-Assisted)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="space-y-4">
-                    <input type="file" id="sketchImageInput" accept="image/*" onchange="processSketchWithAI()" class="w-full">
-                    <button onclick="simulateVisionWebhookRoutine()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-4 rounded-2xl">ANALYZE SKETCH</button>
-                </div>
-                <div class="md:col-span-2" id="sketchFeasibilityGrid"></div>
+
+            <div class="summary-row">
+              <span>Rigging Allowance</span>
+              <strong id="riggingWeight">0 kg</strong>
             </div>
-        </section>
-                <!-- Bottom Buttons -->
-        <section class="flex flex-col sm:flex-row gap-4">
-            <button onclick="addNewLiftingScheduleBatch()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-2xl">Add New Lifting Schedule</button>
-            <button onclick="generateAssembledRiggingReports()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl">Generate Rigging Reports</button>
-        </section>
 
-    </main>
+            <div class="summary-row">
+              <span>Dynamic Load Factor</span>
+              <strong>1.15</strong>
+            </div>
 
-    <footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-xs text-slate-500">
-        © 2026 DASA Heavy Lift Engineering
-    </footer>
+            <div class="summary-row total-row">
+              <span>Gross Lift Weight</span>
+              <strong id="grossWeight">0 kg</strong>
+            </div>
 
-    <script>
-        let INVENTORY_POOL = [];
-        let nextId = 101;
+            <div class="summary-row">
+              <span>Lift Height</span>
+              <strong id="displayHeight">0 m</strong>
+            </div>
 
-        const memberOptions = {
-            "Universal Beam": ["UB 203x133x30", "UB 254x146x37", "UB 305x165x54", "UB 356x171x57", "UB 406x178x60"],
-            "Parallel Flange Channel": ["PFC 100x50", "PFC 125x65", "PFC 150x75", "PFC 200x75", "PFC 230x90"],
-            "Universal Column": ["UC 152x152x23", "UC 203x203x46", "UC 254x254x73"],
-            "Plate Girder": ["Custom Built-up Girder"]
-        };
+            <div class="summary-row">
+              <span>Required Boom Tip Height</span>
+              <strong id="boomHeight">0 m</strong>
+            </div>
 
-        function updateMemberOptions() {
-            const profile = document.getElementById("inputBeamProfile").value;
-            const select = document.getElementById("inputBeamMember");
-            select.innerHTML = "";
-            (memberOptions[profile] || ["Select Size"]).forEach(opt => {
-                const el = document.createElement("option");
-                el.value = opt;
-                el.textContent = opt;
-                select.appendChild(el);
-            });
+            <div class="summary-row">
+              <span>Safe Operating Radius</span>
+              <strong id="safeRadius">0 m</strong>
+            </div>
+          </div>
+
+          <!-- RIGGING REQUIREMENTS -->
+          <div class="result-card">
+            <h3>Rigging Requirements</h3>
+
+            <div id="riggingNotes">
+              <div class="note success">
+                Awaiting calculations...
+              </div>
+            </div>
+          </div>
+
+          <!-- ENGINEERING NOTES -->
+          <div class="result-card">
+            <h3>Engineering Safety Notes</h3>
+
+            <div id="engineeringNotes">
+              <div class="note warning">
+                Complete lift inputs to generate engineering guidance.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CRANE MATCH RESULTS -->
+        <div class="crane-results-section">
+
+          <div class="section-title">
+            Compatible Crane Analysis
+          </div>
+
+          <div id="craneCards" class="crane-card-grid">
+
+            <!-- GENERATED BY JAVASCRIPT -->
+
+          </div>
+
+        </div>
+
+        <!-- WEATHER PANEL -->
+        <div class="weather-section">
+
+          <div class="section-title">
+            Wind & Weather Monitoring
+          </div>
+
+          <div class="weather-card">
+
+            <div class="weather-row">
+              <span>Current Wind Speed</span>
+              <strong id="windSpeed">-- km/h</strong>
+            </div>
+
+            <div class="weather-row">
+              <span>Forecast Trend</span>
+              <strong id="forecastTrend">Pending</strong>
+            </div>
+
+            <div class="weather-row">
+              <span>Safe Lifting Window</span>
+              <strong id="safeWindow">Pending</strong>
+            </div>
+
+            <div class="weather-row">
+              <span>Wind Advisory</span>
+              <strong id="windAdvisory">No data</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- AI REPORT -->
+        <div class="ai-report-section">
+
+          <div class="section-title">
+            AI Lift Planning Report
+          </div>
+
+          <div id="aiReport" class="ai-report-box">
+
+            Awaiting calculation...
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+
+    /* =========================
+       CRANE DATABASE
+    ========================== */
+
+    const craneDatabase = [
+      {
+        name: "100T Mobile Crane",
+        maxCapacity: 100000,
+        maxHeight: 52,
+        safeRadius: 18,
+        outriggers: true
+      },
+      {
+        name: "160T Mobile Crane",
+        maxCapacity: 160000,
+        maxHeight: 68,
+        safeRadius: 24,
+        outriggers: true
+      },
+      {
+        name: "220T Crawler Crane",
+        maxCapacity: 220000,
+        maxHeight: 84,
+        safeRadius: 28,
+        outriggers: true
+      },
+      {
+        name: "300T Crawler Crane",
+        maxCapacity: 300000,
+        maxHeight: 96,
+        safeRadius: 32,
+        outriggers: true
+      }
+    ];
+
+    /* =========================
+       MATERIAL DATABASE
+    ========================== */
+
+    const beamDatabase = {
+      "W200x15": 15,
+      "W250x25": 25,
+      "W310x39": 39,
+      "W360x51": 51,
+      "W410x60": 60,
+      "H200x200": 50,
+      "H250x250": 72,
+      "H300x300": 94,
+      "UB305x165": 40,
+      "UB457x191": 67
+    };
+
+    /* =========================
+       DOM REFERENCES
+    ========================== */
+
+    const materialSelect = document.getElementById("materialType");
+    const beamTypeSelect = document.getElementById("beamType");
+    const beamLengthInput = document.getElementById("beamLength");
+    const customWeightInput = document.getElementById("customWeight");
+    const liftHeightInput = document.getElementById("liftHeight");
+    const craneSelect = document.getElementById("craneType");
+
+    /* =========================
+       MATERIAL SWITCH
+    ========================== */
+
+    materialSelect.addEventListener("change", () => {
+
+      const beamInputs = document.getElementById("beamInputs");
+      const equipmentInputs = document.getElementById("equipmentInputs");
+
+      if (materialSelect.value === "beam") {
+        beamInputs.style.display = "block";
+        equipmentInputs.style.display = "none";
+      } else {
+        beamInputs.style.display = "none";
+        equipmentInputs.style.display = "block";
+      }
+
+    });
+
+    /* =========================
+       MAIN CALCULATION
+    ========================== */
+
+    function calculateLift() {
+
+      let totalWeight = 0;
+      let beamLength = 0;
+
+      const materialType = materialSelect.value;
+      const liftHeight = parseFloat(liftHeightInput.value) || 0;
+
+      if (materialType === "beam") {
+
+        const beamType = beamTypeSelect.value;
+        beamLength = parseFloat(beamLengthInput.value) || 0;
+
+        const weightPerMeter = beamDatabase[beamType] || 0;
+
+        totalWeight = weightPerMeter * beamLength;
+
+      } else {
+
+        totalWeight = parseFloat(customWeightInput.value) || 0;
+
+      }
+
+      /* RIGGING ALLOWANCE */
+
+      const riggingAllowance =
+        Math.max(totalWeight * 0.10, 250);
+
+      /* DYNAMIC FACTOR */
+
+      const grossWeight =
+        (totalWeight + riggingAllowance) * 1.15;
+
+      /* BOOM HEIGHT */
+
+      const boomTipHeight =
+        liftHeight + 6;
+
+      /* SAFE RADIUS */
+
+      const safeRadius =
+        Math.max((beamLength / 2) + 3, 8);
+              /* =========================
+         UPDATE SUMMARY UI
+      ========================== */
+
+      document.getElementById("beamWeight").innerText =
+        totalWeight.toFixed(0) + " kg";
+
+      document.getElementById("riggingWeight").innerText =
+        riggingAllowance.toFixed(0) + " kg";
+
+      document.getElementById("grossWeight").innerText =
+        grossWeight.toFixed(0) + " kg";
+
+      document.getElementById("displayHeight").innerText =
+        liftHeight.toFixed(1) + " m";
+
+      document.getElementById("boomHeight").innerText =
+        boomTipHeight.toFixed(1) + " m";
+
+      document.getElementById("safeRadius").innerText =
+        safeRadius.toFixed(1) + " m";
+
+      /* =========================
+         RIGGING NOTES
+      ========================== */
+
+      const riggingNotes =
+        document.getElementById("riggingNotes");
+
+      riggingNotes.innerHTML = "";
+
+      if (beamLength >= 9) {
+
+        riggingNotes.innerHTML += `
+          <div class="note danger">
+            ⚠️ Spreader bar mandatory for beams exceeding 9m.
+          </div>
+        `;
+
+      } else if (beamLength > 0) {
+
+        riggingNotes.innerHTML += `
+          <div class="note success">
+            ✅ Standard 2-leg lifting sling configuration acceptable.
+          </div>
+        `;
+
+      }
+
+      if (beamLength >= 15) {
+
+        riggingNotes.innerHTML += `
+          <div class="note warning">
+            ⚠️ Long beam detected. Use dual vertical slings and monitor beam deflection.
+          </div>
+        `;
+
+      }
+
+      riggingNotes.innerHTML += `
+        <div class="note info">
+          🔗 Maintain sling angle above 60° from horizontal.
+        </div>
+      `;
+
+      /* =========================
+         ENGINEERING NOTES
+      ========================== */
+
+      const engineeringNotes =
+        document.getElementById("engineeringNotes");
+
+      engineeringNotes.innerHTML = "";
+
+      engineeringNotes.innerHTML += `
+        <div class="note info">
+          📐 Recommended boom operating angle: 65° - 75°.
+        </div>
+      `;
+
+      engineeringNotes.innerHTML += `
+        <div class="note info">
+          📏 Required boom clearance allowance included.
+        </div>
+      `;
+
+      if (grossWeight >= 75000) {
+
+        engineeringNotes.innerHTML += `
+          <div class="note warning">
+            ⚠️ Critical lift category triggered. Senior rigging supervision required.
+          </div>
+        `;
+
+      }
+
+      if (liftHeight >= 30) {
+
+        engineeringNotes.innerHTML += `
+          <div class="note warning">
+            ⚠️ High elevation lift. Monitor boom deflection and wind loading.
+          </div>
+        `;
+
+      }
+
+      /* =========================
+         CRANE ANALYSIS
+      ========================== */
+
+      const craneCards =
+        document.getElementById("craneCards");
+
+      craneCards.innerHTML = "";
+
+      let successfulCranes = 0;
+
+      craneDatabase.forEach(crane => {
+
+        const passesWeight =
+          grossWeight <= crane.maxCapacity;
+
+        const passesHeight =
+          boomTipHeight <= crane.maxHeight;
+
+        const passesRadius =
+          safeRadius <= crane.safeRadius;
+
+        const isValid =
+          passesWeight &&
+          passesHeight &&
+          passesRadius;
+
+        if (isValid) {
+          successfulCranes++;
         }
 
-        function addBeamToInventory() {
-            const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
-            const qty = parseInt(document.getElementById("inputBeamQty").value) || 1;
-            let weight = Math.round(length * 420); // Default auto weight
-            const member = document.getElementById("inputBeamMember").value;
+        let cardClass =
+          isValid ? "crane-card success" : "crane-card fail";
 
-            if (member.includes("Girder")) {
-                weight = Math.round(length * 650); // Higher weight for girders
-            }
+        let statusText =
+          isValid ? "SUITABLE" : "NOT SUITABLE";
 
-            for (let i = 0; i < qty; i++) {
-                INVENTORY_POOL.push({
-                    id: nextId++,
-                    weight: weight,
-                    length: length,
-                    componentClass: member
-                });
-            }
-            renderInventoryTable();
+        let failureReasons = "";
+
+        if (!passesWeight) {
+
+          const overload =
+            grossWeight - crane.maxCapacity;
+
+          failureReasons += `
+            <div class="fail-reason">
+              ❌ Capacity exceeded by ${overload.toFixed(0)} kg
+            </div>
+          `;
         }
 
-        function addEquipmentToInventory() {
-            const weight = parseFloat(document.getElementById("inputEquipWeight").value);
-            if (!weight) return alert("Please enter weight");
-            INVENTORY_POOL.push({
-                id: nextId++,
-                weight: weight,
-                length: 6,
-                componentClass: document.getElementById("inputEquipName").value || "Equipment"
-            });
-            renderInventoryTable();
+        if (!passesHeight) {
+
+          failureReasons += `
+            <div class="fail-reason">
+              ❌ Boom height insufficient for required lift
+            </div>
+          `;
         }
 
-        function renderInventoryTable() {
-            const tbody = document.getElementById("libraryTableBody");
-            tbody.innerHTML = "";
-            let totalAll = 0;
+        if (!passesRadius) {
 
-            INVENTORY_POOL.forEach(item => {
-                totalAll += item.weight;
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td class="py-4 px-6 text-center"><input type="checkbox" onchange="calculateSelectedWeight()"></td>
-                    <td class="py-4 px-6 font-mono text-center">#${item.id}</td>
-                    <td class="py-4 px-6 text-right">${item.weight} kg</td>
-                    <td class="py-4 px-6 text-right">${item.length} m</td>
-                    <td class="py-4 px-6">${item.componentClass}</td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            document.getElementById("totalBOMWeightDisplay").textContent = totalAll.toLocaleString() + " kg";
-            calculateSelectedWeight();
+          failureReasons += `
+            <div class="fail-reason">
+              ❌ Operating radius exceeds crane stability zone
+            </div>
+          `;
         }
 
-        function calculateSelectedWeight() {
-            let selectedTotal = 0;
-            const checkboxes = document.querySelectorAll("#libraryTableBody input[type='checkbox']");
-            checkboxes.forEach((chk, index) => {
-                if (chk.checked) {
-                    selectedTotal += INVENTORY_POOL[index].weight;
-                }
-            });
-            document.getElementById("combinedSelectedWeightDisplay").textContent = selectedTotal.toLocaleString() + " kg";
+        let operationalNotes = "";
+
+        if (isValid) {
+
+          operationalNotes += `
+            <div class="pass-note">
+              ✅ Maintain optimum boom angle between 65° and 75°
+            </div>
+          `;
+
+          operationalNotes += `
+            <div class="pass-note">
+              ✅ Confirm outrigger ground bearing pressure before lift
+            </div>
+          `;
+
+          if (beamLength >= 9) {
+
+            operationalNotes += `
+              <div class="pass-note">
+                ⚠️ Spreader bar and dual vertical slings required
+              </div>
+            `;
+          }
+
         }
 
-        function findCranesToSuitInventory() {
-            const height = parseFloat(document.getElementById("phase2TargetHeight").value) || 15;
-            alert(`Finding cranes suitable for ${height}m lift based on selected members.`);
-        }
+        craneCards.innerHTML += `
+          <div class="${cardClass}">
 
-        function stageNewElement() { alert("Staged."); }
-        function processSketchWithAI() { alert("Sketch uploaded."); }
-        function simulateVisionWebhookRoutine() { alert("AI analysis complete."); }
-        function addNewLiftingScheduleBatch() { alert("New schedule added."); }
-        function generateAssembledRiggingReports() { alert("Report generated."); }
+            <div class="crane-card-header">
+              <h3>${crane.name}</h3>
+              <span class="status-badge">
+                ${statusText}
+              </span>
+            </div>
 
-        window.onload = () => {
-            updateMemberOptions();
-            renderInventoryTable();
-        };
-    </script>
+            <div class="crane-details">
+
+              <div class="detail-row">
+                <span>Max Capacity</span>
+                <strong>${crane.maxCapacity.toLocaleString()} kg</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Max Boom Height</span>
+                <strong>${crane.maxHeight} m</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Safe Radius</span>
+                <strong>${crane.safeRadius} m</strong>
+              </div>
+
+            </div>
+
+            <div class="crane-notes">
+
+              ${failureReasons}
+
+              ${operationalNotes}
+
+            </div>
+
+          </div>
+        `;
+
+      });
+
+      /* =========================
+         OVERALL STATUS
+      ========================== */
+
+      const overallStatus =
+        document.getElementById("overallStatus");
+
+      if (successfulCranes > 0) {
+
+        overallStatus.innerHTML =
+          "LIFT POSSIBLE";
+
+        overallStatus.className =
+          "result-status success-status";
+
+      } else {
+
+        overallStatus.innerHTML =
+          "NO SAFE CRANE FOUND";
+
+        overallStatus.className =
+          "result-status fail-status";
+
+      }
+
+      /* =========================
+         WEATHER MOCK DATA
+      ========================== */
+
+      const randomWind =
+        Math.floor(Math.random() * 35) + 5;
+
+      document.getElementById("windSpeed").innerText =
+        randomWind + " km/h";
+
+      if (randomWind <= 20) {
+
+        document.getElementById("forecastTrend").innerText =
+          "Stable";
+
+        document.getElementById("safeWindow").innerText =
+          "5 - 8 hours";
+
+        document.getElementById("windAdvisory").innerText =
+          "Safe lifting conditions";
+
+      } else {
+
+        document.getElementById("forecastTrend").innerText =
+          "Wind Increasing";
+
+        document.getElementById("safeWindow").innerText =
+          "1 - 2 hours";
+
+        document.getElementById("windAdvisory").innerText =
+          "Monitor gusting conditions carefully";
+
+      }
+        ```html id="r9m2xc"
+      /* =========================
+         AI REPORT GENERATOR
+      ========================== */
+
+      const aiReport =
+        document.getElementById("aiReport");
+
+      let reportHTML = `
+
+        <strong>Lift Planning Summary</strong><br><br>
+
+        Gross Lift Weight:
+        <strong>${grossWeight.toFixed(0)} kg</strong><br>
+
+        Required Lift Height:
+        <strong>${liftHeight.toFixed(1)} m</strong><br>
+
+        Minimum Safe Radius:
+        <strong>${safeRadius.toFixed(1)} m</strong><br><br>
+
+      `;
+
+      if (successfulCranes > 0) {
+
+        reportHTML += `
+          <span style="color:#16a34a;">
+            ✅ Suitable cranes identified for planned lift.
+          </span><br><br>
+        `;
+
+      } else {
+
+        reportHTML += `
+          <span style="color:#dc2626;">
+            ❌ No cranes currently meet lift requirements.
+          </span><br><br>
+        `;
+
+      }
+
+      if (beamLength >= 9) {
+
+        reportHTML += `
+          • Spreader bar required due to beam length.<br>
+        `;
+
+      }
+
+      if (beamLength >= 15) {
+
+        reportHTML += `
+          • Long beam handling precautions required.<br>
+        `;
+
+      }
+
+      if (grossWeight >= 75000) {
+
+        reportHTML += `
+          • Critical lift procedure recommended.<br>
+        `;
+
+      }
+
+      if (randomWind >= 20) {
+
+        reportHTML += `
+          • Wind conditions may impact crane stability and lift timing.<br>
+        `;
+
+      } else {
+
+        reportHTML += `
+          • Current weather conditions acceptable for lifting operations.<br>
+        `;
+
+      }
+
+      reportHTML += `
+        <br>
+        • Recommended boom angle: 65° - 75°.<br>
+        • Confirm rigging certification before execution.<br>
+        • Verify outrigger bearing pressures onsite.<br>
+        • Confirm exclusion zones and lifting permits before commencement.<br>
+      `;
+
+      aiReport.innerHTML = reportHTML;
+
+    }
+
+    /* =========================
+       BUTTON EVENT
+    ========================== */
+
+    document
+      .getElementById("calculateBtn")
+      .addEventListener("click", calculateLift);
+
+  </script>
+
 </body>
 </html>
+```
