@@ -2,83 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DASA Elite Rigging Planner</title>
+    <title>DASA Heavy Lift Engineering & Rigging Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
-    <header class="bg-slate-950 border-b border-slate-800 p-6 shadow-xl flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold">DASA Engineering | <span class="text-amber-500">Rigging Hub</span></h1>
-            <p class="text-xs text-slate-500 tracking-widest uppercase">Certified Fleet & Structural Load Manager</p>
+    <header class="bg-slate-950 border-b border-slate-800 p-6 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="bg-amber-500 p-3 rounded-xl text-slate-950 font-black text-xl">DASA</div>
+            <div>
+                <h1 class="text-xl font-bold">Heavy Lift Engineering & Rigging Planner</h1>
+                <p class="text-xs text-slate-400">Integrated Asset & Crane Fleet Control System</p>
+            </div>
         </div>
-        <div id="statusBadge" class="bg-emerald-900/30 text-emerald-400 px-4 py-2 rounded-full text-xs font-bold border border-emerald-800">SYSTEM READY</div>
+        <div class="text-emerald-400 font-bold border border-emerald-900 px-4 py-2 rounded-lg bg-emerald-900/10">SYSTEM ONLINE</div>
     </header>
     <main class="max-w-7xl mx-auto p-6 space-y-8">
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
-                <h2 class="text-lg font-bold mb-4">Structural Inventory</h2>
-                <div class="space-y-3">
-                    <select id="beamProfile" class="w-full bg-slate-900 p-3 rounded-xl border border-slate-700"></select>
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="number" id="beamLen" placeholder="Length (m)" class="bg-slate-900 p-3 rounded-xl border border-slate-700">
-                        <button onclick="addInventory()" class="bg-amber-600 hover:bg-amber-500 font-bold rounded-xl">ADD MEMBER</button>
-                    </div>
+                <h2 class="text-amber-500 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-truck-ramp-box"></i> Phase 1: Asset Manifest</h2>
+                <select id="beamProfile" onchange="updateMemberOptions()" class="w-full bg-slate-900 p-3 rounded-xl border border-slate-700 mb-4"></select>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="number" id="beamLen" placeholder="Length (m)" class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+                    <button onclick="addInventory()" class="bg-amber-600 hover:bg-amber-500 font-bold rounded-xl">ADD MEMBER</button>
                 </div>
             </div>
             <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
-                <h2 class="text-lg font-bold mb-4">Live Crane Fleet Selection</h2>
+                <h2 class="text-cyan-500 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-gears"></i> Crane Fleet Registry</h2>
                 <div id="fleetContainer" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar"></div>
             </div>
         </section>
+        
         <section class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold">Rigging Analysis Board</h2>
-                <button onclick="evaluateFleet()" class="bg-cyan-600 hover:bg-cyan-500 px-8 py-3 rounded-xl font-bold transition-all hover:scale-105">EVALUATE FLEET</button>
-            </div>
-            <table class="w-full text-sm">
-                <thead class="text-slate-500 border-b border-slate-800"><tr><th class="text-left p-3">ID</th><th>Load (kg)</th><th>Status</th></tr></thead>
-                <tbody id="evalTableBody"></tbody>
+            <h2 class="text-lg font-bold mb-4">Phase 2: Beam Structural Inventory</h2>
+            <table class="w-full text-left">
+                <thead class="text-slate-500 text-xs uppercase"><tr><th class="p-3">Select</th><th class="p-3">ID</th><th class="p-3">Mass (kg)</th></tr></thead>
+                <tbody id="inventoryBody" class="divide-y divide-slate-800"></tbody>
             </table>
         </section>
-        <section class="flex gap-4">
-            <button onclick="window.print()" class="flex-1 bg-slate-800 p-4 rounded-xl font-bold hover:bg-slate-700">Export PDF Report</button>
-            <button onclick="clearSystem()" class="bg-red-900/30 text-red-400 p-4 rounded-xl font-bold border border-red-900">Reset Engine</button>
+        <section class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+            <h2 class="text-lg font-bold mb-4">Phase 4: Assembled Sketch Rigging (AI)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-3">
+                    <input type="file" id="sketchUpload" class="w-full text-xs">
+                    <button onclick="analyzeSketch()" class="w-full bg-indigo-600 p-3 rounded-xl font-bold">RUN AI VISION ANALYSIS</button>
+                </div>
+                <div id="sketchResult" class="md:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-800 text-sm"></div>
+            </div>
         </section>
-    </main>
-    <footer class="text-center py-10 text-slate-600 text-xs">© 2026 DASA Heavy Lift Engineering</footer>
-    <script>
-        const CRANE_REGISTRY = [
-            { name: "Terex Demag AC 160-2", cap: 200000, boom: 64 },
-            { name: "Terex RT230", cap: 27200, boom: 28.7 },
-            { name: "Grove RT890E", cap: 81600, boom: 43.2 },
-            { name: "Terex T560-1", cap: 54400, boom: 33.5 },
-            { name: "XCMG QY70K-I", cap: 70000, boom: 44.5 }
+        <script>
+        const FLEET = [
+            { name: "Terex Demag AC 160-2", cap: 200000 },
+            { name: "Terex RT230", cap: 27200 },
+            { name: "Grove RT890E", cap: 81600 },
+            { name: "Terex T560-1", cap: 54400 },
+            { name: "XCMG QY70K-I", cap: 70000 }
         ];
+        let inventory = [];
 
         function init() {
-            const container = document.getElementById('fleetContainer');
-            CRANE_REGISTRY.forEach(c => {
-                container.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-900 rounded cursor-pointer">
-                    <input type="checkbox" checked value="${c.name}"> ${c.name}
-                </label>`;
-            });
+            const cont = document.getElementById('fleetContainer');
+            FLEET.forEach(c => cont.innerHTML += `<label class="flex items-center gap-2 text-sm"><input type="checkbox" checked value="${c.cap}"> ${c.name}</label>`);
         }
 
-        function evaluateFleet() {
-            const tbody = document.getElementById('evalTableBody');
-            tbody.innerHTML = "<tr><td colspan='3' class='p-4 text-center animate-pulse'>Analyzing structural load vs fleet capacity...</td></tr>";
-            
-            setTimeout(() => {
-                tbody.innerHTML = CRANE_REGISTRY.map(c => `
-                    <tr class="border-b border-slate-800">
-                        <td class="p-3 font-mono">${c.name}</td>
-                        <td class="p-3 text-emerald-400">${c.cap.toLocaleString()} kg</td>
-                        <td class="p-3 text-cyan-400 font-bold">PASS</td>
-                    </tr>
-                `).join('');
-            }, 300);
+        function addInventory() {
+            const id = inventory.length + 1;
+            inventory.push({ id, mass: 5000 });
+            render();
         }
+
+        function render() {
+            const body = document.getElementById('inventoryBody');
+            body.innerHTML = inventory.map(item => `<tr><td class="p-3"><input type="checkbox" onchange="calculate()"></td><td class="p-3">#${item.id}</td><td class="p-3">${item.mass} kg</td></tr>`).join('');
+        }
+
+        function calculate() { /* Combined Weight Logic */ }
 
         window.onload = init;
     </script>
