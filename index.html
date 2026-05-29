@@ -122,11 +122,13 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            position: relative; overflow: hidden;
+            position: relative;
         }
         .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(245,158,11,0.4), transparent);
+            content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(245,158,11,0.5), transparent);
+            border-radius: 2px;
+            pointer-events: none; z-index: 1;
         }
         .card.cyan-card::before {
             background: linear-gradient(90deg, transparent, rgba(6,182,212,0.4), transparent);
@@ -225,7 +227,7 @@
         }
         .dropdown-btn:hover { border-color: #3a5070; }
         .dropdown-panel {
-            position: absolute; z-index: 50; width: 100%;
+            position: absolute; z-index: 9999; width: 100%;
             background: #0b1220; border: 1px solid var(--border-bright);
             border-radius: 10px; margin-top: 4px;
             max-height: 280px; overflow-y: auto;
@@ -446,7 +448,6 @@
         <!-- RIGHT: DCPL badge -->
         <div class="dcpl-badge text-right">
             <div class="dcpl-acronym">DCPL</div>
-            <div class="dcpl-sub">Development Consultants<br>Private Limited</div>
         </div>
     </div>
 </header>
@@ -571,7 +572,7 @@
     </div>
 
     <!-- ─── PHASE 1: DEPLOYMENT PARAMETERS ─── -->
-    <section class="card p-6">
+    <section class="card p-6" style="overflow:visible">
         <div class="corner-tl"></div><div class="corner-tr"></div>
         <div class="section-header">
             <div class="section-header-icon"><i class="fa-solid fa-sliders"></i></div>
@@ -582,7 +583,7 @@
         </div>
 
         <!-- 2x2 grid: all 4 inputs balanced -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5" style="overflow:visible">
 
             <!-- RIGGING FACTOR -->
             <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px">
@@ -627,17 +628,26 @@
             </div>
 
             <!-- CRANE FLEET SELECTOR -->
-            <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px">
+            <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px;overflow:visible">
                 <label class="input-label">
                     <i class="fa-solid fa-truck-pickup" style="color:var(--amber);margin-right:6px"></i>
                     Select Cranes
                 </label>
-                <div class="relative">
-                    <button onclick="toggleCraneDropdown()" class="dropdown-btn" style="margin-top:2px">
+                <div style="position:relative">
+                    <button id="craneDropdownBtn" onclick="toggleCraneDropdown()" class="dropdown-btn" style="margin-top:2px">
                         <span id="craneSelectionLabel" style="color:var(--text-dim)">Select Crane(s)...</span>
                         <i class="fa-solid fa-chevron-down" style="color:var(--text-muted);font-size:12px;transition:transform 0.2s" id="craneChevron"></i>
                     </button>
-                    <div id="craneDropdown" class="hidden dropdown-panel" style="min-width:340px">
+                    <div id="craneDropdown" class="hidden" style="
+                        position:absolute; top:calc(100% + 6px); left:0;
+                        min-width:340px; width:100%;
+                        background:#0b1220;
+                        border:1px solid var(--border-bright);
+                        border-radius:10px;
+                        max-height:320px; overflow-y:auto;
+                        box-shadow:0 20px 60px rgba(0,0,0,0.8);
+                        z-index:99999;
+                    ">
                         <div class="p-2 space-y-0.5" id="craneSelectionContainer"></div>
                     </div>
                 </div>
@@ -1274,5 +1284,7 @@ window.onload = () => {
     document.getElementById('riggingPctLabel').textContent = '+10%';
 };
 </script>
+
+</div>
 </body>
 </html>
