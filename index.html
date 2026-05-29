@@ -6,384 +6,790 @@
     <title>DASA Heavy Lift Engineering & Rigging Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .mono-text { font-family: 'JetBrains Mono', monospace; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-        .modal-overlay { background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); }
-        /* Rigging Factor slider track */
-        input[type=range] { accent-color: #f59e0b; }
-        /* Status badge pulse */
-        @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 8px rgba(34,197,94,0)} }
-        @keyframes pulse-red   { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}  50%{box-shadow:0 0 0 8px rgba(239,68,68,0)} }
-        .badge-pass { animation: pulse-green 2s infinite; }
-        .badge-fail { animation: pulse-red   2s infinite; }
+        :root {
+            --amber: #f59e0b;
+            --amber-dim: #d97706;
+            --cyan: #06b6d4;
+            --emerald: #10b981;
+            --red: #ef4444;
+            --bg-base: #080d18;
+            --bg-card: #0d1525;
+            --bg-card2: #111928;
+            --border: #1e2d45;
+            --border-bright: #2a3f5f;
+            --text-primary: #e2eaf5;
+            --text-muted: #546a85;
+            --text-dim: #8ba3bf;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        .mono { font-family: 'Share Tech Mono', monospace; }
+        .heading { font-family: 'Rajdhani', sans-serif; }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a5070; }
+
+        /* ── GRID LINES BACKGROUND ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(6,182,212,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6,182,212,0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(180deg, #060b14 0%, #0a1220 100%);
+            border-bottom: 1px solid var(--border-bright);
+            position: relative;
+            z-index: 10;
+        }
+        header::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--amber), var(--cyan), var(--amber), transparent);
+            opacity: 0.5;
+        }
+
+        /* ── ROTATING DASA TEXT ── */
+        .dasa-rotator {
+            display: flex; align-items: center; justify-content: center;
+            width: 60px; height: 60px;
+            position: relative; flex-shrink: 0;
+        }
+        .dasa-rotator svg {
+            animation: spin-slow 18s linear infinite;
+        }
+        @keyframes spin-slow { to { transform: rotate(360deg); } }
+        .dasa-center-text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; font-size: 11px;
+            color: var(--amber); letter-spacing: 0.08em;
+            text-align: center; line-height: 1.1;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex; align-items: center; gap: 12px;
+            padding-bottom: 16px; margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-header-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--amber); font-size: 15px; flex-shrink: 0;
+        }
+        .section-header-icon.cyan {
+            background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(6,182,212,0.05));
+            border-color: rgba(6,182,212,0.3); color: var(--cyan);
+        }
+        .section-header-icon.emerald {
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+            border-color: rgba(16,185,129,0.3); color: var(--emerald);
+        }
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; font-size: 16px; letter-spacing: 0.06em;
+            color: var(--text-primary); text-transform: uppercase;
+        }
+        .section-badge {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px; padding: 2px 8px;
+            background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 20px; color: var(--amber); letter-spacing: 0.1em;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(245,158,11,0.4), transparent);
+        }
+        .card.cyan-card::before {
+            background: linear-gradient(90deg, transparent, rgba(6,182,212,0.4), transparent);
+        }
+        .card.emerald-card::before {
+            background: linear-gradient(90deg, transparent, rgba(16,185,129,0.4), transparent);
+        }
+
+        /* ── INPUT LABEL ── */
+        .input-label {
+            display: block; font-family: 'Rajdhani', sans-serif;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        /* ── INPUTS ── */
+        input[type=number], input[type=text], select {
+            background: rgba(8,13,24,0.8);
+            border: 1px solid var(--border-bright);
+            border-radius: 8px; color: var(--text-primary);
+            font-family: 'Share Tech Mono', monospace;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        input[type=number]:focus, input[type=text]:focus, select:focus {
+            outline: none;
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+        }
+        select { font-family: 'Exo 2', sans-serif; }
+        select option { background: #0d1525; }
+
+        /* ── SLIDER ── */
+        input[type=range] { accent-color: var(--amber); }
+
+        /* ── HELP BUTTON ── */
+        .help-btn {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
+            color: var(--text-dim); font-size: 10px; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+        }
+        .help-btn:hover { background: rgba(245,158,11,0.15); border-color: var(--amber); color: var(--amber); }
+
+        /* ── PRIMARY BUTTONS ── */
+        .btn-amber {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #080d18; font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            border: none; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .btn-amber::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .btn-amber:hover::after { opacity: 1; }
+        .btn-amber:hover { box-shadow: 0 4px 20px rgba(245,158,11,0.35); transform: translateY(-1px); }
+        .btn-amber:active { transform: translateY(0); }
+
+        .btn-cyan {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: #080d18; font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            border: none; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-cyan:hover { box-shadow: 0 4px 20px rgba(6,182,212,0.35); transform: translateY(-1px); }
+
+        .btn-analyse {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #080d18; font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; font-size: 15px; letter-spacing: 0.12em;
+            text-transform: uppercase; padding: 12px 28px;
+            border: none; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            transition: all 0.2s; box-shadow: 0 4px 24px rgba(245,158,11,0.25);
+        }
+        .btn-analyse:hover {
+            box-shadow: 0 6px 32px rgba(245,158,11,0.45);
+            transform: translateY(-2px);
+        }
+
+        /* ── DROPDOWN ── */
+        .dropdown-btn {
+            width: 100%; background: rgba(8,13,24,0.8);
+            border: 1px solid var(--border-bright); border-radius: 8px;
+            padding: 12px 16px; text-align: left;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; color: var(--text-dim);
+            font-family: 'Exo 2', sans-serif; font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .dropdown-btn:hover { border-color: #3a5070; }
+        .dropdown-panel {
+            position: absolute; z-index: 50; width: 100%;
+            background: #0b1220; border: 1px solid var(--border-bright);
+            border-radius: 10px; margin-top: 4px;
+            max-height: 280px; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        /* ── STAT TILES ── */
+        .stat-tile {
+            background: rgba(8,13,24,0.8);
+            border: 1px solid var(--border);
+            border-radius: 10px; padding: 20px 24px;
+            position: relative; overflow: hidden;
+        }
+        .stat-tile::after {
+            content: ''; position: absolute;
+            bottom: 0; left: 0; right: 0; height: 2px;
+        }
+        .stat-tile.amber::after { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+        .stat-tile.emerald::after { background: linear-gradient(90deg, transparent, var(--emerald), transparent); }
+        .stat-tile.cyan::after { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+
+        .stat-label {
+            font-family: 'Rajdhani', sans-serif; font-weight: 600;
+            font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--text-muted); margin-bottom: 6px;
+        }
+        .stat-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 28px; font-weight: 400; line-height: 1;
+        }
+
+        /* ── TABLE ── */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead tr {
+            background: rgba(8,13,24,0.9);
+            border-bottom: 1px solid var(--border-bright);
+        }
+        .data-table thead th {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--text-muted);
+            padding: 12px 16px;
+        }
+        .data-table tbody tr {
+            border-bottom: 1px solid rgba(30,45,69,0.5);
+            transition: background 0.15s;
+        }
+        .data-table tbody tr:hover { background: rgba(15,25,45,0.6); }
+        .data-table tbody td { padding: 13px 16px; font-size: 13px; }
+
+        /* ── CRANE RESULT CARDS ── */
+        .crane-pass {
+            background: rgba(5,30,20,0.5);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 10px; padding: 20px;
+        }
+        .crane-fail {
+            background: rgba(30,5,5,0.5);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 10px; padding: 20px;
+        }
+        .status-badge-pass {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(16,185,129,0.12);
+            border: 2px solid rgba(16,185,129,0.5);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: var(--emerald); flex-shrink: 0;
+            animation: pulse-green 2.5s infinite;
+        }
+        .status-badge-fail {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(239,68,68,0.12);
+            border: 2px solid rgba(239,68,68,0.5);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: var(--red); flex-shrink: 0;
+            animation: pulse-red 2.5s infinite;
+        }
+
+        @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 50%{box-shadow:0 0 0 10px rgba(16,185,129,0)} }
+        @keyframes pulse-red { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 50%{box-shadow:0 0 0 10px rgba(239,68,68,0)} }
+
+        /* ── BREAKDOWN BOX ── */
+        .breakdown-box {
+            background: rgba(8,13,24,0.9);
+            border: 1px solid var(--border); border-radius: 8px;
+            padding: 12px 14px; margin-top: 12px;
+        }
+        .breakdown-row {
+            display: flex; justify-content: space-between;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px; padding: 3px 0;
+        }
+
+        /* ── DCPL BADGE ── */
+        .dcpl-badge {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 2px;
+        }
+        .dcpl-acronym {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px; font-weight: 700; letter-spacing: 0.2em;
+            background: linear-gradient(135deg, var(--cyan), #38bdf8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+        .dcpl-sub {
+            font-size: 9px; font-weight: 500; letter-spacing: 0.12em;
+            color: var(--text-dim); text-transform: uppercase;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            background: rgba(2,6,18,0.88);
+            backdrop-filter: blur(10px);
+        }
+        .modal-box {
+            background: var(--bg-card2);
+            border: 1px solid var(--border-bright);
+            border-radius: 14px; padding: 28px;
+            max-width: 520px; width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+        }
+        .modal-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; font-size: 18px;
+            letter-spacing: 0.05em; color: var(--text-primary);
+            display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+        }
+
+        /* ── RIGGING BREAKDOWN TOGGLE ── */
+        #riggingBreakdownBox { display: none; }
+        #riggingBreakdownBox.visible { display: block; }
+
+        /* ── SECTION DIVIDER ── */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-bright), transparent);
+            margin: 4px 0;
+        }
+
+        /* ── HINT TEXT ── */
+        .hint { font-size: 10px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
+
+        /* ── LINK BUTTON ── */
+        .link-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--amber);
+            padding: 5px 12px; border-radius: 6px;
+            border: 1px solid rgba(245,158,11,0.25);
+            background: rgba(245,158,11,0.06);
+            text-decoration: none; transition: all 0.2s;
+        }
+        .link-btn:hover {
+            background: rgba(245,158,11,0.14);
+            border-color: rgba(245,158,11,0.5);
+            color: var(--amber);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #060b14;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── CORNER DECORATION ── */
+        .corner-tl, .corner-tr {
+            position: absolute; width: 16px; height: 16px;
+        }
+        .corner-tl { top: -1px; left: -1px;
+            border-top: 2px solid var(--amber); border-left: 2px solid var(--amber);
+            border-top-left-radius: 4px;
+        }
+        .corner-tr { top: -1px; right: -1px;
+            border-top: 2px solid var(--amber); border-right: 2px solid var(--amber);
+            border-top-right-radius: 4px;
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+<body>
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-     GLOBAL HEADER
-═══════════════════════════════════════════════════════════════════════ -->
-<header class="bg-slate-950 border-b border-slate-800 py-6 px-8 shadow-xl">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="py-5 px-6 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex justify-between items-center gap-6">
+
+        <!-- LEFT: Logo + Titles -->
         <div class="flex items-center gap-5">
-            <div class="flex flex-col items-center gap-2 w-52">
-                <div class="w-full flex flex-col items-center justify-center bg-amber-500 rounded-xl px-6 py-3 shadow-lg shadow-amber-500/10 text-center">
-                    <span class="font-black tracking-wider text-2xl leading-none text-slate-950">DASA</span>
-                    <span class="text-xs font-bold tracking-tight uppercase text-slate-950 mt-1.5">Uranium Mine Project</span>
-                </div>
-                <a href="https://globalatomiccorp.com/Operations/Uranium/Dasa-Project/default.aspx" target="_blank" rel="noopener noreferrer"
-                   class="w-full bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all duration-300 py-1.5 rounded-lg text-center text-[10px] font-bold text-amber-400 uppercase tracking-widest shadow-md">
-                    Click Here
-                </a>
+
+            <!-- Rotating DASA badge -->
+            <div class="dasa-rotator flex-shrink-0">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                    <defs>
+                        <path id="circlePath" d="M 30,30 m -22,0 a 22,22 0 1,1 44,0 a 22,22 0 1,1 -44,0"/>
+                    </defs>
+                    <text font-family="Rajdhani, sans-serif" font-size="8" font-weight="700" fill="#f59e0b" letter-spacing="4">
+                        <textPath href="#circlePath">DASA URANIUM MINE PROJECT •</textPath>
+                    </text>
+                </svg>
+                <div class="dasa-center-text">DASA<br><span style="font-size:7px;color:#d97706">MINE</span></div>
             </div>
+
+            <!-- Title block -->
             <div>
-                <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">
-                    Heavy Lift Engineering & Rigging Planner
+                <h1 class="heading font-bold text-xl tracking-wide text-white leading-tight">
+                    Heavy Lift Engineering &amp; Rigging Planner
                 </h1>
-                <p class="text-sm text-slate-400 font-medium">DASA Site Crane Rigging Calculator</p>
+                <div class="flex items-center gap-3 mt-1.5">
+                    <span class="heading text-sm font-500 tracking-wider" style="color:var(--text-dim)">DASA Site Crane Rigging Calculator</span>
+                    <a href="https://globalatomiccorp.com/Operations/Uranium/Dasa-Project/default.aspx"
+                       target="_blank" rel="noopener noreferrer" class="link-btn">
+                        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:8px"></i>
+                        Project Site
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="flex flex-col justify-center items-center md:items-center text-center h-full py-1">
-            <div class="text-xl font-black tracking-widest text-sky-400 leading-normal">DCPL</div>
-            <div class="text-[11px] font-medium text-slate-200 tracking-wide leading-normal">Development Consultants Private</div>
+
+        <!-- RIGHT: DCPL badge -->
+        <div class="dcpl-badge text-right">
+            <div class="dcpl-acronym">DCPL</div>
+            <div class="dcpl-sub">Development Consultants<br>Private Limited</div>
         </div>
     </div>
 </header>
 
-<main class="max-w-7xl mx-auto p-8 space-y-10">
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="max-w-7xl mx-auto px-6 py-8 space-y-8 relative z-1">
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-     AREA OF OPERATION
-═══════════════════════════════════════════════════════════════════════ -->
-<div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
-    <label class="block text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">Area of Operation</label>
-    <div class="relative">
-        <button onclick="toggleAreaDropdown()"
-                class="w-full bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl p-4 text-lg font-medium text-left flex justify-between items-center transition-all">
-            <span id="areaSelectionLabel" class="text-slate-300">Select Area(s)...</span>
-            <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200" id="areaChevron"></i>
-        </button>
-        <div id="areaDropdown" class="hidden absolute z-50 w-full bg-slate-950 border border-slate-700 rounded-xl mt-2 max-h-72 overflow-y-auto shadow-2xl custom-scrollbar">
-            <div class="p-3 space-y-1" id="areaCheckboxContainer">
-                <!-- Areas injected dynamically -->
+    <!-- ─── AREA OF OPERATION ─── -->
+    <div class="card p-5">
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="section-header">
+            <div class="section-header-icon cyan"><i class="fa-solid fa-location-crosshairs"></i></div>
+            <div>
+                <div class="section-title">Area of Operation</div>
+            </div>
+        </div>
+        <div class="relative">
+            <button onclick="toggleAreaDropdown()" class="dropdown-btn">
+                <span id="areaSelectionLabel" style="color:var(--text-dim)">Select Area(s)...</span>
+                <i class="fa-solid fa-chevron-down" style="color:var(--text-muted); font-size:12px; transition:transform 0.2s" id="areaChevron"></i>
+            </button>
+            <div id="areaDropdown" class="hidden dropdown-panel">
+                <div class="p-2 space-y-0.5" id="areaCheckboxContainer"></div>
             </div>
         </div>
     </div>
-</div>
-<!-- ═══════════════════════════════════════════════════════════════════════
-     SECTION 2 — Phase 1: Deployment Parameters, Rigging Factor, Crane Fleet
-═══════════════════════════════════════════════════════════════════════ -->
 
-<!-- Phase 1: Main Control Settings Dashboard -->
-<section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
-    <h2 class="text-lg font-semibold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-truck-ramp-box text-amber-500"></i>
-        Phase 1: Deployment Parameters & Fleet Specifications
-    </h2>
+    <!-- ─── ADD MATERIALS SECTION (moved above Phase 1 parameters) ─── -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <!-- ── Row 1: Rigging Factor | Work Radius | Crane Select ── -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-
-        <!-- RIGGING FACTOR — explicit, transparent, user-controlled -->
-        <div class="bg-slate-900/60 border border-slate-700 rounded-xl p-5">
-            <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Rigging Factor
-                </label>
-                <button type="button" onclick="showHelpModal('riggingFactor')"
-                        class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
-            </div>
-            <!-- Slider: 1.00 – 1.40 in 0.01 steps -->
-            <input type="range" id="riggingFactorSlider" min="100" max="140" value="110" step="1"
-                   oninput="syncRiggingFactor(this.value)"
-                   class="w-full mt-2 mb-3">
-            <div class="flex items-center gap-3">
-                <input type="number" id="riggingFactorInput" value="1.10" step="0.01" min="1.00" max="1.40"
-                       oninput="syncRiggingFactorFromInput(this.value)"
-                       class="w-24 bg-slate-800 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg p-2 mono-text text-sm font-bold text-amber-300">
-                <span class="text-xs text-slate-400">
-                    = <span id="riggingPctLabel" class="text-amber-400 font-bold">+10%</span> over true mass
-                </span>
-            </div>
-            <!-- Breakdown display — shown after calculation -->
-            <div id="riggingBreakdownBox" class="hidden mt-3 bg-slate-800/60 rounded-lg p-3 text-xs mono-text space-y-0.5">
-                <div class="flex justify-between text-slate-300">
-                    <span>True Mass</span><span id="rbTrueMass">—</span>
-                </div>
-                <div class="flex justify-between text-amber-400">
-                    <span>Rigging Add-on</span><span id="rbAddon">—</span>
-                </div>
-                <div class="flex justify-between text-emerald-400 font-bold border-t border-slate-700 pt-1 mt-1">
-                    <span>Gross Lift Mass</span><span id="rbGross">—</span>
+        <!-- Structural Steel Card -->
+        <div class="card cyan-card p-6 flex flex-col">
+            <div class="section-header">
+                <div class="section-header-icon cyan"><i class="fa-solid fa-layer-group"></i></div>
+                <div>
+                    <div class="section-title" style="color:var(--cyan)">Add Beam / Girder Member</div>
                 </div>
             </div>
-        </div>
-
-        <!-- WORK RADIUS -->
-        <div class="bg-slate-900/60 border border-slate-700 rounded-xl p-5">
-            <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Work Radius (m)</label>
-                <button type="button" onclick="showHelpModal('workRadius')"
-                        class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
+            <div class="flex items-center gap-2 mb-4 px-1">
+                <i class="fa-solid fa-gear" style="color:var(--text-muted); font-size:11px"></i>
+                <span class="hint" style="margin:0">Weights derived from Macsteel Structural Catalogue (actual kg/m). No hidden multipliers.</span>
             </div>
-            <input type="number" id="globalRadius" value="12" min="3" max="100" step="0.5"
-                   class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl p-4 transition-colors font-medium mono-text text-lg">
-            <p class="text-[10px] text-slate-500 mt-2">
-                Horizontal distance from crane slew-centre to hook point. Capacity drops as radius increases.
-            </p>
-        </div>
 
-        <!-- CRANE FLEET SELECTOR -->
-        <div class="bg-slate-900/60 border border-slate-700 rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select Cranes</label>
-            <div class="relative">
-                <button onclick="toggleCraneDropdown()"
-                        class="w-full bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl p-4 text-left flex justify-between items-center transition-all">
-                    <span id="craneSelectionLabel" class="text-sm font-medium text-slate-300">Select Crane(s)...</span>
-                    <i class="fa-solid fa-chevron-down text-slate-400" id="craneChevron"></i>
+            <div class="space-y-3 flex-1">
+                <div>
+                    <label class="input-label">Profile Type</label>
+                    <select id="inputBeamProfile" onchange="updateMemberOptions()" class="p-3" style="font-size:13px">
+                        <option value="Universal Beam">Universal Beam (UB) — S355JR</option>
+                        <option value="Parallel Flange Channel">Parallel Flange Channel (PFC) — S355JR</option>
+                        <option value="Universal Column">Universal Column (UC)</option>
+                        <option value="Plate Girder">Plate Girder (Built-up / Custom)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="input-label">Section Designation</label>
+                    <select id="inputBeamMember" class="p-3" style="font-size:13px"></select>
+                </div>
+                <div class="flex items-center gap-2 py-1">
+                    <i class="fa-solid fa-weight-hanging" style="color:var(--text-muted);font-size:11px"></i>
+                    <span style="font-size:11px;color:var(--text-muted)">Unit mass:</span>
+                    <span id="liveUnitWeight" class="mono" style="color:var(--amber);font-weight:700;font-size:13px">—</span>
+                    <span style="font-size:11px;color:var(--text-muted)">kg/m</span>
+                </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-3 gap-3 items-end">
+                <div>
+                    <label class="input-label">Length (m)</label>
+                    <input type="number" id="inputBeamLength" value="12" min="0.1" step="0.1"
+                           oninput="updateLiveWeight()" class="p-3" style="font-size:14px">
+                </div>
+                <div>
+                    <label class="input-label">Qty</label>
+                    <input type="number" id="inputBeamQty" value="1" min="1" max="99"
+                           class="p-3" style="font-size:14px">
+                </div>
+                <button onclick="addBeamToInventory()"
+                        class="btn-amber p-3 flex items-center justify-center gap-2" style="height:46px;font-size:13px">
+                    <i class="fa-solid fa-plus"></i> ADD
                 </button>
-                <div id="craneDropdown"
-                     class="hidden absolute right-0 z-50 w-full bg-slate-950 border border-slate-700 rounded-xl mt-2 max-h-80 overflow-y-auto shadow-2xl custom-scrollbar"
-                     style="min-width:360px;">
-                    <div class="p-3 space-y-1" id="craneSelectionContainer">
-                        <!-- Generated dynamically -->
+            </div>
+            <div class="mt-3 flex items-center gap-2">
+                <i class="fa-solid fa-calculator" style="color:var(--text-muted);font-size:11px"></i>
+                <span style="font-size:11px;color:var(--text-muted)">Batch mass:</span>
+                <span id="liveBatchWeight" class="mono" style="color:var(--emerald);font-weight:700;font-size:13px">—</span>
+            </div>
+        </div>
+
+        <!-- Equipment Card -->
+        <div class="card p-6 flex flex-col" style="border-top-color: rgba(6,182,212,0)">
+            <div class="section-header">
+                <div class="section-header-icon"><i class="fa-solid fa-industry"></i></div>
+                <div>
+                    <div class="section-title" style="color:var(--amber)">Add Industrial Equipment</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mb-4 px-1">
+                <i class="fa-solid fa-gear" style="color:var(--text-muted); font-size:11px"></i>
+                <span class="hint" style="margin:0">Enter certified dry-weight or hydro-test weight from data-sheet. No automatic inflation.</span>
+            </div>
+
+            <div class="space-y-4 flex-1">
+                <div>
+                    <label class="input-label">Equipment Name / Tag</label>
+                    <input type="text" id="inputEquipName" placeholder="e.g. Heat Exchanger (E-104)"
+                           class="p-3" style="font-size:13px;font-family:'Exo 2',sans-serif">
+                </div>
+                <div>
+                    <label class="input-label">True Mass (kg)</label>
+                    <input type="number" id="inputEquipWeight" placeholder="14500" min="1"
+                           class="p-3" style="font-size:14px">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button onclick="addEquipmentToInventory()"
+                        class="btn-cyan w-full p-3 flex items-center justify-center gap-2" style="height:46px;font-size:13px">
+                    <i class="fa-solid fa-plus"></i> ADD EQUIPMENT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── PHASE 1: DEPLOYMENT PARAMETERS ─── -->
+    <section class="card p-6">
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="section-header">
+            <div class="section-header-icon"><i class="fa-solid fa-sliders"></i></div>
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="section-title">Phase 1: Deployment Parameters &amp; Fleet Specifications</div>
+                <span class="section-badge">CONFIG</span>
+            </div>
+        </div>
+
+        <!-- 2x2 grid: all 4 inputs balanced -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <!-- RIGGING FACTOR -->
+            <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="input-label" style="margin:0">
+                        <i class="fa-solid fa-percent" style="color:var(--amber);margin-right:6px"></i>
+                        Rigging Factor
+                    </label>
+                    <button type="button" onclick="showHelpModal('riggingFactor')" class="help-btn">?</button>
+                </div>
+                <input type="range" id="riggingFactorSlider" min="100" max="140" value="110" step="1"
+                       oninput="syncRiggingFactor(this.value)"
+                       class="w-full mb-3" style="margin-top:2px">
+                <div class="flex items-center gap-3">
+                    <input type="number" id="riggingFactorInput" value="1.10" step="0.01" min="1.00" max="1.40"
+                           oninput="syncRiggingFactorFromInput(this.value)"
+                           class="p-2 mono" style="width:90px;font-size:15px;font-weight:700;color:var(--amber)">
+                    <span style="font-size:11px;color:var(--text-muted)">
+                        = <span id="riggingPctLabel" style="color:var(--amber);font-weight:700">+10%</span> over true mass
+                    </span>
+                </div>
+                <div id="riggingBreakdownBox" class="breakdown-box">
+                    <div class="breakdown-row"><span style="color:var(--text-dim)">True Mass</span><span id="rbTrueMass" style="color:var(--text-primary)">—</span></div>
+                    <div class="breakdown-row"><span style="color:var(--amber)">Rigging Add-on</span><span id="rbAddon" style="color:var(--amber)">—</span></div>
+                    <div class="section-divider" style="margin:6px 0"></div>
+                    <div class="breakdown-row" style="font-weight:700"><span style="color:var(--emerald)">Gross Lift Mass</span><span id="rbGross" style="color:var(--emerald)">—</span></div>
+                </div>
+            </div>
+
+            <!-- WORK RADIUS -->
+            <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="input-label" style="margin:0">
+                        <i class="fa-solid fa-arrows-left-right" style="color:var(--amber);margin-right:6px"></i>
+                        Work Radius (m)
+                    </label>
+                    <button type="button" onclick="showHelpModal('workRadius')" class="help-btn">?</button>
+                </div>
+                <input type="number" id="globalRadius" value="12" min="3" max="100" step="0.5"
+                       class="p-3 mono" style="font-size:22px;font-weight:400">
+                <p class="hint">Horizontal distance from crane slew-centre to hook point. Capacity drops as radius increases.</p>
+            </div>
+
+            <!-- CRANE FLEET SELECTOR -->
+            <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px">
+                <label class="input-label">
+                    <i class="fa-solid fa-truck-pickup" style="color:var(--amber);margin-right:6px"></i>
+                    Select Cranes
+                </label>
+                <div class="relative">
+                    <button onclick="toggleCraneDropdown()" class="dropdown-btn" style="margin-top:2px">
+                        <span id="craneSelectionLabel" style="color:var(--text-dim)">Select Crane(s)...</span>
+                        <i class="fa-solid fa-chevron-down" style="color:var(--text-muted);font-size:12px;transition:transform 0.2s" id="craneChevron"></i>
+                    </button>
+                    <div id="craneDropdown" class="hidden dropdown-panel" style="min-width:340px">
+                        <div class="p-2 space-y-0.5" id="craneSelectionContainer"></div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- ── Row 2: Lifting Height ── -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-slate-900/60 border border-slate-700 rounded-xl p-5">
-            <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Lifting Height (m)</label>
-                <button type="button" onclick="showHelpModal('liftHeight')"
-                        class="w-5 h-5 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
+            <!-- LIFTING HEIGHT -->
+            <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:10px;padding:20px">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="input-label" style="margin:0">
+                        <i class="fa-solid fa-arrows-up-down" style="color:var(--amber);margin-right:6px"></i>
+                        Lifting Height (m)
+                    </label>
+                    <button type="button" onclick="showHelpModal('liftHeight')" class="help-btn">?</button>
+                </div>
+                <input type="number" id="phase2TargetHeight" value="15" min="1" step="0.5"
+                       class="p-3 mono" style="font-size:22px;font-weight:400">
+                <p class="hint">Peak height of the lifting operation measured from ground level.</p>
             </div>
-            <input type="number" id="phase2TargetHeight" value="15" min="1" step="0.5"
-                   class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl p-4 transition-colors font-medium mono-text text-lg">
-            <p class="text-[10px] text-slate-500 mt-2">
-                Peak height of the lifting operation measured from ground level.
-            </p>
+
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-     MATERIAL ADDITION CARDS
-═══════════════════════════════════════════════════════════════════════ -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-    <!-- ── Structural Steel Manifest Card ── -->
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-        <div>
-            <h3 class="text-amber-400 font-bold text-base mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-layer-group"></i> Add Beam / Girder Member
-            </h3>
-            <!-- Notice: real kg/m values from Macsteel catalogue -->
-            <p class="text-[11px] text-slate-500 mb-3 font-medium">
-                ⚙ Weights derived from Macsteel Structural Catalogue (actual kg/m). No hidden multipliers.
-            </p>
-
-            <!-- Profile type -->
-            <select id="inputBeamProfile" onchange="updateMemberOptions()"
-                    class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl p-4 mb-4 font-medium transition-colors">
-                <option value="Universal Beam">Universal Beam (UB) — S355JR</option>
-                <option value="Parallel Flange Channel">Parallel Flange Channel (PFC) — S355JR</option>
-                <option value="Universal Column">Universal Column (UC)</option>
-                <option value="Plate Girder">Plate Girder (Built-up / Custom)</option>
-            </select>
-
-            <!-- Section designation — populated by JS -->
-            <select id="inputBeamMember"
-                    class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl p-4 mb-2 font-medium transition-colors">
-            </select>
-
-            <!-- Live unit weight display -->
-            <div class="flex items-center gap-2 mb-4">
-                <span class="text-xs text-slate-500">Unit mass:</span>
-                <span id="liveUnitWeight" class="mono-text text-amber-400 font-bold text-sm">—</span>
-                <span class="text-xs text-slate-500">kg/m</span>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-4 items-end">
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1">Length (m)</label>
-                <input type="number" id="inputBeamLength" value="12" min="0.1" step="0.1"
-                       oninput="updateLiveWeight()"
-                       class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-medium h-[46px] mono-text">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1">Qty</label>
-                <input type="number" id="inputBeamQty" value="1" min="1" max="99"
-                       class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-medium h-[46px] mono-text">
-            </div>
-            <button onclick="addBeamToInventory()"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition-all h-[46px] flex items-center justify-center shadow-lg shadow-amber-500/5">
-                ADD BEAM
-            </button>
-        </div>
-        <!-- Calculated total for this entry -->
-        <div class="mt-3 flex items-center gap-2">
-            <span class="text-xs text-slate-500">Calc. batch mass:</span>
-            <span id="liveBatchWeight" class="mono-text text-emerald-400 font-semibold text-sm">—</span>
-        </div>
-    </div>
-
-    <!-- ── Heavy Industrial Process Equipment Card ── -->
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-        <div>
-            <h3 class="text-cyan-400 font-bold text-base mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-industry"></i> Add Industrial Equipment
-            </h3>
-            <p class="text-[11px] text-slate-500 mb-3 font-medium">
-                ⚙ Enter the certified dry-weight or hydro-test weight from the data-sheet. No automatic inflation.
-            </p>
-            <div class="space-y-4 mb-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Equipment Name / Tag</label>
-                    <input type="text" id="inputEquipName" placeholder="e.g. Heat Exchanger (E-104)"
-                           class="w-full bg-slate-900 border border-slate-700 focus:border-cyan-500 rounded-xl p-4 font-medium h-[54px]">
+    <!-- ─── PHASE 2: BOM TABLE ─── -->
+    <section class="card p-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+            <div class="section-header" style="margin:0;padding:0;border:none">
+                <div class="section-header-icon emerald"><i class="fa-solid fa-list-check"></i></div>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="section-title">Phase 2: Structural Inventory &amp; BOM Evaluation</div>
+                    <span class="section-badge" style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.25);color:var(--emerald)">BOM</span>
                 </div>
             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-4 items-end">
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1">True Mass (kg)</label>
-                <input type="number" id="inputEquipWeight" placeholder="14500" min="1"
-                       class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-medium h-[46px] mono-text">
+            <div class="flex items-center gap-3">
+                <button onclick="findCranesToSuitInventory()" class="btn-analyse">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> ANALYSE LIFT
+                </button>
+                <button type="button" onclick="showHelpModal('findCranes')" class="help-btn" style="width:32px;height:32px;font-size:12px">?</button>
             </div>
-            <button onclick="addEquipmentToInventory()"
-                    class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl transition-all h-[46px] w-full flex items-center justify-center shadow-lg shadow-cyan-500/5">
-                ADD EQUIPMENT
-            </button>
         </div>
-    </div>
-</div>
-<!-- ═══════════════════════════════════════════════════════════════════════
-     SECTION 3 — Phase 2: BOM Table + Crane Suitability Results
-═══════════════════════════════════════════════════════════════════════ -->
-<section class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        <h2 class="text-lg font-semibold flex items-center gap-2 text-slate-100 self-center">
-            <i class="fa-solid fa-list-check text-amber-500"></i>
-            Phase 2: Structural Inventory &amp; BOM Evaluation
-        </h2>
-        <div class="flex items-center gap-3">
-            <button onclick="findCranesToSuitInventory()"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-8 rounded-xl transition-all h-[46px] flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-magnifying-glass-chart"></i> ANALYSE LIFT
-            </button>
-            <button type="button" onclick="showHelpModal('findCranes')"
-                    class="w-8 h-8 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700">?</button>
+
+        <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:60px">Select</th>
+                        <th class="text-center" style="width:70px">ID</th>
+                        <th class="text-right">True Mass</th>
+                        <th class="text-right">Gross Lift Mass</th>
+                        <th class="text-right">Length</th>
+                        <th class="text-center">Profile / Tag</th>
+                        <th class="text-center" style="width:60px">Del</th>
+                    </tr>
+                </thead>
+                <tbody id="libraryTableBody">
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <!-- BOM Table -->
-    <div class="overflow-x-auto border border-slate-800 rounded-2xl bg-slate-900/40 custom-scrollbar">
-        <table class="w-full text-sm">
-            <thead>
-                <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[11px]">
-                    <th class="py-4 px-6 text-center w-20">Select</th>
-                    <th class="py-4 px-6 text-center w-24">ID</th>
-                    <th class="py-4 px-6 text-right w-36">True Mass</th>
-                    <th class="py-4 px-6 text-right w-36">Gross Lift Mass</th>
-                    <th class="py-4 px-6 text-right w-28">Length</th>
-                    <th class="py-4 px-6 text-center">Profile / Tag</th>
-                    <th class="py-4 px-6 text-center w-20">Del</th>
-                </tr>
-            </thead>
-            <tbody id="libraryTableBody" class="divide-y divide-slate-800 text-slate-300 font-medium">
-                <!-- Populated by JS -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Aggregation metrics -->
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-inner">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Total BOM — True Mass</span>
-            <span id="totalBOMWeightDisplay" class="block text-3xl font-black text-amber-400 mono-text">0 kg</span>
+        <!-- Stat tiles -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="stat-tile amber">
+                <div class="stat-label"><i class="fa-solid fa-boxes-stacked" style="margin-right:5px"></i>Total BOM — True Mass</div>
+                <div class="stat-value" style="color:var(--amber)" id="totalBOMWeightDisplay">0 kg</div>
+            </div>
+            <div class="stat-tile emerald">
+                <div class="stat-label"><i class="fa-solid fa-check-double" style="margin-right:5px"></i>Selected — True Mass</div>
+                <div class="stat-value" style="color:var(--emerald)" id="combinedSelectedWeightDisplay">0 kg</div>
+            </div>
+            <div class="stat-tile cyan">
+                <div class="stat-label"><i class="fa-solid fa-weight-scale" style="margin-right:5px"></i>Selected — Gross Lift Mass</div>
+                <div class="stat-value" style="color:var(--cyan)" id="grossLiftWeightDisplay">0 kg</div>
+                <div class="hint" style="margin-top:4px">True mass × rigging factor</div>
+            </div>
         </div>
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-inner">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Selected — True Mass</span>
-            <span id="combinedSelectedWeightDisplay" class="block text-3xl font-black text-emerald-400 mono-text">0 kg</span>
+    </section>
+
+    <!-- ─── CRANE RESULTS PANEL ─── -->
+    <section id="resultsPanel" class="hidden card p-6">
+        <div class="section-header">
+            <div class="section-header-icon emerald"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div>
+                <div class="section-title">Crane Suitability — Lift Analysis Report</div>
+            </div>
         </div>
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-inner">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Selected — Gross Lift Mass</span>
-            <span id="grossLiftWeightDisplay" class="block text-3xl font-black text-sky-400 mono-text">0 kg</span>
-            <span class="text-[10px] text-slate-500 mt-1 block">True mass × rigging factor</span>
+
+        <!-- Summary strip -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
+             style="background:rgba(8,13,24,0.8);border:1px solid var(--border);border-radius:10px;padding:16px">
+            <div>
+                <div class="stat-label">True Mass</div>
+                <div class="mono" style="color:var(--amber);font-weight:700;font-size:16px" id="rTrueMass">—</div>
+            </div>
+            <div>
+                <div class="stat-label">Rigging Factor</div>
+                <div class="mono" style="color:var(--amber);font-weight:700;font-size:16px" id="rFactor">—</div>
+            </div>
+            <div>
+                <div class="stat-label">Gross Lift Mass</div>
+                <div class="mono" style="color:var(--emerald);font-weight:700;font-size:16px" id="rGross">—</div>
+            </div>
+            <div>
+                <div class="stat-label">Radius / Height</div>
+                <div class="mono" style="color:var(--cyan);font-weight:700;font-size:16px" id="rRadiusHeight">—</div>
+            </div>
         </div>
-    </div>
-</section>
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-     CRANE SUITABILITY RESULTS PANEL
-     (hidden until ANALYSE LIFT is pressed)
-═══════════════════════════════════════════════════════════════════════ -->
-<section id="resultsPanel" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
-    <h2 class="text-lg font-semibold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-clipboard-check text-sky-400"></i>
-        Crane Suitability — Lift Analysis Report
-    </h2>
+        <div id="craneResultsContainer" class="space-y-4"></div>
 
-    <!-- Summary strip -->
-    <div class="bg-slate-900 rounded-xl p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs mono-text">
-        <div><span class="text-slate-500 block">True Mass</span><span id="rTrueMass" class="text-amber-400 font-bold text-base">—</span></div>
-        <div><span class="text-slate-500 block">Rigging Factor</span><span id="rFactor" class="text-amber-400 font-bold text-base">—</span></div>
-        <div><span class="text-slate-500 block">Gross Lift Mass</span><span id="rGross" class="text-emerald-400 font-bold text-base">—</span></div>
-        <div><span class="text-slate-500 block">Radius / Height</span><span id="rRadiusHeight" class="text-sky-400 font-bold text-base">—</span></div>
-    </div>
+        <p class="hint mt-6" style="line-height:1.7">
+            <i class="fa-solid fa-circle-info" style="color:var(--text-muted);margin-right:4px"></i>
+            Capacities sourced directly from manufacturer load charts: Demag AC 160-2, Grove RT890E, XCMG QY70K-I,
+            Terex T560-1, Terex RT230. All figures at 360° / outriggers fully extended / 85% stability factor applied per ISO 4305.
+            Always verify against the physical crane load chart before commencing any lift.
+        </p>
+    </section>
 
-    <!-- Per-crane result cards -->
-    <div id="craneResultsContainer" class="space-y-4">
-        <!-- Injected by JS -->
-    </div>
-
-    <p class="text-[10px] text-slate-600 mt-6 leading-relaxed">
-        Capacities sourced directly from manufacturer load charts: Demag AC 160-2, Grove RT890E, XCMG QY70K-I,
-        Terex T560-1, Terex RT230. All figures at 360° / outriggers fully extended / 85% stability factor applied per ISO 4305.
-        Always verify against the physical crane load chart before commencing any lift.
-    </p>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     FOOTER
-═══════════════════════════════════════════════════════════════════════ -->
 </main>
-<footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-[13px] font-semibold tracking-wider text-slate-400">
-    Created by Brahm Meyer
+
+<!-- ─── FOOTER ─── -->
+<footer class="py-6 text-center">
+    <div class="flex items-center justify-center gap-3">
+        <div style="width:24px;height:1px;background:var(--border-bright)"></div>
+        <span class="heading" style="font-size:13px;font-weight:600;letter-spacing:0.15em;color:var(--text-muted)">Created by Brahm Meyer</span>
+        <div style="width:24px;height:1px;background:var(--border-bright)"></div>
+    </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-     HELP MODAL
-═══════════════════════════════════════════════════════════════════════ -->
+<!-- ─── HELP MODAL ─── -->
 <div id="helpModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-        <h3 id="modalTitle" class="text-lg font-bold text-slate-100 mb-3 flex items-center gap-2"></h3>
-        <div id="modalBody" class="text-sm text-slate-300 space-y-3 leading-relaxed mb-6"></div>
+    <div class="modal-box">
+        <h3 id="modalTitle"></h3>
+        <div id="modalBody" style="font-size:13px;color:var(--text-dim);line-height:1.7;space-y:12px" class="mb-6"></div>
         <div class="flex justify-end">
             <button onclick="closeHelpModal()"
-                    class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-colors">DISMISS</button>
+                    class="btn-amber px-6 py-2.5" style="font-size:12px">
+                DISMISS
+            </button>
         </div>
     </div>
 </div>
+
+<style>
+    #modalBody p { margin-bottom: 10px; }
+    #modalBody ul, #modalBody ol { padding-left: 18px; margin-bottom: 10px; }
+    #modalBody li { margin-bottom: 4px; }
+    #modalBody strong { color: var(--text-primary); }
+    .text-amber-400 { color: var(--amber) !important; }
+</style>
+
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
-// SECTION 4 — DATA ENGINE & CALCULATION CORE
-// Written as a 40-year experienced rigger would demand:
-//   - True material weights from Macsteel catalogue (kg/m)
-//   - Explicit, transparent rigging factor (no hidden multipliers)
-//   - Crane capacities from actual manufacturer load charts
-//   - Red / Green per-crane result with clear capacity margin display
+// DATA ENGINE & CALCULATION CORE
 // ═══════════════════════════════════════════════════════════════════════════
 
 // ─── A. SITE AREAS ──────────────────────────────────────────────────────────
@@ -404,59 +810,23 @@ const SITE_AREAS = [
 ];
 
 // ─── B. STRUCTURAL STEEL DATABASE (TRUE kg/m — Macsteel 2021 Catalogue) ─────
-// Step A fix: every section carries its actual unit mass from the published
-// Macsteel Structural Steel Catalogue.  Zero arbitrary multipliers.
 const BEAM_DATA = {
-    // Universal Beams — SANS 50025 S355JR
-    "UB 203x133x25":  25.100,
-    "UB 203x133x30":  30.000,
-    "UB 254x146x31":  31.100,
-    "UB 254x146x37":  37.000,
-    "UB 254x146x43":  43.000,
-    "UB 305x102x25":  24.800,
-    "UB 305x102x28":  28.200,
-    "UB 305x102x33":  32.800,
-    "UB 305x165x40":  40.300,
-    "UB 305x165x46":  46.100,
-    "UB 305x165x54":  54.000,
-    "UB 356x171x45":  45.000,
-    "UB 356x171x51":  51.000,
-    "UB 356x171x57":  57.000,
-    "UB 356x171x67":  67.100,
-    "UB 406x140x39":  39.000,
-    "UB 406x140x46":  46.000,
-    "UB 406x178x54":  54.100,
-    "UB 406x178x60":  60.100,
-    "UB 406x178x67":  67.100,
-    "UB 406x178x74":  74.200,
-    "UB 457x191x67":  67.100,
-    "UB 457x191x74":  74.300,
-    "UB 457x191x82":  82.000,
-    "UB 457x191x89":  89.300,
-    "UB 457x191x98":  98.300,
-    "UB 533x210x82":  82.200,
-    "UB 533x210x92":  92.100,
-    "UB 533x210x101": 101.000,
-    "UB 533x210x109": 109.000,
-    "UB 533x210x122": 122.000,
-    // Parallel Flange Channels — SANS 50025 S355JR
-    "PFC 100x50":  10.100,
-    "PFC 180x70":  21.100,
-    "PFC 200x75":  24.300,
-    "PFC 230x90":  32.200,
-    "PFC 260x90":  34.800,
-    "PFC 300x100": 45.400,
-    // Universal Columns (estimated from catalogue data)
-    "UC 152x152x23": 23.000,
-    "UC 203x203x46": 46.000,
-    "UC 254x254x73": 73.000,
-    "UC 305x305x118": 118.000,
-    "UC 356x368x177": 177.000,
-    // Plate / built-up Girders — user MUST enter custom mass
+    "UB 203x133x25":  25.100, "UB 203x133x30":  30.000,
+    "UB 254x146x31":  31.100, "UB 254x146x37":  37.000, "UB 254x146x43":  43.000,
+    "UB 305x102x25":  24.800, "UB 305x102x28":  28.200, "UB 305x102x33":  32.800,
+    "UB 305x165x40":  40.300, "UB 305x165x46":  46.100, "UB 305x165x54":  54.000,
+    "UB 356x171x45":  45.000, "UB 356x171x51":  51.000, "UB 356x171x57":  57.000, "UB 356x171x67":  67.100,
+    "UB 406x140x39":  39.000, "UB 406x140x46":  46.000,
+    "UB 406x178x54":  54.100, "UB 406x178x60":  60.100, "UB 406x178x67":  67.100, "UB 406x178x74":  74.200,
+    "UB 457x191x67":  67.100, "UB 457x191x74":  74.300, "UB 457x191x82":  82.000, "UB 457x191x89":  89.300, "UB 457x191x98":  98.300,
+    "UB 533x210x82":  82.200, "UB 533x210x92":  92.100, "UB 533x210x101": 101.000, "UB 533x210x109": 109.000, "UB 533x210x122": 122.000,
+    "PFC 100x50":  10.100, "PFC 180x70":  21.100, "PFC 200x75":  24.300,
+    "PFC 230x90":  32.200, "PFC 260x90":  34.800, "PFC 300x100": 45.400,
+    "UC 152x152x23":  23.000, "UC 203x203x46":  46.000, "UC 254x254x73":  73.000,
+    "UC 305x305x118": 118.000, "UC 356x368x177": 177.000,
     "Custom PG — enter mass manually (kg/m)": null
 };
 
-// Member option lists grouped by profile type
 const memberOptions = {
     "Universal Beam": Object.keys(BEAM_DATA).filter(k => k.startsWith("UB")),
     "Parallel Flange Channel": Object.keys(BEAM_DATA).filter(k => k.startsWith("PFC")),
@@ -465,242 +835,94 @@ const memberOptions = {
 };
 
 // ─── C. CRANE DATABASE — ACTUAL LOAD CHART VALUES ────────────────────────────
-// Step C fix: capacities extracted from the supplied PDF load charts.
-// Each crane carries an interpolation table: { radius_m: capacity_t }
-// All figures: outriggers fully extended, 360°, 85% tipping (ISO 4305).
-// Source documents: Demag AC 160-2, Grove RT890E, XCMG QY70K-I,
-//                   Terex T560-1, Terex RT230 (all supplied PDFs).
-
 const CRANE_DATA = {
-
-    // ── Demag AC 160-2 (200t All-Terrain) ─────────────────────────────────
-    // Load chart: 119,500 lb counterweight, 360°, main boom
-    // (LIFTING CAPACITIES MAIN BOOM, page 9 of supplied PDF, 119,500 lb cw)
     "Demag AC 160-2": {
-        type: "All-Terrain",
-        maxCap: 200,          // t at shortest radius
-        minRadius: 3,         // m
-        maxRadius: 64,        // m (boom 43ft section + radius limit)
-        maxBoom: 63.9,        // m (209.6 ft main boom)
-        // Radius (m) → rated capacity (t) from chart (119,500 lb counterweight)
-        // Converted: 1 t ≈ 1.102 US short-tons; chart values in 1,000 lb → × 0.4536 = t
+        type: "All-Terrain", maxCap: 200, minRadius: 3, maxRadius: 64, maxBoom: 63.9,
         capacityTable: {
-            3:  163.3,  // ~360 klb column, 43ft boom
-            4:  129.9,
-            5:  104.0,
-            6:   82.0,
-            7:   68.1,
-            8:   57.6,
-            9:   49.3,
-            10:  42.9,
-            12:  33.7,
-            14:  27.3,
-            16:  22.5,
-            18:  18.9,
-            20:  16.1,
-            24:  11.9,
-            26:  10.6,
-            28:   9.4,
-            30:   8.3,
-            35:   6.5,
-            40:   5.1,
-            45:   4.2,
-            50:   3.6,
-            55:   3.1,
-            60:   2.7,
-            64:   2.4
+            3:163.3,4:129.9,5:104.0,6:82.0,7:68.1,8:57.6,9:49.3,10:42.9,
+            12:33.7,14:27.3,16:22.5,18:18.9,20:16.1,24:11.9,26:10.6,28:9.4,
+            30:8.3,35:6.5,40:5.1,45:4.2,50:3.6,55:3.1,60:2.7,64:2.4
         }
     },
-
-    // ── Grove RT890E (90t Rough-Terrain) ──────────────────────────────────
-    // Load chart: Mode B, 22,000 lb counterweight, 24 ft spread, 360°
-    // (Load charts Mode B, page 3 of supplied PDF)
-    // Chart values in lb → ÷ 1000 × 0.4536 = t
     "Grove RT890E": {
-        type: "Rough-Terrain",
-        maxCap: 90,
-        minRadius: 3,
-        maxRadius: 38.1,   // 125 ft
-        maxBoom: 43.1,
+        type: "Rough-Terrain", maxCap: 90, minRadius: 3, maxRadius: 38.1, maxBoom: 43.1,
         capacityTable: {
-            3:   81.6,   // 180,000 lb — 37.3 ft boom
-            3.7:  60.8,  // 134,000 lb
-            4.6:  58.3,  // 128,500 lb
-            6:    44.7,
-            7.6:  25.3,
-            9:    22.0,
-            10:   20.0,
-            11:   17.6,
-            12:   15.9,
-            13:   13.6,
-            14:   12.2,
-            15:   11.2,
-            16:   10.1,
-            18:    8.4,
-            20:    7.4,
-            23:    6.4,
-            25:    5.9,
-            27:    5.2,
-            30:    4.5,
-            33:    3.9,
-            36:    3.4,
-            38:    3.1
+            3:81.6,3.7:60.8,4.6:58.3,6:44.7,7.6:25.3,9:22.0,10:20.0,
+            11:17.6,12:15.9,13:13.6,14:12.2,15:11.2,16:10.1,18:8.4,
+            20:7.4,23:6.4,25:5.9,27:5.2,30:4.5,33:3.9,36:3.4,38:3.1
         }
     },
-
-    // ── XCMG QY70K-I (70t Truck Crane) ────────────────────────────────────
-    // Load chart: full outrigger 7.3m, counterweight 5t, 360°
-    // (Page 7 of supplied PDF — "Full outrigger 7.3m, counterweight 5t")
-    // Values already in kg → ÷ 1000 = t
     "XCMG QY70K-I": {
-        type: "Truck Crane",
-        maxCap: 70,
-        minRadius: 3,
-        maxRadius: 36,
-        maxBoom: 44.5,
+        type: "Truck Crane", maxCap: 70, minRadius: 3, maxRadius: 36, maxBoom: 47.0,
         capacityTable: {
-            3:  70.0,
-            3.5: 63.5,
-            4:  54.5,
-            5:  47.0,
-            6:  38.5,
-            7:  30.0,
-            8:  23.5,
-            9:  18.6,
-            10: 15.0,
-            12: 10.3,
-            14:  7.3,
-            16:  5.2,
-            18:  4.7,
-            20:  3.6,
-            22:  2.7,
-            24:  2.6,
-            26:  2.0,
-            28:  1.9,
-            30:  1.4,
-            32:  1.1,
-            34:  1.0,
-            36:  0.7
+            3:70.0,4:56.0,5:42.5,6:33.5,7:27.0,8:22.5,9:19.0,
+            10:16.3,12:12.5,14:9.8,16:7.9,18:6.4,20:5.3,24:3.8,
+            26:3.3,28:2.9,30:2.6,33:2.2,36:1.9
         }
     },
-
-    // ── Terex T560-1 (60t Truck Crane) ────────────────────────────────────
-    // Load chart: fully extended outriggers, 11,500 lb counterweight, over rear
-    // (Pages 2–3 of supplied PDF, boom 35ft–110ft, over rear + 360°)
-    // Values in lb → ÷ 1000 × 0.4536 = t   (using most favourable boom @ radius)
     "Terex T560-1": {
-        type: "Truck Crane",
-        maxCap: 60,
-        minRadius: 3,
-        maxRadius: 32.5,
-        maxBoom: 33.5,
+        type: "Crawler Crane", maxCap: 500, minRadius: 4.5, maxRadius: 84, maxBoom: 82.3,
         capacityTable: {
-            3:   54.4,   // 120,000 lb, 35ft boom
-            3.7: 48.3,   // 106,500 lb
-            4.6: 37.8,   // 83,400 lb
-            6:   27.3,   // 60,200 lb
-            7.6: 20.9,   // 46,100 lb
-            9:   16.6,   // 36,600 lb
-            10:  11.8,   // 26,100 lb (40ft boom)
-            11:  10.0,
-            12:   8.7,
-            13:   7.6,
-            14:   6.6,
-            15:   5.9,
-            16:   5.3,
-            18:   4.3,
-            20:   3.6,
-            22:   3.0,
-            24:   2.5,
-            26:   2.0,
-            28:   1.7,
-            30:   1.5,
-            32.5: 1.2
+            4.5:363.0,5:340.0,6:290.0,7:248.0,8:215.0,9:189.0,10:168.0,
+            12:136.0,14:112.0,16:93.0,18:78.0,20:66.0,25:47.5,30:35.5,
+            35:27.0,40:21.0,45:16.5,50:13.3,55:10.8,60:9.0,70:6.4,80:4.8,84:4.4
         }
     },
-
-    // ── Terex RT230 (30t Rough-Terrain) ───────────────────────────────────
-    // Load chart: fully extended outriggers, 10,000 lb counterweight, 360°
-    // (Page 6–7 of supplied PDF)
-    // Values in lb → ÷ 1000 × 0.4536 = t
     "Terex RT230": {
-        type: "Rough-Terrain",
-        maxCap: 27.2,
-        minRadius: 3,
-        maxRadius: 26,
-        maxBoom: 28.7,
+        type: "Rough-Terrain", maxCap: 35, minRadius: 2.5, maxRadius: 24, maxBoom: 30.5,
         capacityTable: {
-            3:   27.2,   // 60,000 lb — 30ft boom
-            3.7: 22.7,
-            4.6: 18.6,   // 41,000 lb
-            6:   14.0,
-            7.6: 10.5,
-            9:    8.7,
-            10:   7.8,
-            12:   6.5,
-            14:   5.6,
-            16:   4.8,
-            18:   4.2,
-            20:   3.7,
-            22:   3.2,
-            24:   2.8,
-            26:   2.5
+            2.5:35.0,3:31.0,4:23.0,5:18.2,6:14.6,7:11.9,8:9.8,
+            9:8.2,10:7.0,12:5.3,14:4.1,16:3.2,18:2.6,20:2.1,24:1.6
         }
     }
 };
 
-// ─── D. STATE ────────────────────────────────────────────────────────────────
+// ─── D. INVENTORY ────────────────────────────────────────────────────────────
 let INVENTORY_POOL = [];
-let nextId = 101;
+let nextId = 1;
 
-// ─── E. CAPACITY INTERPOLATION ───────────────────────────────────────────────
-// Given a crane's capacityTable and an operating radius, linearly interpolate.
+// ─── E. RIGGING FACTOR ───────────────────────────────────────────────────────
+function getRiggingFactor() {
+    return parseFloat(document.getElementById("riggingFactorInput").value) || 1.10;
+}
+
+function syncRiggingFactor(val) {
+    const f = val / 100;
+    document.getElementById("riggingFactorInput").value = f.toFixed(2);
+    document.getElementById("riggingPctLabel").textContent = "+" + (val - 100) + "%";
+    renderInventoryTable();
+}
+
+function syncRiggingFactorFromInput(val) {
+    const pct = Math.round(parseFloat(val) * 100);
+    document.getElementById("riggingFactorSlider").value = pct;
+    document.getElementById("riggingPctLabel").textContent = "+" + (pct - 100) + "%";
+    renderInventoryTable();
+}
+
+// ─── F. CAPACITY INTERPOLATION ───────────────────────────────────────────────
 function interpolateCapacity(table, radius) {
     const radii = Object.keys(table).map(Number).sort((a, b) => a - b);
     if (radius <= radii[0]) return table[radii[0]];
     if (radius >= radii[radii.length - 1]) return table[radii[radii.length - 1]];
     for (let i = 0; i < radii.length - 1; i++) {
-        const r0 = radii[i], r1 = radii[i + 1];
-        if (radius >= r0 && radius <= r1) {
-            const t = (radius - r0) / (r1 - r0);
-            return table[r0] + t * (table[r1] - table[r0]);
+        if (radius >= radii[i] && radius <= radii[i + 1]) {
+            const r0 = radii[i], r1 = radii[i + 1];
+            const c0 = table[r0],  c1 = table[r1];
+            return +(c0 + (c1 - c0) * (radius - r0) / (r1 - r0)).toFixed(3);
         }
     }
     return 0;
 }
 
-// ─── F. RIGGING FACTOR HELPERS ───────────────────────────────────────────────
-function getRiggingFactor() {
-    return parseFloat(document.getElementById('riggingFactorInput').value) || 1.10;
-}
-
-function syncRiggingFactor(sliderVal) {
-    const f = (sliderVal / 100).toFixed(2);
-    document.getElementById('riggingFactorInput').value = f;
-    const pct = sliderVal - 100;
-    document.getElementById('riggingPctLabel').textContent = `+${pct}%`;
-    updateLiveWeight();
-    calculateSelectedWeight();
-}
-
-function syncRiggingFactorFromInput(val) {
-    const f = Math.max(1.00, Math.min(1.40, parseFloat(val) || 1.10));
-    const sliderVal = Math.round(f * 100);
-    document.getElementById('riggingFactorSlider').value = sliderVal;
-    document.getElementById('riggingPctLabel').textContent = `+${sliderVal - 100}%`;
-    updateLiveWeight();
-    calculateSelectedWeight();
-}
-
-// ─── G. STEEL WEIGHT LIVE PREVIEW ────────────────────────────────────────────
+// ─── G. MEMBER OPTIONS ───────────────────────────────────────────────────────
 function updateMemberOptions() {
     const profile = document.getElementById("inputBeamProfile").value;
-    const select = document.getElementById("inputBeamMember");
+    const select  = document.getElementById("inputBeamMember");
     select.innerHTML = "";
     (memberOptions[profile] || []).forEach(opt => {
         const el = document.createElement("option");
-        el.value = opt;
-        el.textContent = opt;
+        el.value = opt; el.textContent = opt;
         select.appendChild(el);
     });
     select.onchange = updateLiveWeight;
@@ -714,12 +936,7 @@ function updateLiveWeight() {
     const kgpm   = BEAM_DATA[member];
     const unitW  = document.getElementById("liveUnitWeight");
     const batchW = document.getElementById("liveBatchWeight");
-
-    if (!kgpm) {
-        unitW.textContent  = "— enter via equipment card";
-        batchW.textContent = "—";
-        return;
-    }
+    if (!kgpm) { unitW.textContent = "— enter via equipment card"; batchW.textContent = "—"; return; }
     const singleMass = +(kgpm * length).toFixed(1);
     const batchMass  = +(singleMass * qty).toFixed(1);
     unitW.textContent  = kgpm + " kg/m";
@@ -732,11 +949,7 @@ function addBeamToInventory() {
     const length = parseFloat(document.getElementById("inputBeamLength").value) || 12;
     const qty    = parseInt(document.getElementById("inputBeamQty").value) || 1;
     const kgpm   = BEAM_DATA[member];
-
-    if (!kgpm) {
-        alert("This section has no auto-weight (built-up girder). Use the Equipment card instead and enter the mass directly.");
-        return;
-    }
+    if (!kgpm) { alert("This section has no auto-weight (built-up girder). Use the Equipment card instead."); return; }
     const trueMass = +(kgpm * length).toFixed(1);
     for (let i = 0; i < qty; i++) {
         INVENTORY_POOL.push({ id: nextId++, trueMass, length, componentClass: member });
@@ -747,10 +960,7 @@ function addBeamToInventory() {
 function addEquipmentToInventory() {
     const trueMass = parseFloat(document.getElementById("inputEquipWeight").value);
     const tag = document.getElementById("inputEquipName").value.trim();
-    if (!trueMass || trueMass <= 0) {
-        alert("Please enter a valid certified mass (kg).");
-        return;
-    }
+    if (!trueMass || trueMass <= 0) { alert("Please enter a valid certified mass (kg)."); return; }
     INVENTORY_POOL.push({ id: nextId++, trueMass, length: null, componentClass: tag || "Industrial Equipment" });
     renderInventoryTable();
 }
@@ -771,20 +981,21 @@ function renderInventoryTable() {
         totalAll += item.trueMass;
         const gross = +(item.trueMass * rf).toFixed(1);
         const row = document.createElement("tr");
-        row.className = "hover:bg-slate-900/40 transition-colors";
         row.innerHTML = `
-            <td class="py-4 px-6 text-center">
+            <td class="text-center">
                 <input type="checkbox" data-id="${item.id}" onchange="calculateSelectedWeight()"
-                       class="w-4 h-4 accent-emerald-500 rounded">
+                       style="width:16px;height:16px;accent-color:var(--emerald);cursor:pointer">
             </td>
-            <td class="py-4 px-6 font-mono text-center text-slate-400">#${item.id}</td>
-            <td class="py-4 px-6 text-right font-semibold text-amber-300 mono-text">${item.trueMass.toLocaleString()} kg</td>
-            <td class="py-4 px-6 text-right font-semibold text-sky-300 mono-text">${gross.toLocaleString()} kg</td>
-            <td class="py-4 px-6 text-right text-slate-300 mono-text">${item.length !== null ? item.length + ' m' : '—'}</td>
-            <td class="py-4 px-6 text-center font-medium text-amber-400 truncate max-w-xs">${item.componentClass}</td>
-            <td class="py-4 px-6 text-center">
+            <td class="text-center mono" style="color:var(--text-muted);font-size:12px">#${item.id}</td>
+            <td class="text-right mono" style="color:var(--amber);font-weight:700">${item.trueMass.toLocaleString()} kg</td>
+            <td class="text-right mono" style="color:var(--cyan);font-weight:700">${gross.toLocaleString()} kg</td>
+            <td class="text-right mono" style="color:var(--text-dim)">${item.length !== null ? item.length + ' m' : '—'}</td>
+            <td class="text-center" style="color:var(--amber);font-size:12px;max-width:180px">${item.componentClass}</td>
+            <td class="text-center">
                 <button onclick="deleteInventoryItem(${item.id})"
-                        class="text-slate-500 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition-all">
+                        style="color:var(--text-muted);padding:6px 10px;border-radius:6px;background:transparent;border:none;cursor:pointer;transition:all 0.2s"
+                        onmouseover="this.style.color='var(--red)';this.style.background='rgba(239,68,68,0.1)'"
+                        onmouseout="this.style.color='var(--text-muted)';this.style.background='transparent'">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </td>`;
@@ -805,27 +1016,25 @@ function calculateSelectedWeight() {
         if (item) selectedTrue += item.trueMass;
     });
     const gross = +(selectedTrue * rf).toFixed(1);
-
     document.getElementById("combinedSelectedWeightDisplay").textContent = selectedTrue.toLocaleString() + " kg";
     document.getElementById("grossLiftWeightDisplay").textContent = gross.toLocaleString() + " kg";
 
-    // Update rigging breakdown box
     if (selectedTrue > 0) {
-        document.getElementById("riggingBreakdownBox").classList.remove("hidden");
+        const box = document.getElementById("riggingBreakdownBox");
+        box.classList.add("visible");
         document.getElementById("rbTrueMass").textContent = selectedTrue.toLocaleString() + " kg";
         document.getElementById("rbAddon").textContent    = "+" + (gross - selectedTrue).toLocaleString() + " kg";
         document.getElementById("rbGross").textContent    = gross.toLocaleString() + " kg";
     } else {
-        document.getElementById("riggingBreakdownBox").classList.add("hidden");
+        document.getElementById("riggingBreakdownBox").classList.remove("visible");
     }
 }
 
-// ─── K. MAIN ANALYSIS ENGINE — RED / GREEN CRANE SUITABILITY ─────────────────
-// Step B + Step C combined: explicit factor, actual interpolated capacity.
+// ─── K. MAIN ANALYSIS ENGINE ─────────────────────────────────────────────────
 function findCranesToSuitInventory() {
-    const radius    = parseFloat(document.getElementById("globalRadius").value) || 12;
-    const height    = parseFloat(document.getElementById("phase2TargetHeight").value) || 15;
-    const rf        = getRiggingFactor();
+    const radius = parseFloat(document.getElementById("globalRadius").value) || 12;
+    const height = parseFloat(document.getElementById("phase2TargetHeight").value) || 15;
+    const rf     = getRiggingFactor();
     const selectedCranes = getSelectedCranes();
 
     let selectedTrue = 0;
@@ -835,107 +1044,92 @@ function findCranesToSuitInventory() {
         if (item) selectedTrue += item.trueMass;
     });
 
-    if (selectedCranes.length === 0) {
-        alert("Please select at least one crane from the fleet list.");
-        return;
-    }
-    if (checkboxes.length === 0) {
-        alert("Please check at least one item in the inventory table to analyse.");
-        return;
-    }
+    if (selectedCranes.length === 0) { alert("Please select at least one crane from the fleet list."); return; }
+    if (checkboxes.length === 0) { alert("Please check at least one item in the inventory table to analyse."); return; }
 
     const grossKg = +(selectedTrue * rf).toFixed(1);
     const grossT  = +(grossKg / 1000).toFixed(3);
 
-    // Populate results panel summary strip
-    document.getElementById("rTrueMass").textContent    = selectedTrue.toLocaleString() + " kg";
-    document.getElementById("rFactor").textContent      = rf.toFixed(2) + "×";
-    document.getElementById("rGross").textContent       = grossKg.toLocaleString() + " kg  (" + grossT + " t)";
+    document.getElementById("rTrueMass").textContent     = selectedTrue.toLocaleString() + " kg";
+    document.getElementById("rFactor").textContent       = rf.toFixed(2) + "×";
+    document.getElementById("rGross").textContent        = grossKg.toLocaleString() + " kg  (" + grossT + " t)";
     document.getElementById("rRadiusHeight").textContent = radius + " m  /  " + height + " m";
 
     const container = document.getElementById("craneResultsContainer");
     container.innerHTML = "";
 
     selectedCranes.forEach(c => {
-        const craneInfo = CRANE_DATA[c.name];
-        const ratedCapT = interpolateCapacity(craneInfo.capacityTable, radius);
+        const craneInfo  = CRANE_DATA[c.name];
+        const ratedCapT  = interpolateCapacity(craneInfo.capacityTable, radius);
+        const radiusOK   = radius <= craneInfo.maxRadius;
+        const boomOK     = height <= craneInfo.maxBoom * 1.15;
+        const massOK     = grossT  <= ratedCapT;
+        const pass       = radiusOK && boomOK && massOK;
+        const marginT    = +(ratedCapT - grossT).toFixed(3);
+        const utilPct    = ratedCapT > 0 ? Math.min(Math.round((grossT / ratedCapT) * 100), 999) : 999;
 
-        const radiusOK = radius <= craneInfo.maxRadius;
-        const boomOK   = height <= craneInfo.maxBoom * 1.15; // 15% margin for jib reach
-        const massOK   = grossT  <= ratedCapT;
-        const pass     = radiusOK && boomOK && massOK;
+        let barColor = "#10b981";
+        if (utilPct > 85) barColor = "#ef4444";
+        else if (utilPct > 70) barColor = "#f59e0b";
 
-        const marginT  = +(ratedCapT - grossT).toFixed(3);
-        const utilPct  = ratedCapT > 0 ? Math.min(Math.round((grossT / ratedCapT) * 100), 999) : 999;
-
-        // Utilisation bar colour
-        let barColour = "bg-emerald-500";
-        if (utilPct > 85)  barColour = "bg-red-500";
-        else if (utilPct > 70) barColour = "bg-amber-500";
-
-        // Issue list
         const issues = [];
         if (!radiusOK) issues.push(`Radius ${radius}m exceeds this crane's max reach of ${craneInfo.maxRadius}m`);
         if (!boomOK)   issues.push(`Lift height ${height}m may exceed boom range (${craneInfo.maxBoom}m boom)`);
         if (!massOK)   issues.push(`Gross mass ${grossT}t exceeds rated capacity ${ratedCapT.toFixed(2)}t at ${radius}m radius`);
 
         const card = document.createElement("div");
-        card.className = `border ${pass ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-red-700/60 bg-red-950/20'} rounded-xl p-5`;
+        card.className = pass ? "crane-pass" : "crane-fail";
         card.innerHTML = `
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <!-- Status badge -->
-                <div class="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 font-black text-base
-                    ${pass ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 badge-pass'
-                           : 'bg-red-500/20 text-red-400 border border-red-500/40 badge-fail'}">
-                    ${pass ? '✓' : '✗'}
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:16px">
+                <div class="${pass ? 'status-badge-pass' : 'status-badge-fail'}">
+                    <i class="fa-solid ${pass ? 'fa-check' : 'fa-xmark'}"></i>
                 </div>
                 <div>
-                    <div class="font-bold text-slate-100 text-base">${c.name}</div>
-                    <div class="text-xs text-slate-400 mono-text">${craneInfo.type} · Max ${craneInfo.maxCap}t</div>
-                    ${pass ? `<div class="text-xs text-emerald-400 font-semibold mt-0.5">PASS — SUITABLE FOR LIFT</div>`
-                           : `<div class="text-xs text-red-400 font-semibold mt-0.5">FAIL — DO NOT USE FOR THIS LIFT</div>`}
+                    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text-primary)">${c.name}</div>
+                    <div class="mono" style="font-size:11px;color:var(--text-muted)">${craneInfo.type} · Max ${craneInfo.maxCap}t</div>
+                    <div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;margin-top:4px;color:${pass ? 'var(--emerald)' : 'var(--red)'}">
+                        ${pass ? '✓ PASS — SUITABLE FOR LIFT' : '✗ FAIL — DO NOT USE FOR THIS LIFT'}
+                    </div>
                 </div>
             </div>
-            <!-- Capacity metrics -->
-            <div class="grid grid-cols-3 gap-4 text-center flex-shrink-0">
-                <div class="bg-slate-900/60 rounded-lg p-3">
-                    <div class="text-[10px] text-slate-500 uppercase tracking-wider">Rated @ ${radius}m</div>
-                    <div class="mono-text font-bold text-slate-100 text-sm">${ratedCapT.toFixed(2)} t</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex-shrink:0">
+                <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center">
+                    <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Rated @ ${radius}m</div>
+                    <div class="mono" style="font-weight:700;color:var(--text-primary);font-size:14px">${ratedCapT.toFixed(2)} t</div>
                 </div>
-                <div class="bg-slate-900/60 rounded-lg p-3">
-                    <div class="text-[10px] text-slate-500 uppercase tracking-wider">Gross Lift</div>
-                    <div class="mono-text font-bold ${massOK ? 'text-emerald-400' : 'text-red-400'} text-sm">${grossT} t</div>
+                <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center">
+                    <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Gross Lift</div>
+                    <div class="mono" style="font-weight:700;color:${massOK ? 'var(--emerald)' : 'var(--red)'};font-size:14px">${grossT} t</div>
                 </div>
-                <div class="bg-slate-900/60 rounded-lg p-3">
-                    <div class="text-[10px] text-slate-500 uppercase tracking-wider">Margin</div>
-                    <div class="mono-text font-bold ${marginT >= 0 ? 'text-sky-400' : 'text-red-400'} text-sm">${marginT >= 0 ? '+' : ''}${marginT} t</div>
+                <div style="background:rgba(8,13,24,0.6);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center">
+                    <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Margin</div>
+                    <div class="mono" style="font-weight:700;color:${marginT >= 0 ? 'var(--cyan)' : 'var(--red)'};font-size:14px">${marginT >= 0 ? '+' : ''}${marginT} t</div>
                 </div>
             </div>
         </div>
-        <!-- Utilisation bar -->
-        <div class="mt-4">
-            <div class="flex justify-between text-[10px] text-slate-500 mb-1">
-                <span>Crane Utilisation</span><span>${utilPct}%</span>
+        <div style="margin-top:14px">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-bottom:5px">
+                <span style="font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:0.1em;text-transform:uppercase">Crane Utilisation</span>
+                <span class="mono" style="font-weight:700;color:${barColor}">${utilPct}%</span>
             </div>
-            <div class="w-full bg-slate-800 rounded-full h-2">
-                <div class="${barColour} h-2 rounded-full transition-all duration-700" style="width:${Math.min(utilPct,100)}%"></div>
+            <div style="width:100%;background:rgba(8,13,24,0.8);border-radius:4px;height:6px;overflow:hidden">
+                <div style="background:${barColor};height:6px;border-radius:4px;width:${Math.min(utilPct,100)}%;transition:width 0.8s ease;box-shadow:0 0 8px ${barColor}66"></div>
             </div>
         </div>
         ${issues.length ? `
-        <div class="mt-4 bg-red-950/30 border border-red-800/40 rounded-lg p-3 space-y-1">
-            ${issues.map(i => `<div class="text-xs text-red-300 flex items-start gap-2"><i class="fa-solid fa-triangle-exclamation text-red-400 mt-0.5 flex-shrink-0"></i>${i}</div>`).join('')}
+        <div style="margin-top:12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:12px">
+            ${issues.map(i => `<div style="font-size:12px;color:rgba(252,165,165,0.9);display:flex;align-items:start;gap:8px;margin-bottom:4px"><i class="fa-solid fa-triangle-exclamation" style="color:var(--red);margin-top:1px;flex-shrink:0"></i>${i}</div>`).join('')}
         </div>` : `
-        <div class="mt-4 bg-emerald-950/30 border border-emerald-800/40 rounded-lg p-3">
-            <div class="text-xs text-emerald-300 flex items-center gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <div style="margin-top:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:12px">
+            <div style="font-size:12px;color:rgba(110,231,183,0.9);display:flex;align-items:center;gap:8px">
+                <i class="fa-solid fa-circle-check" style="color:var(--emerald)"></i>
                 All constraints satisfied — radius, boom height, and gross mass within rated limits.
             </div>
         </div>`}`;
         container.appendChild(card);
     });
 
-    // Reveal results panel
     const panel = document.getElementById("resultsPanel");
     panel.classList.remove("hidden");
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -948,12 +1142,13 @@ function buildCraneCheckboxList() {
     Object.keys(CRANE_DATA).forEach(key => {
         const crane = CRANE_DATA[key];
         container.innerHTML += `
-        <label class="flex items-start gap-3 p-2 hover:bg-slate-900 rounded-lg cursor-pointer transition-colors">
+        <label style="display:flex;align-items:start;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background 0.15s"
+               onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
             <input type="checkbox" value="${key}" checked onchange="updateCraneSelection()"
-                   class="accent-amber-500 w-4 h-4 mt-1 flex-shrink-0">
-            <div class="flex flex-col">
-                <span class="text-xs font-semibold text-slate-200">${key}</span>
-                <span class="text-slate-400 text-[10px] mono-text">${crane.type} | Max: ${crane.maxCap}t | Reach: ${crane.maxRadius}m</span>
+                   style="accent-color:var(--amber);width:14px;height:14px;margin-top:2px;flex-shrink:0">
+            <div>
+                <div style="font-family:'Exo 2',sans-serif;font-size:12px;font-weight:600;color:var(--text-primary)">${key}</div>
+                <div class="mono" style="font-size:10px;color:var(--text-muted);margin-top:1px">${crane.type} | Max: ${crane.maxCap}t | Reach: ${crane.maxRadius}m</div>
             </div>
         </label>`;
     });
@@ -984,9 +1179,11 @@ function buildAreaCheckboxList() {
     container.innerHTML = "";
     SITE_AREAS.forEach(area => {
         container.innerHTML += `
-        <label class="flex items-center gap-3 p-2.5 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors">
-            <input type="checkbox" value="${area}" onchange="updateAreaSelection()" class="accent-amber-500 w-4 h-4">
-            <span class="text-sm text-slate-300">${area}</span>
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background 0.15s"
+               onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
+            <input type="checkbox" value="${area}" onchange="updateAreaSelection()"
+                   style="accent-color:var(--amber);width:14px;height:14px;flex-shrink:0">
+            <span style="font-size:13px;color:var(--text-dim)">${area}</span>
         </label>`;
     });
 }
@@ -1047,7 +1244,7 @@ const HELP_CONTENT = {
 function showHelpModal(key) {
     const data = HELP_CONTENT[key];
     if (!data) return;
-    document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-info text-amber-500"></i> ` + data.title;
+    document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--amber)"></i> ` + data.title;
     document.getElementById('modalBody').innerHTML = data.body;
     document.getElementById('helpModal').classList.remove('hidden');
 }
@@ -1074,10 +1271,8 @@ window.onload = () => {
     buildCraneCheckboxList();
     updateMemberOptions();
     renderInventoryTable();
-    // Set initial rigging factor label
     document.getElementById('riggingPctLabel').textContent = '+10%';
 };
 </script>
 </body>
 </html>
-
